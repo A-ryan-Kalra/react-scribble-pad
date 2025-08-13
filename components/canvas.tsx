@@ -15,6 +15,7 @@ export const stickerDetails = atom<{
   sticketTextAtom: boolean;
   bgColor: string;
   fontSize: number;
+  isEraserOn?: boolean;
 }>({
   sticketTextAtom: false,
   bgColor: "",
@@ -246,6 +247,7 @@ function Canvas() {
         setShowStickerDetails((prev) => ({
           ...prev,
           sticketTextAtom: false,
+          isEraserOn: false,
         }));
       }
     }
@@ -386,6 +388,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
+                isEraserOn: !prev.isEraserOn,
               }));
 
               toolsRef.current.eraser = true;
@@ -417,6 +420,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
+                isEraserOn: false,
               }));
             }}
             className={` li-box `}
@@ -473,6 +477,7 @@ function Canvas() {
                     });
                     setShowStickerDetails((prev) => ({
                       ...prev,
+                      isEraserOn: false,
                       fontSize:
                         1.2 * Number(e.target.value) > 10
                           ? 1.2 * Number(e.target.value)
@@ -499,6 +504,7 @@ function Canvas() {
               }));
               setShowStickerDetails((prev) => ({
                 ...prev,
+                isEraserOn: false,
                 sticketTextAtom: false,
               }));
             }}
