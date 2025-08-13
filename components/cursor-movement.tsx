@@ -3,69 +3,34 @@ import { useLocation } from "react-router-dom";
 import { useSocket } from "../src/services/use-socket-provider";
 import type { CursorMovementProps } from "../types";
 
-function CursorMovement({ position }: CursorMovementProps) {
-  // const socketRef = useRef<WebSocket>(null);
-  // const { roomId } = useParams();
-  // const [input, setInput] = useState("");
-  const [messages, setMessages] = useState({ message: "", name: "" });
+function CursorMovement() {
   const url = new URL(window.location.href);
 
   const searchParams = url.searchParams;
   const name = searchParams.get("name");
 
-  // const [userCursor, setUserCursor] = useState<{
-  //   x: number;
-  //   y: number;
-  //   width: number;
-  //   height: number;
-  // }>({
-  //   x: 0,
-  //   y: 0,
-  //   width: 0,
-  //   height: 0,
-  // });
-  const { socketProvider } = useSocket();
-
-  // useEffect(() => {
-  //   const ws = new WebSocket(
-  //     `wss://8f0nnzr5-5173.inc1.devtunnels.ms/ws/cursor/${roomId}?name=${position.name}`
-  //   );
-  //   socketProvider.set("cursor", ws);
-
-  //   // return () => {};
-  // }, [position.name]);
+  const [userCursor, setUserCursor] = useState<{
+    x: number;
+    y: number;
+  }>({
+    x: 0,
+    y: 0,
+  });
 
   useEffect(() => {
-    // const ws = new WebSocket(
-    //   `ws://localhost:8000/ws/message/${roomId}?name=${name}`
-    // );
-    // socketProvider.set(roomId ?? "", ws);
-    const socket = socketProvider.get("message");
-
-    if (socket) {
-      socket!.onclose = () => {
-        console.log(`${name} left the chat room.`);
-      };
-
-      socket!.onmessage = (event: MessageEvent) => {
-        const parsed = JSON.parse(event.data);
-        const message = parsed ?? {};
-
-        if (message.name !== name && message.type === "message") {
-          setMessages(JSON.parse(event.data));
-        }
-        // else {
-        //   console.log(event.data);
-        // }
-      };
+    function handleMouseMove(event: MouseEvent) {
+      console.log(event);
+      setUserCursor({
+        x: event.clientX,
+        y: event.clientY,
+      });
     }
 
-    // window.addEventListener("keydown", () => sendMessage(input));
+    window.addEventListener("mousemove", handleMouseMove);
 
-    // return () => {
-    // socket?.close();
-    // window.removeEventListener("keydown", () => sendMessage(input));
-    // };
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, []);
 
   return (
@@ -79,27 +44,24 @@ function CursorMovement({ position }: CursorMovementProps) {
         zIndex: 999999,
         cursor: "none",
         // transition: "transform 0.04s ease-in-out",
-        transform: `translate(${
-          ((position.x - 25) / position.width) * window.innerWidth
-        }px, ${((position.y - 25) / position.height) * window.innerHeight}px)`,
+        transform: `translate(${userCursor.x - 10}px, ${userCursor.y - 30}px)`,
       }}
     >
       <div
         style={{
           width: "25px",
           height: "25px",
-          color: position?.cursorStyle,
+          // color: position?.cursorStyle,
         }}
         className=" relative top-0 left-0 mx-auto"
       >
-        {position.name}
-        <div
+        {/* <div
           className={`absolute -top-11 min-w-[150px] bg-lime-300/90 ${
             messages.message && "p-1"
           } text-black rounded-[5px] text-sm`}
         >
           {messages.name !== name && messages.message && "Typing..."}
-        </div>
+        </div> */}
       </div>
       <div
         style={{
@@ -110,7 +72,7 @@ function CursorMovement({ position }: CursorMovementProps) {
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
           backgroundPosition: "center",
-          backgroundColor: position.cursorStyle,
+          backgroundColor: "purple",
           width: "25px",
           height: "25px",
         }}

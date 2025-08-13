@@ -1,19 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 // import { useParams } from "react-router-dom";
 import { useSocket } from "../src/services/use-socket-provider";
-import type { StickerDetailProps } from "../types";
-import { v4 as uuidv4 } from "uuid";
+
 import { atom, useAtom } from "jotai";
 import { stickerDetails } from "./canvas";
 export const isDraggingAtom = atom(false);
 
-function StickerEditor({
-  name,
-  divRefs,
-}: {
-  name: string;
-  divRefs: HTMLDivElement[];
-}) {
+function StickerEditor() {
   const [, setIsDragging] = useAtom(isDraggingAtom);
 
   // const { roomId } = useParams();
@@ -87,27 +80,8 @@ function StickerEditor({
     };
   }, [socketProvider, showStickerDetails.sticketTextAtom]);
 
-  useEffect(() => {
-    const sendMessage = () => {
-      if (socketProvider.get("message")) {
-        const data = { type: "message", name, message: input };
-
-        socketProvider.get("message")!.send(JSON.stringify(data));
-      }
-    };
-    sendMessage();
-  }, [input]);
-  function handleStickerMovement(data: StickerDetailProps | {}) {
-    //  setUserCursor(data);
-    const stickerMovement = socketProvider.get("cursor");
-    if (stickerMovement && stickerMovement.readyState === WebSocket.OPEN) {
-      stickerMovement.send(JSON.stringify(data));
-      //  lastSent = now;
-    }
-  }
   const handleInput = (event: FormEvent) => {
     event.preventDefault();
-    const id = uuidv4();
 
     const divEl = document.createElement("div");
     divEl.textContent = input;
@@ -136,7 +110,6 @@ function StickerEditor({
     divEl.style.top = `${userCursor.y}px`;
     divEl.className = "dynamic-input";
 
-    divRefs.push(divEl);
     document.body.appendChild(divEl);
     // inputEl.focus();
 
@@ -144,19 +117,8 @@ function StickerEditor({
     let offsetX = 0;
     let offsetY = 0;
 
-    const data = {
-      x: userCursor.x,
-      y: userCursor.y,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      name,
-      type: "sticker",
-      message: divEl.textContent as string,
-      stickerNo: id,
-    };
     // socketProvider.get("message")?.send(JSON.stringify(data));
 
-    handleStickerMovement(data);
     setInput("");
     setShowInput(false);
     let lastSent = 0;
@@ -207,19 +169,6 @@ function StickerEditor({
         setStopMessageSocket(false);
       }, 500);
 
-      const react = divEl.getBoundingClientRect();
-      const data = {
-        x: react.left,
-        y: react.top,
-        width: window.innerWidth,
-        height: window.innerHeight,
-        name,
-        type: "sticker",
-        message: divEl?.textContent as string,
-        stickerNo: id,
-      };
-
-      handleStickerMovement(data);
       lastSent = now;
     });
 
@@ -229,19 +178,6 @@ function StickerEditor({
         // if (now - lastSent < 20) return;
         divEl.style.left = `${event.clientX - offsetX}px`;
         divEl.style.top = `${event.clientY - offsetY}px`;
-
-        const data = {
-          x: event.clientX - offsetX,
-          y: event.clientY - offsetY,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          name,
-          type: "sticker",
-          message: divEl.textContent as string,
-          stickerNo: id,
-        };
-
-        handleStickerMovement(data);
       }
     };
 
@@ -251,23 +187,10 @@ function StickerEditor({
       if (e.touches.length > 0) {
         setIsDragging(true);
         // const touch = e.touches[0];
-        const react = divEl.getBoundingClientRect();
 
         // offsetX = touch.clientX - react.left;
         // offsetY = touch.clientY - react.top;
         isDragging = true;
-        const data = {
-          x: react.left,
-          y: react.top,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          name,
-          type: "sticker",
-          message: divEl.textContent as string,
-          stickerNo: id,
-        };
-
-        handleStickerMovement(data);
       }
     });
 
@@ -277,18 +200,6 @@ function StickerEditor({
         divEl.style.left = `${touch.clientX - divEl.clientWidth / 2}px`;
         divEl.style.top = `${touch.clientY - divEl.clientHeight / 2}px`;
 
-        const data = {
-          x: touch.clientX - offsetX,
-          y: touch.clientY - offsetY,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          name,
-          type: "sticker",
-          message: divEl.textContent as string,
-          stickerNo: id,
-        };
-
-        handleStickerMovement(data);
         const now = Date.now();
         if (now - lastSent < 10) return;
         const cursorData = {
@@ -320,14 +231,6 @@ function StickerEditor({
     divEl.addEventListener("keydown", (e) => {
       if (e.key === "Delete") {
         divEl.remove();
-        const data = {
-          name,
-          type: "delete",
-          message: divEl.textContent as string,
-          stickerNo: id,
-        };
-
-        handleStickerMovement(data);
       } else if (e.key === "Enter" && e.shiftKey) {
         divEl.appendChild(document.createElement("br"));
       } else if (e.key === "Escape" || e.key === "Enter") {
@@ -336,14 +239,6 @@ function StickerEditor({
       // if (window.innerWidth < 1024) {
       if (e.key === "Backspace" && divEl.textContent?.trim() === "") {
         divEl.remove();
-        const data = {
-          name,
-          type: "delete",
-          message: divEl.textContent as string,
-          stickerNo: id,
-        };
-
-        handleStickerMovement(data);
       }
     });
   };

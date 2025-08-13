@@ -1,23 +1,26 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import CursorMovement from "./cursor-movement";
 import StickerEditor from "./sticker-editor";
 
-import StickerMovement from "./sticker-movement";
 import Canvas from "./canvas";
 import "./index.css";
+import type { StickerDetailProps, UserDetailsProps } from "../types";
 
 function PlayArea() {
-  // const socketRef = useRef<WebSocket>(null);
-
-  const divRefs = useRef<HTMLDivElement[]>([]);
+  const [userData, setUserData] = useState<UserDetailsProps[]>([]);
 
   return (
-    <section className="h-full w-full ">
-      {/* <CursorMovement position={{ ...data }} key={index} /> */}
+    <section
+      style={{
+        height: "100%",
+        width: "100%",
+        cursor: "none",
+      }}
+      className=""
+    >
+      <CursorMovement />
 
-      {/* <StickerMovement position={{ ...data }} key={index} /> */}
-
-      <StickerEditor divRefs={divRefs.current ?? []} name={name ?? ""} />
+      <StickerEditor />
 
       <Canvas />
     </section>

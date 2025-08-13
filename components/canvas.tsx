@@ -30,11 +30,6 @@ export const stickerDetails = atom<{
 function Canvas() {
   const [isDragAtom] = useAtom(isDraggingAtom);
 
-  const url = new URL(window.location.href);
-
-  const searchParams = url.searchParams;
-  // const name = searchParams.get("name");
-  const name = "aryan" + Date.now();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
@@ -47,7 +42,7 @@ function Canvas() {
     textSize: "",
   });
   const isDrawing = useRef<boolean>(false);
-  const { socketProvider } = useSocket();
+  // const { socketProvider } = useSocket();
   const toolsRef = useRef<{
     eraser: boolean;
     pickColor: boolean;
@@ -77,30 +72,6 @@ function Canvas() {
     toolsRef.current.moveSticker = isDragAtom;
   }, [isDragAtom]);
 
-  function sendDataToUser(
-    name: string,
-    type: "canvas",
-    status: "draw" | "erase" | "stop" | "text",
-    position?: { offsetX?: number; offsetY?: number },
-    strokeStyle?: string,
-    lineWidth?: number,
-    textStyle?: string,
-    fillText?: string
-  ) {
-    const data = {
-      name,
-      position,
-      status,
-      type: type,
-      strokeStyle,
-      lineWidth,
-      textStyle,
-      fillText,
-      innerWidth: window.innerWidth,
-      innerHeight: window.innerHeight,
-    };
-    socketProvider.get("message")?.send(JSON.stringify(data));
-  }
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -145,15 +116,7 @@ function Canvas() {
         // ctx?.beginPath();
         // ctx?.moveTo(offSetX, offSetY);
       }
-      const data = {
-        name,
-        steps: "start",
-        position: { offSetX, offSetY },
-        type: "canvas",
-        innerWidth: window.innerWidth,
-        innerHeight: window.innerHeight,
-      };
-      socketProvider.get("message")?.send(JSON.stringify(data));
+
       return { offSetX, offSetY };
     }
 
@@ -181,36 +144,14 @@ function Canvas() {
       const { offsetX, offsetY } = getMousePosition(event);
       ctx.beginPath();
       ctx.moveTo(offsetX, offsetY);
-
-      const data = {
-        name,
-        steps: "start",
-        position: { offsetX, offsetY },
-        type: "canvas",
-      };
-      socketProvider.get("message")?.send(JSON.stringify(data));
     };
     const stopDrawing = () => {
       isDrawing.current = false;
       ctx.beginPath();
-      sendDataToUser(name as string, "canvas", "stop");
+      // sendDataToUser(name as string, "canvas", "stop");
     };
     const drawCanvas = (offsetX: number, offsetY: number) => {
       if (toolsRef.current.eraser) {
-        for (let con in canvasMap.current) {
-          canvasMap.current[con]["ctxRemoteUser"].globalCompositeOperation =
-            "destination-out";
-          const size = 100;
-          canvasMap.current[con]["ctxRemoteUser"].rect(
-            offsetX - size / 2,
-            offsetY - size / 2,
-            size,
-            size
-          );
-          canvasMap.current[con]["ctxRemoteUser"].fill();
-          canvasMap.current[con]["ctxRemoteUser"].beginPath();
-          canvasMap.current[con]["ctxRemoteUser"].moveTo(offsetX, offsetY);
-        }
         ctx.globalCompositeOperation = "destination-out";
         const size = 100;
         ctx.rect(offsetX - size / 2, offsetY - size / 2, size, size);
@@ -218,7 +159,7 @@ function Canvas() {
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
 
-        sendDataToUser(name as string, "canvas", "erase", { offsetX, offsetY });
+        // sendDataToUser(name as string, "canvas", "erase", { offsetX, offsetY });
       } else if (toolsRef.current.showText) {
         // ctx.strokeStyle = "red";
         // ctx.lineWidth = 1;
@@ -246,15 +187,15 @@ function Canvas() {
         // ctx.arc(offsetX, offsetY, Math.PI, 0, Math.PI * 2); // full circle
         // ctx.fill(); // for filled
         // or
-        sendDataToUser(
-          name as string,
-          "canvas",
-          "draw",
-          { offsetX, offsetY },
-          ctx?.strokeStyle as unknown as string,
-          ctx?.lineWidth,
-          ctx?.fillStyle as unknown as string
-        );
+        // sendDataToUser(
+        //   name as string,
+        //   "canvas",
+        //   "draw",
+        //   { offsetX, offsetY },
+        //   ctx?.strokeStyle as unknown as string,
+        //   ctx?.lineWidth,
+        //   ctx?.fillStyle as unknown as string
+        // );
       }
     };
     const draw = (event: MouseEvent) => {
@@ -268,122 +209,6 @@ function Canvas() {
 
       // lastSent = now;
     };
-
-    function createCanvasForUser(userId: string) {
-      if (canvasMap.current[userId]) return canvasMap.current[userId];
-
-      const canvas = document.createElement("canvas");
-      if (window.innerWidth < 1200) {
-        dpr = 1;
-      } else {
-        dpr = window.devicePixelRatio || 1;
-      }
-
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      canvas.style.backgroundColor = "transparent";
-      canvas.style.pointerEvents = "none";
-      canvas.style.zIndex = "99999";
-      canvas.style.position = "absolute";
-      // document.body.appendChild(canvas);
-      document.getElementById("canvas-container")!.appendChild(canvas);
-
-      const ctxRemoteUser = canvas!.getContext("2d");
-      if (window.innerWidth < 1200) {
-        dpr = 1;
-      } else {
-        dpr = window.devicePixelRatio || 1;
-      }
-      ctxRemoteUser!.scale(dpr, dpr);
-      canvasMap.current[userId] = { canvas, ctxRemoteUser };
-      return { canvas, ctxRemoteUser };
-    }
-    function handleCanvasPosition(e: MessageEvent) {
-      const parsed = JSON.parse(e.data);
-
-      const { ctxRemoteUser } = createCanvasForUser(parsed.name);
-
-      // ctxRemoteUser!.lineWidth = 5;
-      // ctxRemoteUser!.fill();
-
-      // console.log(ctx);
-
-      // ctx!.save();
-      if (ctxRemoteUser) {
-        ctxRemoteUser.strokeStyle = parsed?.strokeStyle;
-        ctxRemoteUser.lineWidth = parsed?.lineWidth;
-        ctxRemoteUser.fillStyle = parsed?.strokeStyle;
-        ctxRemoteUser.font = parsed?.textStyle;
-      }
-      if (parsed.status === "erase") {
-        for (let con in canvasMap.current) {
-          canvasMap.current[con]["ctxRemoteUser"]!.globalCompositeOperation =
-            "destination-out";
-          const size = 100;
-          canvasMap.current[con]["ctxRemoteUser"]!.rect(
-            ((parsed.position?.offsetX - size / 2) / parsed.innerWidth) *
-              window.innerWidth,
-            ((parsed.position?.offsetY - size / 2) / parsed.innerHeight) *
-              window.innerHeight,
-            size,
-            size
-          );
-
-          canvasMap.current[con]["ctxRemoteUser"]!.fill();
-          canvasMap.current[con]["ctxRemoteUser"]!.beginPath();
-          canvasMap.current[con]["ctxRemoteUser"]!.moveTo(
-            (parsed?.position?.offsetX / parsed.innerWidth) * window.innerWidth,
-            (parsed?.position?.offsetY / parsed.innerHeight) *
-              window.innerHeight
-          );
-        }
-
-        ctx!.globalCompositeOperation = "destination-out";
-        const size = 100;
-        ctx!.rect(
-          ((parsed.position?.offsetX - size / 2) / parsed.innerWidth) *
-            window.innerWidth,
-          ((parsed.position?.offsetY - size / 2) / parsed.innerHeight) *
-            window.innerHeight,
-          size,
-          size
-        );
-        ctx!.fill();
-        ctx!.beginPath();
-        ctx!.moveTo(
-          (parsed?.position?.offsetX / parsed.innerWidth) * window.innerWidth,
-          (parsed?.position?.offsetY / parsed.innerHeight) * window.innerHeight
-        );
-
-        // ctxRemoteUser!.save();
-
-        // ctxRemoteUser!.restore();
-      } else if (parsed?.status === "stop") {
-        ctxRemoteUser!.beginPath();
-      } else if (parsed.status === "text") {
-        // ctxRemoteUser!.font = "20px Arial";
-
-        ctxRemoteUser!.fillText(
-          parsed?.fillText ?? "",
-          (parsed?.position?.offsetX / parsed.innerWidth) * window.innerWidth,
-          (parsed?.position?.offsetY / parsed.innerHeight) * window.innerHeight
-        );
-      } else {
-        ctxRemoteUser!.globalCompositeOperation = "source-over";
-        // ctxRemoteUser!.strokeStyle = "red";
-        // ctxRemoteUser!.lineWidth = 5;
-        ctxRemoteUser!.lineCap = "round";
-        ctxRemoteUser!.lineTo(
-          (parsed?.position?.offsetX / parsed.innerWidth) * window.innerWidth,
-          (parsed?.position?.offsetY / parsed.innerHeight) * window.innerHeight
-        );
-        ctxRemoteUser!.stroke();
-      }
-      // ctx!.restore();
-      // ctx?.lineTo(parsed.position?.offsetX, parsed?.position?.offsetY);
-    }
 
     function handleEraser(event: MouseEvent) {
       if (toolsRef.current.eraser) {
@@ -461,9 +286,6 @@ function Canvas() {
       ctx.putImageData(imageData, 0, 0);
     };
 
-    socketProvider
-      .get("message")
-      ?.addEventListener("message", handleCanvasPosition);
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
@@ -489,7 +311,7 @@ function Canvas() {
       window.removeEventListener("touchmove", touchMove);
       window.removeEventListener("touchend", stopDrawing);
     };
-  }, [socketProvider.get("message")]);
+  }, [ctx]);
 
   function handleInput(e: FormEvent) {
     e.preventDefault();
@@ -556,14 +378,6 @@ function Canvas() {
                       bgColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
                       sticketTextAtom: false,
                     }));
-                    const data = {
-                      type: "cursor",
-                      name,
-                      width: window.innerWidth,
-                      height: window.innerHeight,
-                      cursorStyle: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
-                    };
-                    socketProvider.get("cursor")!.send(JSON.stringify(data));
                   }}
                 />
               )}
@@ -733,19 +547,6 @@ function Canvas() {
                         // showStickerDetails.bgColor,
                         showCanvasText.x,
                         showCanvasText.y
-                      );
-                      sendDataToUser(
-                        name as string,
-                        "canvas",
-                        "text",
-                        {
-                          offsetX: showCanvasText.x,
-                          offsetY: showCanvasText.y,
-                        },
-                        ctx?.strokeStyle as unknown as string,
-                        ctx?.lineWidth,
-                        ctx?.font as unknown as string,
-                        e.target.value
                       );
                     }
                   }}
