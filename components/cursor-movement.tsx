@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useSocket } from "../src/services/use-socket-provider";
-import type { CursorMovementProps } from "../types";
+import { stickerDetails } from "./canvas";
+import { useAtom } from "jotai";
 
 function CursorMovement() {
-  const url = new URL(window.location.href);
-
-  const searchParams = url.searchParams;
-  const name = searchParams.get("name");
+  const [showStickerDetails] = useAtom(stickerDetails);
 
   const [userCursor, setUserCursor] = useState<{
     x: number;
@@ -19,7 +15,6 @@ function CursorMovement() {
 
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {
-      console.log(event);
       setUserCursor({
         x: event.clientX,
         y: event.clientY,
@@ -42,8 +37,10 @@ function CursorMovement() {
           borderRadius: "50%",
           position: "fixed",
           transition: "transform 0.02s ease-in-out",
-          backgroundColor: "black",
-          transform: `translate(${userCursor.x - 4}px, ${userCursor.y - 4}px)`,
+          backgroundColor: showStickerDetails.bgColor
+            ? showStickerDetails.bgColor
+            : "black",
+          transform: `translate(${userCursor.x - 4}px, ${userCursor.y - 3}px)`,
         }}
       />
       <div
@@ -56,7 +53,7 @@ function CursorMovement() {
           zIndex: 999999,
           cursor: "none",
           // transition: "transform 0.04s ease-in-out",
-          transform: `translate(${userCursor.x}px, ${userCursor.y}px)`,
+          transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
         }}
       >
         <div

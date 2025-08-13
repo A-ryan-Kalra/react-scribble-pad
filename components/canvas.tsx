@@ -1,12 +1,5 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type FormEvent,
-} from "react";
-import { useSocket } from "../src/services/use-socket-provider";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+
 import {
   ALargeSmallIcon,
   Eraser,
