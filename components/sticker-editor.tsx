@@ -7,7 +7,7 @@ import { atom, useAtom } from "jotai";
 import { stickerDetails } from "./canvas";
 export const isDraggingAtom = atom(false);
 
-function UserCursorMovement({
+function StickerEditor({
   name,
   divRefs,
 }: {
@@ -345,10 +345,9 @@ function UserCursorMovement({
 
         handleStickerMovement(data);
       }
-      // }
     });
   };
-  console.log(showInput);
+
   return (
     showInput && (
       <form onSubmit={handleInput}>
@@ -388,4 +387,4 @@ function UserCursorMovement({
   );
 }
 
-export default UserCursorMovement;
+export default StickerEditor;

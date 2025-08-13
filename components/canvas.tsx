@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
-import { isDraggingAtom } from "./user-cursor-movement";
+import { isDraggingAtom } from "./sticker-editor";
 
 export const stickerDetails = atom<{
   sticketTextAtom: boolean;
