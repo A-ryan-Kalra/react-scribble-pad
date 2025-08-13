@@ -505,23 +505,21 @@ function Canvas() {
 
   return (
     <div
-      className={` w-full h-full relative ${
-        tools.canvasText ? "cursor-text" : ""
-      }`}
+      style={{
+        cursor: tools.canvasText ? "text" : "",
+      }}
+      className={` canvas-container `}
     >
       {tools.eraser && <div className="eraser-tool" />}
 
-      <div
-        ref={palleteRef}
-        className="absolute  w-[50px] left-1  top-3 h-[250px] border-[1px] border-slate-400 rounded-md shadow-amber-300"
-      >
-        <ul className="flex flex-col items-center gap-y-4 p-1 w-full h-full">
+      <div ref={palleteRef} className="pallete-box">
+        <ul className="pallete-tools">
           <li
-            className={`relative cursor-pointer ${
-              tools.pickColor
-                ? " rounded-md border-slate-500 "
-                : " border-transparent"
-            } border-[1px] p-1`}
+            className={`li-box`}
+            style={{
+              borderRadius: tools.pickColor ? "0.375rem" : "",
+              borderColor: tools.pickColor ? "#62748e" : "transparent",
+            }}
             onClick={() => {
               // toolsRef.current.pickColor = true;
 
@@ -538,7 +536,10 @@ function Canvas() {
             }}
           >
             <PaletteIcon
-              className={`${tools.pickColor ? "fill-purple-300" : ""}`}
+              style={{
+                fill: tools.pickColor ? "oklch(82.7% 0.119 306.383)" : "",
+              }}
+              className={``}
             />
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
@@ -569,11 +570,11 @@ function Canvas() {
             </div>
           </li>
           <li
-            className={`relative cursor-pointer ${
-              tools.eraser
-                ? " rounded-md border-slate-500 "
-                : " border-transparent"
-            } border-[1px] p-1`}
+            className={`li-box`}
+            style={{
+              borderRadius: tools.eraser ? "0.375rem" : "",
+              borderColor: tools.eraser ? "#62748e" : "transparent",
+            }}
             onClick={() => {
               setShowStickerDetails((prev) => ({
                 ...prev,
@@ -592,7 +593,7 @@ function Canvas() {
               }));
             }}
           >
-            <Eraser className={`${tools.eraser ? "fill-slate-300" : ""}`} />
+            <Eraser style={{ fill: tools.eraser ? "#cad5e2" : "" }} />
           </li>
           <li
             onClick={() => {
@@ -611,20 +612,33 @@ function Canvas() {
                 sticketTextAtom: false,
               }));
             }}
-            className={`relative cursor-pointer ${
-              tools.penSize
-                ? " rounded-md border-slate-500 "
-                : " border-transparent"
-            } border-[1px] p-1`}
+            className={` li-box `}
+            style={{
+              borderRadius: tools.penSize ? "0.375rem" : "",
+              borderColor: tools.penSize ? "#62748e" : "transparent",
+            }}
           >
-            <PenLine className={`${tools.penSize ? "fill-purple-300" : ""}`} />
+            <PenLine
+              style={{
+                fill: tools.penSize ? "oklch(82.7% 0.119 306.383)" : "",
+              }}
+            />
             <div
               onClick={(e) => e.stopPropagation()}
-              className={`absolute left-10 top-0 ${
-                tools.penSize ? "visible" : "invisible"
-              }`}
+              style={{
+                position: "absolute",
+                left: "2.5rem",
+                top: 0,
+                visibility: tools.penSize ? "visible" : "hidden",
+              }}
             >
-              <div className="bg-slate-300 p-1 rounded-md">
+              <div
+                style={{
+                  background: "#cad5e2",
+                  borderRadius: "0.375rem",
+                  padding: "0.25rem",
+                }}
+              >
                 <label htmlFor="sketch-pen" className="text-xs">
                   Sketch Pen
                 </label>
@@ -681,11 +695,11 @@ function Canvas() {
                 sticketTextAtom: false,
               }));
             }}
-            className={`relative cursor-pointer ${
-              tools.canvasText
-                ? " rounded-md border-slate-500 "
-                : " border-transparent"
-            } border-[1px] p-1`}
+            className={` li-box `}
+            style={{
+              borderRadius: tools.canvasText ? "0.375rem" : "",
+              borderColor: tools.canvasText ? "#62748e" : "transparent",
+            }}
           >
             <ALargeSmallIcon />
             {tools.canvasText && (
@@ -736,7 +750,7 @@ function Canvas() {
                     }
                   }}
                   type="text"
-                  className="  border-none outline-none text-sm p-1 left-12 bg-black/10"
+                  className="editor-input"
                 />
               </form>
             )}
@@ -758,11 +772,15 @@ function Canvas() {
                 canvasText: false,
               }));
             }}
-            className={`relative cursor-pointer ${
-              showStickerDetails.sticketTextAtom
-                ? " rounded-md border-slate-500 "
-                : " border-transparent"
-            } border-[1px] p-1`}
+            className={` li-box `}
+            style={{
+              borderRadius: showStickerDetails.sticketTextAtom
+                ? "0.375rem"
+                : "",
+              borderColor: showStickerDetails.sticketTextAtom
+                ? "#62748e"
+                : "transparent",
+            }}
           >
             <StickerIcon />
           </li>
@@ -775,8 +793,14 @@ function Canvas() {
       ></div>
 
       <canvas
-        // style={{ margin: 0, padding: 0 }}
-        className=" bg-white "
+        style={{
+          // width: "100%",
+          // height: "100%",
+
+          // position: "relative",
+          zIndex: 1,
+          backgroundColor: "transparent",
+        }}
         ref={canvasRef}
       />
     </div>

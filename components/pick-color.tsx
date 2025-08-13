@@ -6,8 +6,7 @@ interface PickColorProps {
 export default function PickColor({ pick }: PickColorProps) {
   return (
     <Sketch
-      className="absolute top-0 left-7"
-      style={{ marginLeft: 20 }}
+      style={{ marginLeft: 20, position: "absolute", top: 0, left: "1.75rem" }}
       onChange={(color) => {
         pick({ ...color.rgba });
       }}

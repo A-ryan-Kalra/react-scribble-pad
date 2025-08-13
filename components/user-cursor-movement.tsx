@@ -348,7 +348,7 @@ function UserCursorMovement({
       // }
     });
   };
-
+  console.log(showInput);
   return (
     showInput && (
       <form onSubmit={handleInput}>
@@ -381,7 +381,7 @@ function UserCursorMovement({
           }}
           type="text"
           value={input}
-          className="  border-none outline-none text-sm p-1 left-12 bg-black/10"
+          className="sticker-editor"
         />
       </form>
     )
