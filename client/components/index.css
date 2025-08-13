@@ -1,0 +1,22 @@
+:root {
+  --eraserPositionX: 0px;
+  --eraserPositionY: 0px;
+}
+.eraser-tool {
+  position: fixed;
+  border: 1px solid black;
+  cursor: grab;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  transform: translate(
+    calc(var(--eraserPositionX) - (100px / 2)),
+    calc(var(--eraserPositionY) - (100px / 2))
+  );
+  z-index: 999999;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+
+  pointer-events: none;
+}
