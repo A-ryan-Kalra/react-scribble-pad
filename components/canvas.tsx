@@ -323,6 +323,7 @@ function Canvas() {
   return (
     <div
       style={{
+        zIndex: 9999999,
         cursor: tools.canvasText ? "text" : "",
       }}
       className={` canvas-container `}

@@ -20,11 +20,20 @@ function CursorMovement() {
         y: event.clientY,
       });
     }
+    function handleTouchMove(event: TouchEvent) {
+      const cursor = event.touches[0];
+      setUserCursor({
+        x: cursor.clientX,
+        y: cursor.clientY,
+      });
+    }
 
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
 
@@ -37,6 +46,8 @@ function CursorMovement() {
           height: "5px",
           borderRadius: "50%",
           position: "fixed",
+          pointerEvents: "none",
+          zIndex: 99999999,
           transition: "transform 0.02s ease-in-out",
           backgroundColor: showStickerDetails.bgColor
             ? showStickerDetails.bgColor
@@ -51,7 +62,7 @@ function CursorMovement() {
           position: "fixed",
           borderRadius: "23px",
           pointerEvents: "none",
-          zIndex: 999999,
+          zIndex: 99999999,
           cursor: "none",
           // transition: "transform 0.04s ease-in-out",
           transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
@@ -71,6 +82,7 @@ function CursorMovement() {
             backgroundColor: "black",
             width: "30px",
             height: "30px",
+            pointerEvents: "none",
           }}
         />
       </div>
