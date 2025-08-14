@@ -42,11 +42,16 @@ ul {
 
 .pallete-box {
   position: absolute;
-  width: 350px;
+  /* width: 350px; */
   /* left: 0.25rem; */
-  left: 50%;
-  transform: translateX(-50%);
   /* top: 0.75rem; */
+  /* left: 50%; */
+  z-index: 999999;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 350px;
+  /* transform: translateX(-50%); */
   bottom: 1.75rem;
   height: fit-content;
   display: flex;
@@ -76,7 +81,7 @@ ul {
   border: 1px solid transparent;
 }
 
-.editor-input {
+/* .editor-input {
   border: none;
   outline: none;
   padding: 0.25rem;
@@ -85,8 +90,17 @@ ul {
   background-color: rgba(0, 0, 0, 0.1);
   font-size: 0.875rem;
   line-height: 0.25rem;
+} */
+.editor-input {
+  border: none;
+  outline: none;
+  width: 150px;
+  height: 30px;
+  position: fixed;
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 99999;
 }
-
 .sticker-editor {
   /* border-none outline-none text-sm p-1 left-12 bg-black/10 */
   border: none;

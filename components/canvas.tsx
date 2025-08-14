@@ -336,7 +336,7 @@ function Canvas() {
 
   function showEraser(event: MouseEventHandler<HTMLLIElement>) {
     const touches = event;
-    console.log(touches);
+
     document.documentElement.style.setProperty(
       "--eraserPositionX",
       `${touches.clientX}px`
@@ -362,7 +362,7 @@ function Canvas() {
   return (
     <div
       style={{
-        zIndex: 9999999,
+        // zIndex: 9999999,
         cursor: tools.canvasText ? "text" : "",
       }}
       className={` canvas-container `}
@@ -575,7 +575,7 @@ function Canvas() {
                     borderRadius: "3px",
                     // pointerEvents: "none",
                     zIndex: 99999,
-
+                    marginTop: 2,
                     left: `${showCanvasText.x}px`,
                     top: `${showCanvasText.y}px`,
                   }}

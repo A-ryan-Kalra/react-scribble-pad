@@ -16,7 +16,7 @@ function StickerEditor() {
   const { socketProvider } = useSocket();
   const [showInput, setShowInput] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [showStickerDetails] = useAtom(stickerDetails);
+  const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
 
   const [userCursor, setUserCursor] = useState<{
     x: number;
@@ -122,6 +122,12 @@ function StickerEditor() {
     setInput("");
     setShowInput(false);
     let lastSent = 0;
+    divEl.addEventListener("mouseenter", () => {
+      setShowStickerDetails((prev) => ({ ...prev, isEraserOn: true }));
+    });
+    divEl.addEventListener("mouseleave", () => {
+      setShowStickerDetails((prev) => ({ ...prev, isEraserOn: false }));
+    });
 
     divEl.addEventListener("mousedown", (e) => {
       isDragging = true;
