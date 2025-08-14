@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import CursorMovement from "./cursor-movement";
 import StickerEditor from "./sticker-editor";
 
@@ -12,7 +11,7 @@ function SkribblePad() {
         height: "100%",
         width: "100%",
         cursor: "none",
-        overflow: "hidden",
+        // overflow: "hidden",
       }}
       className=""
     >

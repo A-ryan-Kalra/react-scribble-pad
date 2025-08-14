@@ -376,7 +376,7 @@ function Canvas() {
                                                             ? 1.2 * Number(e.target.value)
                                                             : 10,
                                                     }));
-                                                } })] }) })] }), _jsxs("li", { onClick: () => {
+                                                } })] }) })] }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = true;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;
@@ -398,28 +398,7 @@ function Canvas() {
                             }, className: ` li-box `, style: {
                                 borderRadius: tools.canvasText ? "0.375rem" : "",
                                 borderColor: tools.canvasText ? "#62748e" : "transparent",
-                            }, children: [_jsx(ALargeSmallIcon, {}), tools.canvasText && (_jsx("form", { onClick: (e) => e.stopPropagation(), onSubmit: handleInput, className: "", children: _jsx("input", { ref: inputRef, 
-                                        // maxLength={30}
-                                        placeholder: "", style: {
-                                            width: "150px",
-                                            height: "30px",
-                                            position: "fixed",
-                                            borderRadius: "3px",
-                                            // pointerEvents: "none",
-                                            zIndex: 99999,
-                                            marginTop: 2,
-                                            left: `${showCanvasText.x}px`,
-                                            top: `${showCanvasText.y}px`,
-                                        }, onChange: (e) => {
-                                            if (ctx) {
-                                                // ctx.fillStyle = ctx.strokeStyle;
-                                                ctx.font = `${canvasConf.textSize}px Arial`;
-                                                ctx.fillStyle = showStickerDetails.bgColor;
-                                                ctx.fillText(e.target.value, 
-                                                // showStickerDetails.bgColor,
-                                                showCanvasText.x, showCanvasText.y);
-                                            }
-                                        }, type: "text", className: "editor-input" }) }))] }), _jsx("li", { onClick: () => {
+                            }, children: _jsx(ALargeSmallIcon, {}) }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = false;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;
@@ -458,6 +437,26 @@ function Canvas() {
                     // position: "relative",
                     zIndex: 1,
                     backgroundColor: tools.showScreen ? "transparent" : "black",
-                }, ref: canvasRef })] }));
+                }, ref: canvasRef }), tools.canvasText && (_jsx("form", { onClick: (e) => e.stopPropagation(), onSubmit: handleInput, className: "", children: _jsx("input", { ref: inputRef, 
+                    // maxLength={30}
+                    placeholder: "", style: {
+                        width: "150px",
+                        height: "30px",
+                        position: "fixed",
+                        borderRadius: "3px",
+                        // pointerEvents: "none",
+                        zIndex: 99999,
+                        left: `${showCanvasText.x}px`,
+                        top: `${showCanvasText.y}px`,
+                    }, onChange: (e) => {
+                        if (ctx) {
+                            // ctx.fillStyle = ctx.strokeStyle;
+                            ctx.font = `${canvasConf.textSize}px Arial`;
+                            ctx.fillStyle = showStickerDetails.bgColor;
+                            ctx.fillText(e.target.value, 
+                            // showStickerDetails.bgColor,
+                            showCanvasText.x, showCanvasText.y);
+                        }
+                    }, type: "text", className: "editor-input" }) }))] }));
 }
 export default Canvas;

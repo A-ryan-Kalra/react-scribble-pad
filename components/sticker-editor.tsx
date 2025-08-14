@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-// import { useParams } from "react-router-dom";
-import { useSocket } from "../src/services/use-socket-provider";
 
 import { atom, useAtom } from "jotai";
 import { stickerDetails } from "./canvas";
@@ -13,7 +11,7 @@ function StickerEditor() {
   const [input, setInput] = useState("");
   // const [messages, setMessages] = useState({ message: "", name: "" });
   const [stopMessageSocket, setStopMessageSocket] = useState(false);
-  const { socketProvider } = useSocket();
+
   const [showInput, setShowInput] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
@@ -78,7 +76,7 @@ function StickerEditor() {
     return () => {
       window.removeEventListener("mousedown", handleMouseDown);
     };
-  }, [socketProvider, showStickerDetails.sticketTextAtom]);
+  }, [showStickerDetails.sticketTextAtom]);
 
   const handleInput = (event: FormEvent) => {
     event.preventDefault();
@@ -122,7 +120,7 @@ function StickerEditor() {
 
     setInput("");
     setShowInput(false);
-    let lastSent = 0;
+
     divEl.addEventListener("mouseenter", () => {
       setShowStickerDetails((prev) => ({ ...prev, showPen: true }));
     });
@@ -167,16 +165,12 @@ function StickerEditor() {
       //   return;
       // }
 
-      const now = Date.now();
-      if (now - lastSent < 20) return;
       if (clearMessageSocketTimer) {
         clearTimeout(clearMessageSocketTimer);
       }
       clearMessageSocketTimer = setTimeout(() => {
         setStopMessageSocket(false);
       }, 500);
-
-      lastSent = now;
     });
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -206,24 +200,6 @@ function StickerEditor() {
         const touch = e.touches[0];
         divEl.style.left = `${touch.clientX - divEl.clientWidth / 2}px`;
         divEl.style.top = `${touch.clientY - divEl.clientHeight / 2}px`;
-
-        const now = Date.now();
-        if (now - lastSent < 10) return;
-        const cursorData = {
-          x: touch.clientX + 10 - offsetX,
-          y: touch.clientY - offsetY,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          name,
-          type: "cursor",
-        };
-        const socketCursor = socketProvider.get("cursor");
-        if (socketCursor && socketCursor.readyState === WebSocket.OPEN) {
-          // console.log(data);
-
-          socketCursor.send(JSON.stringify(cursorData));
-          lastSent = now;
-        }
       }
     });
     document.addEventListener("touchend", () => {

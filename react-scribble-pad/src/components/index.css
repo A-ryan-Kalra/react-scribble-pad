@@ -96,12 +96,12 @@ ul {
 .editor-input {
   border: none;
   outline: none;
-  width: 150px;
+  /* width: 150px;
   height: 30px;
   position: fixed;
-  border-radius: 3px;
+  border-radius: 3px; */
   background-color: rgba(0, 0, 0, 0.1);
-  z-index: 99999;
+  /* z-index: 99999; */
 }
 .sticker-editor {
   /* border-none outline-none text-sm p-1 left-12 bg-black/10 */

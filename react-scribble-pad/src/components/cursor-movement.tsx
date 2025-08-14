@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { stickerDetails } from "./canvas";
 import { useAtom } from "jotai";
+import pencilSvg from "../../public/pencil.svg";
 
 function CursorMovement() {
   const [showStickerDetails] = useAtom(stickerDetails);
@@ -63,19 +64,17 @@ function CursorMovement() {
       >
         <div
           style={{
-            visibility: showStickerDetails?.showPen ? "hidden" : "visible",
-            WebkitMaskImage: "url('/pencil.svg')",
+            width: 40,
+            height: 40,
+            backgroundColor: "red", // This is what you actually see through the mask
+            WebkitMaskImage: `url(${pencilSvg})`,
             WebkitMaskRepeat: "no-repeat",
-            rotate: "90deg",
-            WebkitMaskSize: "contain",
             WebkitMaskPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "contain",
-            backgroundPosition: "center",
-            backgroundColor: "black",
-            width: "30px",
-            height: "30px",
-            pointerEvents: "none",
+            WebkitMaskSize: "contain",
+            maskImage: `url(${pencilSvg})`,
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+            maskSize: "contain",
           }}
         />
       </div>

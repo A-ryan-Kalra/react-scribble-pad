@@ -568,45 +568,6 @@ function Canvas() {
             }}
           >
             <ALargeSmallIcon />
-            {tools.canvasText && (
-              <form
-                onClick={(e) => e.stopPropagation()}
-                onSubmit={handleInput}
-                className=""
-              >
-                <input
-                  ref={inputRef}
-                  // maxLength={30}
-                  placeholder=""
-                  style={{
-                    width: "150px",
-                    height: "30px",
-                    position: "fixed",
-                    borderRadius: "3px",
-                    // pointerEvents: "none",
-                    zIndex: 99999,
-                    marginTop: 2,
-                    left: `${showCanvasText.x}px`,
-                    top: `${showCanvasText.y}px`,
-                  }}
-                  onChange={(e) => {
-                    if (ctx) {
-                      // ctx.fillStyle = ctx.strokeStyle;
-                      ctx!.font = `${canvasConf.textSize}px Arial`;
-                      ctx.fillStyle = showStickerDetails.bgColor;
-                      ctx.fillText(
-                        e.target.value,
-                        // showStickerDetails.bgColor,
-                        showCanvasText.x,
-                        showCanvasText.y
-                      );
-                    }
-                  }}
-                  type="text"
-                  className="editor-input"
-                />
-              </form>
-            )}
           </li>
           <li
             onClick={() => {
@@ -682,6 +643,45 @@ function Canvas() {
         }}
         ref={canvasRef}
       />
+      {tools.canvasText && (
+        <form
+          onClick={(e) => e.stopPropagation()}
+          onSubmit={handleInput}
+          className=""
+        >
+          <input
+            ref={inputRef}
+            // maxLength={30}
+            placeholder=""
+            style={{
+              width: "150px",
+              height: "30px",
+              position: "fixed",
+              borderRadius: "3px",
+              // pointerEvents: "none",
+              zIndex: 99999,
+
+              left: `${showCanvasText.x}px`,
+              top: `${showCanvasText.y}px`,
+            }}
+            onChange={(e) => {
+              if (ctx) {
+                // ctx.fillStyle = ctx.strokeStyle;
+                ctx!.font = `${canvasConf.textSize}px Arial`;
+                ctx.fillStyle = showStickerDetails.bgColor;
+                ctx.fillText(
+                  e.target.value,
+                  // showStickerDetails.bgColor,
+                  showCanvasText.x,
+                  showCanvasText.y
+                );
+              }
+            }}
+            type="text"
+            className="editor-input"
+          />
+        </form>
+      )}
     </div>
   );
 }
