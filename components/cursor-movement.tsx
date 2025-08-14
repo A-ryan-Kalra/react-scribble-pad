@@ -15,25 +15,18 @@ function CursorMovement() {
 
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {
-      setUserCursor({
-        x: event.clientX,
-        y: event.clientY,
-      });
-    }
-    function handleTouchMove(event: TouchEvent) {
-      const cursor = event.touches[0];
-      setUserCursor({
-        x: cursor.clientX,
-        y: cursor.clientY,
-      });
+      if (window.innerWidth > 768) {
+        setUserCursor({
+          x: event.clientX,
+          y: event.clientY,
+        });
+      }
     }
 
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchmove", handleTouchMove);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
 
@@ -48,7 +41,7 @@ function CursorMovement() {
           position: "fixed",
           pointerEvents: "none",
           zIndex: 99999999,
-          transition: "transform 0.02s ease-in-out",
+          transition: "transform 0.02s ease-in",
           backgroundColor: showStickerDetails.bgColor
             ? showStickerDetails.bgColor
             : "black",

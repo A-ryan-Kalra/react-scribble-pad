@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEvent as MouseEventHandler,
+  type TouchEvent as TouchEventHandler,
+} from "react";
 
 import {
   ALargeSmallIcon,
@@ -27,16 +34,16 @@ function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-  const [eraserPosition, setEraserPosition] = useState({ x: 0, y: 0 });
+
   const [showCanvasText, setShowCanvasText] = useState({ x: -100, y: -100 });
   const inputRef = useRef<HTMLInputElement>(null);
-  const canvasMap = useRef<{ [key: string]: any }>({});
+
   const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
   const [canvasConf, setCanvasConf] = useState<{ textSize: string }>({
     textSize: "",
   });
   const isDrawing = useRef<boolean>(false);
-  // const { socketProvider } = useSocket();
+
   const toolsRef = useRef<{
     eraser: boolean;
     pickColor: boolean;
@@ -122,9 +129,16 @@ function Canvas() {
       // if (now - lastSent < 10) return;
       if (toolsRef.current.eraser) {
         const touch = event.touches[0];
-        setEraserPosition({ x: touch.clientX, y: touch.clientY });
 
         drawCanvas(touch.clientX, touch.clientY);
+        document.documentElement.style.setProperty(
+          "--eraserPositionX",
+          `${touch.clientX}px`
+        );
+        document.documentElement.style.setProperty(
+          "--eraserPositionY",
+          `${touch.clientY}px`
+        );
       } else {
         const { offSetX, offSetY } = touchStart(event);
 
@@ -320,6 +334,31 @@ function Canvas() {
     }));
   }
 
+  function showEraser(event: MouseEventHandler<HTMLLIElement>) {
+    const touches = event;
+    console.log(touches);
+    document.documentElement.style.setProperty(
+      "--eraserPositionX",
+      `${touches.clientX}px`
+    );
+    document.documentElement.style.setProperty(
+      "--eraserPositionY",
+      `${touches.clientY}px`
+    );
+  }
+
+  function showEraserOnTouch(event: TouchEventHandler<HTMLElement>) {
+    const touch = event.touches[0];
+    document.documentElement.style.setProperty(
+      "--eraserPositionX",
+      `${touch.clientX}px`
+    );
+    document.documentElement.style.setProperty(
+      "--eraserPositionY",
+      `${touch.clientY}px`
+    );
+  }
+
   return (
     <div
       style={{
@@ -385,14 +424,17 @@ function Canvas() {
               borderRadius: tools.eraser ? "0.375rem" : "",
               borderColor: tools.eraser ? "#62748e" : "transparent",
             }}
-            onClick={() => {
+            onTouchStart={showEraserOnTouch}
+            onClick={(event: MouseEventHandler<HTMLLIElement>) => {
+              showEraser(event);
+
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
                 isEraserOn: !prev.isEraserOn,
               }));
 
-              toolsRef.current.eraser = true;
+              toolsRef.current.eraser = !toolsRef.current.eraser;
               toolsRef.current.canvasText = false;
               toolsRef.current.pickColor = false;
               toolsRef.current.showText = false;
@@ -439,8 +481,8 @@ function Canvas() {
               onClick={(e) => e.stopPropagation()}
               style={{
                 position: "absolute",
-                left: "2.5rem",
-                top: 0,
+                left: "-2rem",
+                bottom: 50,
                 visibility: tools.penSize ? "visible" : "hidden",
               }}
             >
@@ -494,14 +536,14 @@ function Canvas() {
               toolsRef.current.canvasText = true;
               toolsRef.current.eraser = false;
               toolsRef.current.pickColor = false;
-              toolsRef.current.showText = false;
+              toolsRef.current.showText = !toolsRef.current.showText;
               ctx!.globalCompositeOperation = "source-over";
               // ctx!.fillStyle = ctx!.strokeStyle;
-              setTools(() => ({
+              setTools((prev) => ({
                 penSize: false,
                 eraser: false,
                 pickColor: false,
-                canvasText: true,
+                canvasText: !prev.canvasText,
               }));
               setShowStickerDetails((prev) => ({
                 ...prev,
