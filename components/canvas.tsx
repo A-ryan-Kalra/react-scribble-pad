@@ -10,6 +10,8 @@ import {
 import {
   ALargeSmallIcon,
   Eraser,
+  MonitorCheck,
+  MonitorX,
   PaletteIcon,
   PenLine,
   StickerIcon,
@@ -22,7 +24,7 @@ export const stickerDetails = atom<{
   sticketTextAtom: boolean;
   bgColor: string;
   fontSize: number;
-  isEraserOn?: boolean;
+  showPen?: boolean;
 }>({
   sticketTextAtom: false,
   bgColor: "",
@@ -62,11 +64,13 @@ function Canvas() {
     pickColor: boolean;
     penSize: boolean;
     canvasText: boolean;
+    showScreen: boolean;
   }>({
     eraser: false,
     pickColor: false,
     penSize: false,
     canvasText: false,
+    showScreen: true,
   });
 
   useEffect(() => {
@@ -247,12 +251,13 @@ function Canvas() {
     }
     function closeAllTools(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setTools({
+        setTools((prev) => ({
+          ...prev,
           canvasText: false,
           eraser: false,
           penSize: false,
           pickColor: false,
-        });
+        }));
         toolsRef.current.canvasText = false;
         toolsRef.current.eraser = false;
         toolsRef.current.pickColor = false;
@@ -261,7 +266,7 @@ function Canvas() {
         setShowStickerDetails((prev) => ({
           ...prev,
           sticketTextAtom: false,
-          isEraserOn: false,
+          showPen: false,
         }));
       }
     }
@@ -326,7 +331,8 @@ function Canvas() {
     e.preventDefault();
     toolsRef.current.canvasText = !toolsRef.current.canvasText;
 
-    setTools(() => ({
+    setTools((prev) => ({
+      ...prev,
       penSize: false,
       eraser: false,
       pickColor: false,
@@ -385,6 +391,7 @@ function Canvas() {
               toolsRef.current.pickColor = false;
               toolsRef.current.showText = false;
               setTools((prev) => ({
+                ...prev,
                 eraser: false,
                 penSize: false,
                 pickColor: !prev.pickColor,
@@ -431,7 +438,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                isEraserOn: !prev.isEraserOn,
+                showPen: !prev.showPen,
               }));
 
               toolsRef.current.eraser = !toolsRef.current.eraser;
@@ -439,6 +446,7 @@ function Canvas() {
               toolsRef.current.pickColor = false;
               toolsRef.current.showText = false;
               setTools((prev) => ({
+                ...prev,
                 penSize: false,
                 pickColor: false,
                 eraser: !prev.eraser,
@@ -455,6 +463,7 @@ function Canvas() {
               toolsRef.current.pickColor = false;
               toolsRef.current.showText = false;
               setTools((prev) => ({
+                ...prev,
                 penSize: !prev.penSize,
                 eraser: false,
                 pickColor: false,
@@ -463,7 +472,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                isEraserOn: false,
+                showPen: false,
               }));
             }}
             className={` li-box `}
@@ -520,7 +529,7 @@ function Canvas() {
                     });
                     setShowStickerDetails((prev) => ({
                       ...prev,
-                      isEraserOn: false,
+                      showPen: false,
                       fontSize:
                         1.2 * Number(e.target.value) > 10
                           ? 1.2 * Number(e.target.value)
@@ -540,6 +549,7 @@ function Canvas() {
               ctx!.globalCompositeOperation = "source-over";
               // ctx!.fillStyle = ctx!.strokeStyle;
               setTools((prev) => ({
+                ...prev,
                 penSize: false,
                 eraser: false,
                 pickColor: false,
@@ -547,7 +557,7 @@ function Canvas() {
               }));
               setShowStickerDetails((prev) => ({
                 ...prev,
-                isEraserOn: false,
+                showPen: false,
                 sticketTextAtom: false,
               }));
             }}
@@ -608,7 +618,8 @@ function Canvas() {
                 ...prev,
                 sticketTextAtom: !prev.sticketTextAtom,
               }));
-              setTools(() => ({
+              setTools((prev) => ({
+                ...prev,
                 penSize: false,
                 eraser: false,
                 pickColor: false,
@@ -627,6 +638,31 @@ function Canvas() {
           >
             <StickerIcon />
           </li>
+          <li className={` li-box `}>
+            {tools.showScreen ? (
+              <div
+                onClick={() => {
+                  setTools((prev) => ({
+                    ...prev,
+                    showScreen: false,
+                  }));
+                }}
+              >
+                <MonitorCheck />
+              </div>
+            ) : (
+              <div
+                onClick={() => {
+                  setTools((prev) => ({
+                    ...prev,
+                    showScreen: true,
+                  }));
+                }}
+              >
+                <MonitorX />
+              </div>
+            )}
+          </li>
         </ul>
       </div>
       <div
@@ -642,7 +678,7 @@ function Canvas() {
 
           // position: "relative",
           zIndex: 1,
-          backgroundColor: "transparent",
+          backgroundColor: tools.showScreen ? "transparent" : "black",
         }}
         ref={canvasRef}
       />

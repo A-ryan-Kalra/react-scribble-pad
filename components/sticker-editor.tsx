@@ -99,6 +99,7 @@ function StickerEditor() {
     divEl.style.outline = "none";
     divEl.style.borderRadius = "10px";
     divEl.style.padding = "0.55rem";
+    divEl.style.backdropFilter = "blur(10px)";
     divEl.style.zIndex = "99999";
     divEl.spellcheck = false;
     divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
@@ -123,10 +124,10 @@ function StickerEditor() {
     setShowInput(false);
     let lastSent = 0;
     divEl.addEventListener("mouseenter", () => {
-      setShowStickerDetails((prev) => ({ ...prev, isEraserOn: true }));
+      setShowStickerDetails((prev) => ({ ...prev, showPen: true }));
     });
     divEl.addEventListener("mouseleave", () => {
-      setShowStickerDetails((prev) => ({ ...prev, isEraserOn: false }));
+      setShowStickerDetails((prev) => ({ ...prev, showPen: false }));
     });
 
     divEl.addEventListener("mousedown", (e) => {

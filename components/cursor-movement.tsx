@@ -34,7 +34,7 @@ function CursorMovement() {
     <>
       <div
         style={{
-          visibility: showStickerDetails?.isEraserOn ? "hidden" : "visible",
+          visibility: showStickerDetails?.showPen ? "hidden" : "visible",
           width: "5px",
           height: "5px",
           borderRadius: "50%",
@@ -63,7 +63,7 @@ function CursorMovement() {
       >
         <div
           style={{
-            visibility: showStickerDetails?.isEraserOn ? "hidden" : "visible",
+            visibility: showStickerDetails?.showPen ? "hidden" : "visible",
             WebkitMaskImage: "url('/pencil.svg')",
             WebkitMaskRepeat: "no-repeat",
             rotate: "90deg",
