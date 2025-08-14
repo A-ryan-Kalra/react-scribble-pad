@@ -5,7 +5,7 @@ import StickerEditor from "./sticker-editor";
 import Canvas from "./canvas";
 import "./index.css";
 
-function PlayArea() {
+function SkribblePad() {
   return (
     <section
       style={{
@@ -25,4 +25,4 @@ function PlayArea() {
   );
 }
 
-export default PlayArea;
+export default SkribblePad;

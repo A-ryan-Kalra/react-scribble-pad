@@ -1,9 +1,9 @@
-import PlayArea from "../components/play-area";
+import SkribblePad from "../components/skribble-pad";
 
 function App() {
   return (
     <div>
-      <PlayArea />
+      <SkribblePad />
     </div>
   );
 }
