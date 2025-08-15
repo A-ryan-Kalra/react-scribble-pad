@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": ["react", "react-dom"],
     "noEmit": false // <-- override here
   },
   "include": ["src"]

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { stickerDetails } from "./canvas";
 import { useAtom } from "jotai";
-
+import { Pencil } from "lucide-react";
 function CursorMovement() {
   const [showStickerDetails] = useAtom(stickerDetails);
 
@@ -64,7 +64,7 @@ function CursorMovement() {
         <div
           style={{
             visibility: showStickerDetails?.hidePen ? "hidden" : "visible",
-            WebkitMaskImage: "url('/pencil.svg')",
+            // WebkitMaskImage: "url('/pencil.svg')",
             WebkitMaskRepeat: "no-repeat",
             rotate: "90deg",
             WebkitMaskSize: "contain",
@@ -78,8 +78,11 @@ function CursorMovement() {
             width: "30px",
             height: "30px",
             pointerEvents: "none",
+            marginLeft: "-0.45rem",
           }}
-        />
+        >
+          <Pencil />
+        </div>
       </div>
     </>
   );
