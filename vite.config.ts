@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react-swc";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
-
+import postcss from "rollup-plugin-postcss";
 export default defineConfig({
   plugins: [
     peerDepsExternal() as any, // auto-externalize peerDependencies
@@ -29,6 +29,12 @@ export default defineConfig({
           "react-dom": "ReactDOM",
         },
       },
+      plugins: [
+        postcss({
+          extract: "react-scribble-pad.css",
+          minimize: true,
+        }),
+      ],
     },
   },
 });

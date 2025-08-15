@@ -4,7 +4,8 @@
   "version": "1.0.9",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "dist/react-scribble-pad.css"
   ],
   "main": "./dist/react-scribble-pad.umd.js",
   "module": "./dist/react-scribble-pad.es.js",
@@ -59,6 +60,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2",
