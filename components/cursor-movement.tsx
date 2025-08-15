@@ -72,7 +72,9 @@ function CursorMovement() {
             backgroundRepeat: "no-repeat",
             backgroundSize: "contain",
             backgroundPosition: "center",
-            backgroundColor: "black",
+            backgroundColor: showStickerDetails.customizeCursor
+              ? showStickerDetails.bgColor
+              : "black",
             width: "30px",
             height: "30px",
             pointerEvents: "none",
