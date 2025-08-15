@@ -4,7 +4,7 @@ import StickerEditor from "./sticker-editor";
 import Canvas from "./canvas";
 import "./index.css";
 
-function SkribblePad() {
+function ScribblePad() {
   return (
     <section
       style={{
@@ -28,4 +28,4 @@ function SkribblePad() {
   );
 }
 
-export default SkribblePad;
+export default ScribblePad;
