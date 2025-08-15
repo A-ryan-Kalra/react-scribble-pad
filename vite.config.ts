@@ -6,13 +6,7 @@ import { resolve } from "path";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from "rollup-plugin-postcss";
 export default defineConfig({
-  plugins: [
-    peerDepsExternal() as any, // auto-externalize peerDependencies
-    react(),
-    dts({
-      rollupTypes: true,
-    }),
-  ],
+  plugins: [peerDepsExternal() as any, react(), dts({ rollupTypes: true })],
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
@@ -21,7 +15,6 @@ export default defineConfig({
       fileName: (format) => `react-scribble-pad.${format}.js`,
     },
     rollupOptions: {
-      // Just to be extra sure
       external: [/^react/, /^react-dom/],
       output: {
         globals: {
@@ -31,7 +24,7 @@ export default defineConfig({
       },
       plugins: [
         postcss({
-          extract: "react-scribble-pad.css",
+          inject: true, // <— inline styles into JS
           minimize: true,
         }),
       ],
