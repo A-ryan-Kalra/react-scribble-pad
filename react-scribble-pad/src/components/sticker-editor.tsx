@@ -123,10 +123,10 @@ function StickerEditor() {
     setShowInput(false);
 
     divEl.addEventListener("mouseenter", () => {
-      setShowStickerDetails((prev) => ({ ...prev, showPen: true }));
+      setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
     });
     divEl.addEventListener("mouseleave", () => {
-      setShowStickerDetails((prev) => ({ ...prev, showPen: false }));
+      setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
     });
 
     divEl.addEventListener("mousedown", (e) => {

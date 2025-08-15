@@ -2,7 +2,7 @@ import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-run
 import { useEffect, useState } from "react";
 import { stickerDetails } from "./canvas";
 import { useAtom } from "jotai";
-import pencilSvg from "../../public/pencil.svg";
+import { Pencil } from "lucide-react";
 function CursorMovement() {
     const [showStickerDetails] = useAtom(stickerDetails);
     const [userCursor, setUserCursor] = useState({
@@ -47,17 +47,20 @@ function CursorMovement() {
                     // transition: "transform 0.04s ease-in-out",
                     transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
                 }, children: _jsx("div", { style: {
-                        width: 40,
-                        height: 40,
-                        backgroundColor: "red", // This is what you actually see through the mask
-                        WebkitMaskImage: `url(${pencilSvg})`,
+                        visibility: showStickerDetails?.showPen ? "hidden" : "visible",
+                        // WebkitMaskImage: `url(${Pencil})`,
                         WebkitMaskRepeat: "no-repeat",
-                        WebkitMaskPosition: "center",
+                        rotate: "90deg",
                         WebkitMaskSize: "contain",
-                        maskImage: `url(${pencilSvg})`,
-                        maskRepeat: "no-repeat",
-                        maskPosition: "center",
-                        maskSize: "contain",
-                    } }) })] }));
+                        WebkitMaskPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        backgroundSize: "contain",
+                        backgroundPosition: "center",
+                        // backgroundColor: "black",
+                        marginLeft: "-0.45rem",
+                        width: "30px",
+                        height: "30px",
+                        pointerEvents: "none",
+                    }, children: _jsx(Pencil, {}) }) })] }));
 }
 export default CursorMovement;

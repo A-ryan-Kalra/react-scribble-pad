@@ -24,7 +24,7 @@ export const stickerDetails = atom<{
   sticketTextAtom: boolean;
   bgColor: string;
   fontSize: number;
-  showPen?: boolean;
+  hidePen?: boolean;
 }>({
   sticketTextAtom: false,
   bgColor: "",
@@ -266,7 +266,7 @@ function Canvas() {
         setShowStickerDetails((prev) => ({
           ...prev,
           sticketTextAtom: false,
-          showPen: false,
+          hidePen: false,
         }));
       }
     }
@@ -368,14 +368,20 @@ function Canvas() {
   return (
     <div
       style={{
-        // zIndex: 9999999,
+        zIndex: 999999,
         cursor: tools.canvasText ? "text" : "",
       }}
       className={` canvas-container `}
     >
-      {tools.eraser && <div className="eraser-tool" />}
+      {tools.eraser && <div className="eraser-tool"></div>}
 
-      <div ref={palleteRef} className="pallete-box">
+      <div
+        onMouseEnter={() => {
+          setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+        }}
+        ref={palleteRef}
+        className="pallete-box"
+      >
         <ul className="pallete-tools">
           <li
             className={`li-box`}
@@ -405,7 +411,12 @@ function Canvas() {
               }}
               className={``}
             />
-            <div onClick={(e) => e.stopPropagation()}>
+            <div
+              onMouseEnter={() => {
+                setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
               {tools.pickColor && (
                 <PickColor
                   pick={(rgba: {
@@ -438,7 +449,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                showPen: !prev.showPen,
+                hidePen: !prev.hidePen,
               }));
 
               toolsRef.current.eraser = !toolsRef.current.eraser;
@@ -472,7 +483,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                showPen: false,
+                hidePen: false,
               }));
             }}
             className={` li-box `}
@@ -529,7 +540,7 @@ function Canvas() {
                     });
                     setShowStickerDetails((prev) => ({
                       ...prev,
-                      showPen: false,
+                      hidePen: false,
                       fontSize:
                         1.2 * Number(e.target.value) > 10
                           ? 1.2 * Number(e.target.value)
@@ -557,7 +568,7 @@ function Canvas() {
               }));
               setShowStickerDetails((prev) => ({
                 ...prev,
-                showPen: false,
+                hidePen: false,
                 sticketTextAtom: false,
               }));
             }}
@@ -638,7 +649,7 @@ function Canvas() {
           // height: "100%",
 
           // position: "relative",
-          zIndex: 1,
+          zIndex: 999999,
           backgroundColor: tools.showScreen ? "transparent" : "black",
         }}
         ref={canvasRef}

@@ -98,7 +98,7 @@ function StickerEditor() {
     divEl.style.borderRadius = "10px";
     divEl.style.padding = "0.55rem";
     divEl.style.backdropFilter = "blur(10px)";
-    divEl.style.zIndex = "99999";
+    divEl.style.zIndex = "999999";
     divEl.spellcheck = false;
     divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
 
@@ -122,10 +122,10 @@ function StickerEditor() {
     setShowInput(false);
 
     divEl.addEventListener("mouseenter", () => {
-      setShowStickerDetails((prev) => ({ ...prev, showPen: true }));
+      setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
     });
     divEl.addEventListener("mouseleave", () => {
-      setShowStickerDetails((prev) => ({ ...prev, showPen: false }));
+      setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
     });
 
     divEl.addEventListener("mousedown", (e) => {
@@ -243,7 +243,7 @@ function StickerEditor() {
             position: "fixed",
             borderRadius: "3px",
             // pointerEvents: "none",
-            zIndex: 99999,
+            zIndex: 999999,
             transition: "transform 0.02s ease-in-out",
             transform: `translate(${
               ((userCursor.x - 75) / userCursor.width) * window.innerWidth

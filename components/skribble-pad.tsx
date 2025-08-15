@@ -12,6 +12,10 @@ function SkribblePad() {
         width: "100%",
         cursor: "none",
         // overflow: "hidden",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 999999,
       }}
       className=""
     >
