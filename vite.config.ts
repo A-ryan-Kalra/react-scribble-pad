@@ -1,13 +1,15 @@
+// vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import dts from "vite-plugin-dts";
 import { resolve } from "path";
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
 
 export default defineConfig({
   plugins: [
+    peerDepsExternal() as any, // auto-externalize peerDependencies
     react(),
     dts({
-      // keep everything else, just turn off the buggy rollup
       rollupTypes: true,
     }),
   ],
@@ -19,7 +21,8 @@ export default defineConfig({
       fileName: (format) => `react-scribble-pad.${format}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      // Just to be extra sure
+      external: [/^react/, /^react-dom/],
       output: {
         globals: {
           react: "React",
