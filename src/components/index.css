@@ -83,7 +83,10 @@ ul {
   padding: 0.25rem;
   border: 1px solid transparent;
 }
-
+.center {
+  display: flex;
+  align-items: center;
+}
 /* .editor-input {
   border: none;
   outline: none;

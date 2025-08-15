@@ -482,7 +482,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                hidePen: !prev.hidePen,
+                // hidePen: !prev.hidePen,
               }));
 
               toolsRef.current.eraser = !toolsRef.current.eraser;
@@ -585,7 +585,7 @@ function Canvas() {
                   <label className="text-xs">Customize Cursor</label>
                   <div style={{ display: "flex", justifyContent: "left" }}>
                     <span>
-                      <label htmlFor="on" className="text-xs">
+                      <label htmlFor="on" className="center">
                         On
                         <input
                           type="radio"
@@ -596,7 +596,7 @@ function Canvas() {
                           onChange={customCursorColor}
                         />
                       </label>
-                      <label htmlFor="off" className="text-xs">
+                      <label htmlFor="off" className="center">
                         Off
                         <input
                           id="off"
@@ -703,8 +703,8 @@ function Canvas() {
           <li
             className={` li-box `}
             style={{
-              borderRadius: tools.showScreen ? "0.375rem" : "",
-              borderColor: tools.showScreen ? "#464c54" : "transparent",
+              borderRadius: bgColor.openPalette ? "0.375rem" : "",
+              borderColor: bgColor.openPalette ? "#464c54" : "transparent",
               display: tools.showScreen ? "none" : "inline",
             }}
             onClick={() => {
