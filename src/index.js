@@ -1,1 +1,1 @@
-export { default as SkribblePad } from "./components/skribble-pad";
+export { default as ScribblePad } from "./components/skribble-pad";
