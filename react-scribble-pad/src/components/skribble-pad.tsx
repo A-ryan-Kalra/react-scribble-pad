@@ -6,12 +6,16 @@ import "./index.css";
 
 function SkribblePad() {
   return (
-    <div
+    <section
       style={{
         height: "100%",
         width: "100%",
         cursor: "none",
-        overflow: "hidden",
+        // overflow: "hidden",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 999999,
       }}
       className=""
     >
@@ -20,7 +24,7 @@ function SkribblePad() {
       <StickerEditor />
 
       <Canvas />
-    </div>
+    </section>
   );
 }
 

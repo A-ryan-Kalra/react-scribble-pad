@@ -703,8 +703,8 @@ function Canvas() {
           <li
             className={` li-box `}
             style={{
-              borderRadius: tools.canvasText ? "0.375rem" : "",
-              borderColor: tools.canvasText ? "#464c54" : "transparent",
+              borderRadius: tools.showScreen ? "0.375rem" : "",
+              borderColor: tools.showScreen ? "#464c54" : "transparent",
               display: tools.showScreen ? "none" : "inline",
             }}
             onClick={() => {
@@ -761,7 +761,7 @@ function Canvas() {
             ? "transparent"
             : bgColor.color
             ? bgColor.color
-            : "black",
+            : "white",
         }}
         ref={canvasRef}
       />

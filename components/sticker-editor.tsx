@@ -33,9 +33,11 @@ function StickerEditor() {
 
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
+
       // if (showStickerDetails.sticketTextAtom)
       if (
         target.classList.contains("dynamic-input") ||
+        (target?.parentNode as HTMLElement)?.classList.contains("li-box") ||
         !showStickerDetails.sticketTextAtom
       ) {
         setShowInput(false);
@@ -243,7 +245,7 @@ function StickerEditor() {
             position: "fixed",
             borderRadius: "3px",
             // pointerEvents: "none",
-            zIndex: 999999,
+            zIndex: 9999999,
             transition: "transform 0.02s ease-in-out",
             transform: `translate(${
               ((userCursor.x - 75) / userCursor.width) * window.innerWidth

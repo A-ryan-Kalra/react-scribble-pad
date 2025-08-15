@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type ChangeEvent,
   type FormEvent,
   type MouseEvent as MouseEventHandler,
   type TouchEvent as TouchEventHandler,
@@ -12,6 +13,7 @@ import {
   Eraser,
   MonitorCheck,
   MonitorX,
+  PaintRollerIcon,
   PaletteIcon,
   PenLine,
   StickerIcon,
@@ -24,15 +26,20 @@ export const stickerDetails = atom<{
   sticketTextAtom: boolean;
   bgColor: string;
   fontSize: number;
-  showPen?: boolean;
+  customizeCursor?: boolean;
+  hidePen?: boolean;
 }>({
   sticketTextAtom: false,
   bgColor: "",
   fontSize: 16,
+  customizeCursor: false,
 });
 function Canvas() {
   const [isDragAtom] = useAtom(isDraggingAtom);
-
+  const [bgColor, setBgColor] = useState<{
+    openPalette: boolean;
+    color: string;
+  }>({ openPalette: false, color: "" });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
@@ -258,6 +265,10 @@ function Canvas() {
           penSize: false,
           pickColor: false,
         }));
+        setBgColor((prev) => ({
+          ...prev,
+          openPalette: false,
+        }));
         toolsRef.current.canvasText = false;
         toolsRef.current.eraser = false;
         toolsRef.current.pickColor = false;
@@ -266,7 +277,7 @@ function Canvas() {
         setShowStickerDetails((prev) => ({
           ...prev,
           sticketTextAtom: false,
-          showPen: false,
+          hidePen: false,
         }));
       }
     }
@@ -329,15 +340,21 @@ function Canvas() {
 
   function handleInput(e: FormEvent) {
     e.preventDefault();
-    toolsRef.current.canvasText = !toolsRef.current.canvasText;
-
-    setTools((prev) => ({
-      ...prev,
-      penSize: false,
-      eraser: false,
-      pickColor: false,
-      canvasText: false,
-    }));
+    // toolsRef.current.canvasText = !toolsRef.current.canvasText;
+    inputRef.current!.value = "";
+    ctx!.fillText(
+      "",
+      // showStickerDetails.bgColor,
+      showCanvasText.x,
+      showCanvasText.y
+    );
+    // setTools((prev) => ({
+    //   ...prev,
+    //   penSize: false,
+    //   eraser: false,
+    //   pickColor: false,
+    //   canvasText: false,
+    // }));
   }
 
   function showEraser(event: MouseEventHandler<HTMLLIElement>) {
@@ -365,23 +382,41 @@ function Canvas() {
     );
   }
 
+  function customCursorColor(event: ChangeEvent<HTMLInputElement>) {
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      customizeCursor: event.target.value === "on" ? true : false,
+    }));
+  }
+
   return (
     <div
       style={{
-        // zIndex: 9999999,
+        zIndex: 999999,
         cursor: tools.canvasText ? "text" : "",
       }}
       className={` canvas-container `}
     >
-      {tools.eraser && <div className="eraser-tool" />}
+      {tools.eraser && <div className="eraser-tool"></div>}
 
-      <div ref={palleteRef} className="pallete-box">
+      <div
+        onMouseEnter={() => {
+          setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+        }}
+        style={{
+          transition: "width 0.2s ease-in",
+
+          width: tools.showScreen ? "300px" : "350px",
+        }}
+        ref={palleteRef}
+        className="pallete-box"
+      >
         <ul className="pallete-tools">
           <li
             className={`li-box`}
             style={{
               borderRadius: tools.pickColor ? "0.375rem" : "",
-              borderColor: tools.pickColor ? "#62748e" : "transparent",
+              borderColor: tools.pickColor ? "#464c54" : "transparent",
             }}
             onClick={() => {
               // toolsRef.current.pickColor = true;
@@ -405,7 +440,16 @@ function Canvas() {
               }}
               className={``}
             />
-            <div onClick={(e) => e.stopPropagation()}>
+            <div
+              onMouseEnter={() => {
+                if (!showStickerDetails.customizeCursor)
+                  setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
+              }}
+              onMouseLeave={() => {
+                setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
               {tools.pickColor && (
                 <PickColor
                   pick={(rgba: {
@@ -429,7 +473,7 @@ function Canvas() {
             className={`li-box`}
             style={{
               borderRadius: tools.eraser ? "0.375rem" : "",
-              borderColor: tools.eraser ? "#62748e" : "transparent",
+              borderColor: tools.eraser ? "#464c54" : "transparent",
             }}
             onTouchStart={showEraserOnTouch}
             onClick={(event: MouseEventHandler<HTMLLIElement>) => {
@@ -438,7 +482,7 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                showPen: !prev.showPen,
+                hidePen: !prev.hidePen,
               }));
 
               toolsRef.current.eraser = !toolsRef.current.eraser;
@@ -472,13 +516,13 @@ function Canvas() {
               setShowStickerDetails((prev) => ({
                 ...prev,
                 sticketTextAtom: false,
-                showPen: false,
+                hidePen: false,
               }));
             }}
             className={` li-box `}
             style={{
               borderRadius: tools.penSize ? "0.375rem" : "",
-              borderColor: tools.penSize ? "#62748e" : "transparent",
+              borderColor: tools.penSize ? "#464c54" : "transparent",
             }}
           >
             <PenLine
@@ -529,7 +573,7 @@ function Canvas() {
                     });
                     setShowStickerDetails((prev) => ({
                       ...prev,
-                      showPen: false,
+                      hidePen: false,
                       fontSize:
                         1.2 * Number(e.target.value) > 10
                           ? 1.2 * Number(e.target.value)
@@ -537,6 +581,37 @@ function Canvas() {
                     }));
                   }}
                 />
+                <div>
+                  <label className="text-xs">Customize Cursor</label>
+                  <div style={{ display: "flex", justifyContent: "left" }}>
+                    <span>
+                      <label htmlFor="on" className="text-xs">
+                        On
+                        <input
+                          type="radio"
+                          id="on"
+                          name="cursorGroup"
+                          value={"on"}
+                          max={40}
+                          onChange={customCursorColor}
+                        />
+                      </label>
+                      <label htmlFor="off" className="text-xs">
+                        Off
+                        <input
+                          id="off"
+                          type="radio"
+                          defaultChecked
+                          name="cursorGroup"
+                          value={"off"}
+                          max={40}
+                          onChange={customCursorColor}
+                        />
+                      </label>
+                    </span>
+                    <span></span>
+                  </div>
+                </div>
               </div>
             </div>
           </li>
@@ -557,14 +632,14 @@ function Canvas() {
               }));
               setShowStickerDetails((prev) => ({
                 ...prev,
-                showPen: false,
+                hidePen: false,
                 sticketTextAtom: false,
               }));
             }}
             className={` li-box `}
             style={{
               borderRadius: tools.canvasText ? "0.375rem" : "",
-              borderColor: tools.canvasText ? "#62748e" : "transparent",
+              borderColor: tools.canvasText ? "#464c54" : "transparent",
             }}
           >
             <ALargeSmallIcon />
@@ -593,7 +668,7 @@ function Canvas() {
                 ? "0.375rem"
                 : "",
               borderColor: showStickerDetails.sticketTextAtom
-                ? "#62748e"
+                ? "#464c54"
                 : "transparent",
             }}
           >
@@ -624,6 +699,48 @@ function Canvas() {
               </div>
             )}
           </li>
+
+          <li
+            className={` li-box `}
+            style={{
+              borderRadius: tools.showScreen ? "0.375rem" : "",
+              borderColor: tools.showScreen ? "#464c54" : "transparent",
+              display: tools.showScreen ? "none" : "inline",
+            }}
+            onClick={() => {
+              setBgColor((prev) => ({
+                ...prev,
+                openPalette: !prev.openPalette,
+              }));
+            }}
+          >
+            <PaintRollerIcon />
+            <div
+              onMouseEnter={() => {
+                setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
+              }}
+              onMouseLeave={() => {
+                setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {bgColor.openPalette && (
+                <PickColor
+                  pick={(rgba: {
+                    r: number;
+                    g: number;
+                    b: number;
+                    a: number;
+                  }) => {
+                    setBgColor((prev) => ({
+                      ...prev,
+                      color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
+                    }));
+                  }}
+                />
+              )}
+            </div>
+          </li>
         </ul>
       </div>
       <div
@@ -638,8 +755,13 @@ function Canvas() {
           // height: "100%",
 
           // position: "relative",
-          zIndex: 1,
-          backgroundColor: tools.showScreen ? "transparent" : "black",
+          zIndex: 999999,
+          transition: "backgroundColor 0.2s ease-in",
+          backgroundColor: tools.showScreen
+            ? "transparent"
+            : bgColor.color
+            ? bgColor.color
+            : "white",
         }}
         ref={canvasRef}
       />

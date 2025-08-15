@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-// import { useParams } from "react-router-dom";
 
 import { atom, useAtom } from "jotai";
 import { stickerDetails } from "./canvas";
@@ -34,9 +33,11 @@ function StickerEditor() {
 
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
+
       // if (showStickerDetails.sticketTextAtom)
       if (
         target.classList.contains("dynamic-input") ||
+        (target?.parentNode as HTMLElement)?.classList.contains("li-box") ||
         !showStickerDetails.sticketTextAtom
       ) {
         setShowInput(false);
@@ -99,7 +100,7 @@ function StickerEditor() {
     divEl.style.borderRadius = "10px";
     divEl.style.padding = "0.55rem";
     divEl.style.backdropFilter = "blur(10px)";
-    divEl.style.zIndex = "99999";
+    divEl.style.zIndex = "999999";
     divEl.spellcheck = false;
     divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
 
@@ -134,6 +135,7 @@ function StickerEditor() {
       offsetX = e.clientX - divEl.offsetLeft;
       offsetY = e.clientY - divEl.offsetTop;
     });
+    let clearMessageSocketTimer: any = 0;
 
     divEl.addEventListener("keydown", () => {
       setStopMessageSocket(true);
@@ -164,6 +166,13 @@ function StickerEditor() {
       //   e.preventDefault();
       //   return;
       // }
+
+      if (clearMessageSocketTimer) {
+        clearTimeout(clearMessageSocketTimer);
+      }
+      clearMessageSocketTimer = setTimeout(() => {
+        setStopMessageSocket(false);
+      }, 500);
     });
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -236,7 +245,7 @@ function StickerEditor() {
             position: "fixed",
             borderRadius: "3px",
             // pointerEvents: "none",
-            zIndex: 99999,
+            zIndex: 9999999,
             transition: "transform 0.02s ease-in-out",
             transform: `translate(${
               ((userCursor.x - 75) / userCursor.width) * window.innerWidth

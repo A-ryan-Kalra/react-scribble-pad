@@ -22,6 +22,7 @@ body {
   left: 0;
   width: 100px;
   height: 100px;
+  background-color: white;
 
   pointer-events: none;
 }
@@ -48,11 +49,11 @@ ul {
   /* left: 50%; */
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.4);
-  z-index: 999999;
+  z-index: 9999999;
   left: 0;
   right: 0;
   margin: 0 auto;
-  width: 350px;
+  /* width: 350px; */
   /* transform: translateX(-50%); */
   bottom: 1.75rem;
   height: fit-content;
@@ -97,9 +98,9 @@ ul {
   border: none;
   outline: none;
   /* width: 150px;
-  height: 30px;
-  position: fixed;
-  border-radius: 3px; */
+  height: 30px; */
+  /* position: fixed; */
+  /* border-radius: 3px; */
   background-color: rgba(0, 0, 0, 0.1);
   /* z-index: 99999; */
 }
