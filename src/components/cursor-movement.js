@@ -2,6 +2,7 @@ import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-run
 import { useEffect, useState } from "react";
 import { stickerDetails } from "./canvas";
 import { useAtom } from "jotai";
+import { Pencil } from "lucide-react";
 function CursorMovement() {
     const [showStickerDetails] = useAtom(stickerDetails);
     const [userCursor, setUserCursor] = useState({
@@ -47,7 +48,7 @@ function CursorMovement() {
                     transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
                 }, children: _jsx("div", { style: {
                         visibility: showStickerDetails?.hidePen ? "hidden" : "visible",
-                        WebkitMaskImage: "url('/pencil.svg')",
+                        // WebkitMaskImage: "url('/pencil.svg')",
                         WebkitMaskRepeat: "no-repeat",
                         rotate: "90deg",
                         WebkitMaskSize: "contain",
@@ -61,6 +62,7 @@ function CursorMovement() {
                         width: "30px",
                         height: "30px",
                         pointerEvents: "none",
-                    } }) })] }));
+                        marginLeft: "-0.45rem",
+                    }, children: _jsx(Pencil, {}) }) })] }));
 }
 export default CursorMovement;
