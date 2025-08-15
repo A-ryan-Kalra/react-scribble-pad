@@ -4,7 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "types": ["react", "react-dom"],
-    "noEmit": false // <-- override here
+    "noEmit": false
   },
   "include": ["src"]
 }
