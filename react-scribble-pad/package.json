@@ -34,8 +34,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && npm run copy-public",
-    "copy-public": "cpy public/** dist --parents",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
