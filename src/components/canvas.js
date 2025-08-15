@@ -345,7 +345,7 @@ function Canvas() {
                                 setShowStickerDetails((prev) => ({
                                     ...prev,
                                     sticketTextAtom: false,
-                                    hidePen: !prev.hidePen,
+                                    // hidePen: !prev.hidePen,
                                 }));
                                 toolsRef.current.eraser = !toolsRef.current.eraser;
                                 toolsRef.current.canvasText = false;
@@ -402,7 +402,7 @@ function Canvas() {
                                                             ? 1.2 * Number(e.target.value)
                                                             : 10,
                                                     }));
-                                                } }), _jsxs("div", { children: [_jsx("label", { className: "text-xs", children: "Customize Cursor" }), _jsxs("div", { style: { display: "flex", justifyContent: "left" }, children: [_jsxs("span", { children: [_jsxs("label", { htmlFor: "on", className: "text-xs", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "text-xs", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] }), _jsx("span", {})] })] })] }) })] }), _jsx("li", { onClick: () => {
+                                                } }), _jsxs("div", { children: [_jsx("label", { className: "text-xs", children: "Customize Cursor" }), _jsxs("div", { style: { display: "flex", justifyContent: "left" }, children: [_jsxs("span", { children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] }), _jsx("span", {})] })] })] }) })] }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = true;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;
@@ -458,8 +458,8 @@ function Canvas() {
                                         showScreen: true,
                                     }));
                                 }, children: _jsx(MonitorX, {}) })) }), _jsxs("li", { className: ` li-box `, style: {
-                                borderRadius: tools.showScreen ? "0.375rem" : "",
-                                borderColor: tools.showScreen ? "#464c54" : "transparent",
+                                borderRadius: bgColor.openPalette ? "0.375rem" : "",
+                                borderColor: bgColor.openPalette ? "#464c54" : "transparent",
                                 display: tools.showScreen ? "none" : "inline",
                             }, onClick: () => {
                                 setBgColor((prev) => ({
