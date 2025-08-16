@@ -20,4 +20,5 @@ export interface StickerDetailsProps {
   fontSize: number;
   customizeCursor?: boolean;
   hidePen?: boolean;
+  hidePenOnEraser?: boolean;
 }

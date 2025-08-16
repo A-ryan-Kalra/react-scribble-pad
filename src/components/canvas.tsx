@@ -29,6 +29,7 @@ export const stickerDetails = atom<StickerDetailsProps>({
   bgColor: "",
   fontSize: 16,
   customizeCursor: false,
+  hidePenOnEraser: false,
 });
 function Canvas() {
   const [isDragAtom] = useAtom(isDraggingAtom);
@@ -226,6 +227,7 @@ function Canvas() {
           ...prev,
           sticketTextAtom: false,
           hidePen: false,
+          hidePenOnEraser: false,
         }));
       }
     }
@@ -348,11 +350,14 @@ function Canvas() {
 
       <div
         onMouseEnter={() => {
+          setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
+        }}
+        onMouseLeave={() => {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
         style={{
           transition: "width 0.2s ease-in",
-
+          cursor: "default",
           width: tools.showScreen ? "300px" : "350px",
         }}
         ref={palleteRef}
@@ -360,7 +365,7 @@ function Canvas() {
       >
         <ul className="pallete-tools">
           <li
-            className={`li-box`}
+            className={`li-box hover`}
             style={{
               borderRadius: tools.pickColor ? "0.375rem" : "",
               borderColor: tools.pickColor ? "#464c54" : "transparent",
@@ -417,7 +422,7 @@ function Canvas() {
             </div>
           </li>
           <li
-            className={`li-box`}
+            className={`li-box hover`}
             style={{
               borderRadius: tools.eraser ? "0.375rem" : "",
               borderColor: tools.eraser ? "#464c54" : "transparent",
@@ -466,7 +471,7 @@ function Canvas() {
                 hidePen: false,
               }));
             }}
-            className={` li-box `}
+            className={`li-box hover`}
             style={{
               borderRadius: tools.penSize ? "0.375rem" : "",
               borderColor: tools.penSize ? "#464c54" : "transparent",
@@ -568,6 +573,7 @@ function Canvas() {
             style={{
               cursor: "pointer",
             }}
+            className={`li-box hover`}
             onClick={handleReset}
           >
             <Power />
@@ -593,7 +599,7 @@ function Canvas() {
                 sticketTextAtom: false,
               }));
             }}
-            className={` li-box `}
+            className={`li-box hover`}
             style={{
               borderRadius: tools.canvasText ? "0.375rem" : "",
               borderColor: tools.canvasText ? "#464c54" : "transparent",
@@ -619,7 +625,7 @@ function Canvas() {
                 canvasText: false,
               }));
             }}
-            className={` li-box `}
+            className={`li-box hover`}
             style={{
               borderRadius: showStickerDetails.sticketTextAtom
                 ? "0.375rem"
@@ -631,7 +637,7 @@ function Canvas() {
           >
             <StickerIcon />
           </li>
-          <li className={` li-box `}>
+          <li className={`li-box hover`}>
             {tools.showScreen ? (
               <div
                 onClick={() => {
@@ -658,7 +664,7 @@ function Canvas() {
           </li>
 
           <li
-            className={` li-box `}
+            className={` li-box hover `}
             style={{
               borderRadius: bgColor.openPalette ? "0.375rem" : "",
               borderColor: bgColor.openPalette ? "#464c54" : "transparent",
