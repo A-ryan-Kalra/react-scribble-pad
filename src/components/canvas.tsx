@@ -480,6 +480,7 @@ function Canvas() {
                   background: "#cad5e2",
                   borderRadius: "0.375rem",
                   padding: "0.25rem",
+                  fontSize: "15px",
                 }}
               >
                 <label htmlFor="sketch-pen">Sketch Pen</label>
@@ -515,38 +516,47 @@ function Canvas() {
                 />
                 <div>
                   <label>Customize Cursor</label>
-                  <div style={{ display: "flex", justifyContent: "left" }}>
-                    <span>
-                      <label htmlFor="on" className="center">
-                        On
-                        <input
-                          type="radio"
-                          id="on"
-                          name="cursorGroup"
-                          value={"on"}
-                          max={40}
-                          onChange={customCursorColor}
-                        />
-                      </label>
-                      <label htmlFor="off" className="center">
-                        Off
-                        <input
-                          id="off"
-                          type="radio"
-                          defaultChecked
-                          name="cursorGroup"
-                          value={"off"}
-                          max={40}
-                          onChange={customCursorColor}
-                        />
-                      </label>
-                    </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      fontSize: "15px",
+                      alignItems: "center",
+                      columnGap: "0.5rem",
+                    }}
+                  >
+                    <label htmlFor="on" className="center">
+                      On
+                      <input
+                        type="radio"
+                        id="on"
+                        name="cursorGroup"
+                        value={"on"}
+                        max={40}
+                        onChange={customCursorColor}
+                      />
+                    </label>
+                    <label htmlFor="off" className="center">
+                      Off
+                      <input
+                        id="off"
+                        type="radio"
+                        defaultChecked
+                        name="cursorGroup"
+                        value={"off"}
+                        max={40}
+                        onChange={customCursorColor}
+                      />
+                    </label>
                   </div>
                 </div>
               </div>
             </div>
           </li>
           <li
+            style={{
+              cursor: "pointer",
+            }}
             onClick={() => {
               if (canvasRef.current)
                 ctx!.clearRect(

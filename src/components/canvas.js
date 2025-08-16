@@ -345,6 +345,7 @@ function Canvas() {
                                             background: "#cad5e2",
                                             borderRadius: "0.375rem",
                                             padding: "0.25rem",
+                                            fontSize: "15px",
                                         }, children: [_jsx("label", { htmlFor: "sketch-pen", children: "Sketch Pen" }), _jsx("input", { type: "range", id: "sketch-pen", max: 40, defaultValue: 5, onChange: (e) => (ctx.lineWidth = Number(e.target.value)) }), _jsx("label", { htmlFor: "text-size", children: "Text Size" }), _jsx("input", { type: "range", id: "text-size", max: 80, defaultValue: 5, onChange: (e) => {
                                                     setCanvasConf({
                                                         textSize: (1.2 * Number(e.target.value) > 10
@@ -358,7 +359,14 @@ function Canvas() {
                                                             ? 1.2 * Number(e.target.value)
                                                             : 10,
                                                     }));
-                                                } }), _jsxs("div", { children: [_jsx("label", { children: "Customize Cursor" }), _jsx("div", { style: { display: "flex", justifyContent: "left" }, children: _jsxs("span", { children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] }) })] })] }) })] }), _jsx("li", { onClick: () => {
+                                                } }), _jsxs("div", { children: [_jsx("label", { children: "Customize Cursor" }), _jsxs("div", { style: {
+                                                            display: "flex",
+                                                            justifyContent: "left",
+                                                            fontSize: "15px",
+                                                            alignItems: "center",
+                                                        }, children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] })] })] }) })] }), _jsx("li", { style: {
+                                cursor: "pointer",
+                            }, onClick: () => {
                                 if (canvasRef.current)
                                     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
                             }, children: _jsx(Power, {}) }), _jsx("li", { onClick: () => {
