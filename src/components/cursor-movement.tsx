@@ -40,7 +40,7 @@ function CursorMovement() {
           borderRadius: "50%",
           position: "fixed",
           pointerEvents: "none",
-          zIndex: 99999999,
+          zIndex: 2147483647,
           transition: "transform 0.02s ease-in",
           backgroundColor: showStickerDetails.bgColor
             ? showStickerDetails.bgColor
@@ -55,7 +55,7 @@ function CursorMovement() {
           position: "fixed",
           borderRadius: "23px",
           pointerEvents: "none",
-          zIndex: 99999999,
+          zIndex: 2147483647,
           cursor: "none",
           // transition: "transform 0.04s ease-in-out",
           transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,

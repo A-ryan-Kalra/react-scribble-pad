@@ -100,7 +100,7 @@ function StickerEditor() {
     divEl.style.borderRadius = "10px";
     divEl.style.padding = "0.55rem";
     divEl.style.backdropFilter = "blur(10px)";
-    divEl.style.zIndex = "999999";
+    divEl.style.zIndex = "214748364";
     divEl.spellcheck = false;
     divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
 
@@ -245,7 +245,7 @@ function StickerEditor() {
             position: "fixed",
             borderRadius: "3px",
             // pointerEvents: "none",
-            zIndex: 9999999,
+            zIndex: 2147483647,
             transition: "transform 0.02s ease-in-out",
             transform: `translate(${
               ((userCursor.x - 75) / userCursor.width) * window.innerWidth

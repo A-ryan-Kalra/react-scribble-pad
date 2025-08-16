@@ -339,7 +339,7 @@ function Canvas() {
   return (
     <div
       style={{
-        zIndex: 999999,
+        zIndex: 214748364,
         cursor: tools.canvasText ? "text" : "",
       }}
       className={` canvas-container `}
@@ -712,7 +712,7 @@ function Canvas() {
           // height: "100%",
 
           // position: "relative",
-          zIndex: 999999,
+          zIndex: 214748364,
           transition: "backgroundColor 0.2s ease-in",
           backgroundColor: tools.showScreen
             ? "transparent"
