@@ -24,13 +24,15 @@ function CursorMovement() {
         };
     }, []);
     return (_jsxs(_Fragment, { children: [_jsx("div", { style: {
-                    visibility: showStickerDetails?.hidePen ? "hidden" : "visible",
+                    visibility: showStickerDetails?.hidePen || showStickerDetails.hidePenOnEraser
+                        ? "hidden"
+                        : "visible",
                     width: "5px",
                     height: "5px",
                     borderRadius: "50%",
                     position: "fixed",
                     pointerEvents: "none",
-                    zIndex: 99999999,
+                    zIndex: 2147483647,
                     transition: "transform 0.02s ease-in",
                     backgroundColor: showStickerDetails.bgColor
                         ? showStickerDetails.bgColor
@@ -42,12 +44,14 @@ function CursorMovement() {
                     position: "fixed",
                     borderRadius: "23px",
                     pointerEvents: "none",
-                    zIndex: 99999999,
+                    zIndex: 2147483647,
                     cursor: "none",
                     // transition: "transform 0.04s ease-in-out",
                     transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
                 }, children: _jsx("div", { style: {
-                        visibility: showStickerDetails?.hidePen ? "hidden" : "visible",
+                        visibility: showStickerDetails?.hidePen || showStickerDetails.hidePenOnEraser
+                            ? "hidden"
+                            : "visible",
                         // WebkitMaskImage: "url('/pencil.svg')",
                         WebkitMaskRepeat: "no-repeat",
                         rotate: "90deg",

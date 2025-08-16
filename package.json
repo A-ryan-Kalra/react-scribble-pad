@@ -2,6 +2,7 @@
   "name": "react-scribble-pad",
   "private": false,
   "version": "1.0.0",
+  "description": "React transparent overlay just made easy.",
   "type": "module",
   "files": [
     "dist"
@@ -20,6 +21,8 @@
   "keywords": [
     "react",
     "vite",
+    "overlay",
+    "transparent-overlay",
     "library",
     "component",
     "whiteboard",

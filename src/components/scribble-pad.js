@@ -12,7 +12,7 @@ function ScribblePad() {
             position: "fixed",
             top: 0,
             left: 0,
-            zIndex: 999999,
+            zIndex: 214748364,
         }, className: "", children: [_jsx(CursorMovement, {}), _jsx(StickerEditor, {}), _jsx(Canvas, {})] }));
 }
 export default ScribblePad;

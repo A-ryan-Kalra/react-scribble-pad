@@ -9,6 +9,7 @@ export const stickerDetails = atom({
     bgColor: "",
     fontSize: 16,
     customizeCursor: false,
+    hidePenOnEraser: false,
 });
 function Canvas() {
     const [isDragAtom] = useAtom(isDraggingAtom);
@@ -178,6 +179,7 @@ function Canvas() {
                     ...prev,
                     sticketTextAtom: false,
                     hidePen: false,
+                    hidePenOnEraser: false,
                 }));
             }
         }
@@ -267,14 +269,17 @@ function Canvas() {
         }
     };
     return (_jsxs("div", { style: {
-            zIndex: 999999,
+            zIndex: 214748364,
             cursor: tools.canvasText ? "text" : "",
         }, className: ` canvas-container `, children: [tools.eraser && _jsx("div", { className: "eraser-tool" }), _jsx("div", { onMouseEnter: () => {
+                    setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
+                }, onMouseLeave: () => {
                     setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
                 }, style: {
                     transition: "width 0.2s ease-in",
+                    cursor: "default",
                     width: tools.showScreen ? "300px" : "350px",
-                }, ref: palleteRef, className: "pallete-box", children: _jsxs("ul", { className: "pallete-tools", children: [_jsxs("li", { className: `li-box`, style: {
+                }, ref: palleteRef, className: "pallete-box", children: _jsxs("ul", { className: "pallete-tools", children: [_jsxs("li", { className: `li-box hover`, style: {
                                 borderRadius: tools.pickColor ? "0.375rem" : "",
                                 borderColor: tools.pickColor ? "#464c54" : "transparent",
                             }, onClick: () => {
@@ -304,7 +309,7 @@ function Canvas() {
                                                 bgColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
                                                 sticketTextAtom: false,
                                             }));
-                                        } })) })] }), _jsx("li", { className: `li-box`, style: {
+                                        } })) })] }), _jsx("li", { className: `li-box hover`, style: {
                                 borderRadius: tools.eraser ? "0.375rem" : "",
                                 borderColor: tools.eraser ? "#464c54" : "transparent",
                             }, onTouchStart: showEraserOnTouch, onClick: (event) => {
@@ -313,6 +318,7 @@ function Canvas() {
                                     ...prev,
                                     sticketTextAtom: false,
                                     // hidePen: !prev.hidePen,
+                                    hidePenOnEraser: !prev.hidePenOnEraser,
                                 }));
                                 toolsRef.current.eraser = !toolsRef.current.eraser;
                                 toolsRef.current.canvasText = false;
@@ -342,7 +348,7 @@ function Canvas() {
                                     sticketTextAtom: false,
                                     hidePen: false,
                                 }));
-                            }, className: ` li-box `, style: {
+                            }, className: `li-box hover`, style: {
                                 borderRadius: tools.penSize ? "0.375rem" : "",
                                 borderColor: tools.penSize ? "#464c54" : "transparent",
                             }, children: [_jsx(PenLine, { style: {
@@ -378,7 +384,7 @@ function Canvas() {
                                                             columnGap: "0.5rem",
                                                         }, children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] })] })] }) })] }), _jsx("li", { style: {
                                 cursor: "pointer",
-                            }, onClick: handleReset, children: _jsx(Power, {}) }), _jsx("li", { onClick: () => {
+                            }, className: `li-box hover`, onClick: handleReset, children: _jsx(Power, {}) }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = true;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;
@@ -397,7 +403,7 @@ function Canvas() {
                                     hidePen: false,
                                     sticketTextAtom: false,
                                 }));
-                            }, className: ` li-box `, style: {
+                            }, className: `li-box hover`, style: {
                                 borderRadius: tools.canvasText ? "0.375rem" : "",
                                 borderColor: tools.canvasText ? "#464c54" : "transparent",
                             }, children: _jsx(Keyboard, {}) }), _jsx("li", { onClick: () => {
@@ -416,14 +422,14 @@ function Canvas() {
                                     pickColor: false,
                                     canvasText: false,
                                 }));
-                            }, className: ` li-box `, style: {
+                            }, className: `li-box hover`, style: {
                                 borderRadius: showStickerDetails.sticketTextAtom
                                     ? "0.375rem"
                                     : "",
                                 borderColor: showStickerDetails.sticketTextAtom
                                     ? "#464c54"
                                     : "transparent",
-                            }, children: _jsx(StickerIcon, {}) }), _jsx("li", { className: ` li-box `, children: tools.showScreen ? (_jsx("div", { onClick: () => {
+                            }, children: _jsx(StickerIcon, {}) }), _jsx("li", { className: `li-box hover`, children: tools.showScreen ? (_jsx("div", { onClick: () => {
                                     setTools((prev) => ({
                                         ...prev,
                                         showScreen: false,
@@ -433,7 +439,7 @@ function Canvas() {
                                         ...prev,
                                         showScreen: true,
                                     }));
-                                }, children: _jsx(MonitorX, {}) })) }), _jsxs("li", { className: ` li-box `, style: {
+                                }, children: _jsx(MonitorX, {}) })) }), _jsxs("li", { className: ` li-box hover `, style: {
                                 borderRadius: bgColor.openPalette ? "0.375rem" : "",
                                 borderColor: bgColor.openPalette ? "#464c54" : "transparent",
                                 display: tools.showScreen ? "none" : "inline",
@@ -455,7 +461,7 @@ function Canvas() {
                     // width: "100%",
                     // height: "100%",
                     // position: "relative",
-                    zIndex: 999999,
+                    zIndex: 214748364,
                     transition: "backgroundColor 0.2s ease-in",
                     backgroundColor: tools.showScreen
                         ? "transparent"

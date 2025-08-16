@@ -435,6 +435,7 @@ function Canvas() {
                 ...prev,
                 sticketTextAtom: false,
                 // hidePen: !prev.hidePen,
+                hidePenOnEraser: !prev.hidePenOnEraser,
               }));
 
               toolsRef.current.eraser = !toolsRef.current.eraser;
