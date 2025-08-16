@@ -255,6 +255,17 @@ function Canvas() {
             customizeCursor: event.target.value === "on" ? true : false,
         }));
     }
+    const handleReset = () => {
+        const allStickers = document.querySelectorAll(".dynamic-input");
+        allStickers.forEach((sticker) => {
+            if (document.body.contains(sticker)) {
+                document.body.removeChild(sticker);
+            }
+        });
+        if (canvasRef.current) {
+            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        }
+    };
     return (_jsxs("div", { style: {
             zIndex: 999999,
             cursor: tools.canvasText ? "text" : "",
@@ -364,12 +375,10 @@ function Canvas() {
                                                             justifyContent: "left",
                                                             fontSize: "15px",
                                                             alignItems: "center",
+                                                            columnGap: "0.5rem",
                                                         }, children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] })] })] }) })] }), _jsx("li", { style: {
                                 cursor: "pointer",
-                            }, onClick: () => {
-                                if (canvasRef.current)
-                                    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-                            }, children: _jsx(Power, {}) }), _jsx("li", { onClick: () => {
+                            }, onClick: handleReset, children: _jsx(Power, {}) }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = true;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;

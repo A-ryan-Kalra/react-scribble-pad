@@ -324,7 +324,18 @@ function Canvas() {
       customizeCursor: event.target.value === "on" ? true : false,
     }));
   }
+  const handleReset = () => {
+    const allStickers = document.querySelectorAll(".dynamic-input");
+    allStickers.forEach((sticker) => {
+      if (document.body.contains(sticker)) {
+        document.body.removeChild(sticker);
+      }
+    });
 
+    if (canvasRef.current) {
+      ctx!.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+  };
   return (
     <div
       style={{
@@ -557,15 +568,7 @@ function Canvas() {
             style={{
               cursor: "pointer",
             }}
-            onClick={() => {
-              if (canvasRef.current)
-                ctx!.clearRect(
-                  0,
-                  0,
-                  canvasRef.current.width,
-                  canvasRef.current.height
-                );
-            }}
+            onClick={handleReset}
           >
             <Power />
           </li>
