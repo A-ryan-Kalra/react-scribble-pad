@@ -9,26 +9,22 @@ import {
 } from "react";
 
 import {
-  ALargeSmallIcon,
   Eraser,
+  Keyboard,
   MonitorCheck,
   MonitorX,
   PaintRollerIcon,
   PaletteIcon,
   PenLine,
+  Power,
   StickerIcon,
 } from "lucide-react";
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
 import { isDraggingAtom } from "./sticker-editor";
+import type { StickerDetailsProps, ToolsProps, ToolsRefProps } from "./type";
 
-export const stickerDetails = atom<{
-  sticketTextAtom: boolean;
-  bgColor: string;
-  fontSize: number;
-  customizeCursor?: boolean;
-  hidePen?: boolean;
-}>({
+export const stickerDetails = atom<StickerDetailsProps>({
   sticketTextAtom: false,
   bgColor: "",
   fontSize: 16,
@@ -53,26 +49,14 @@ function Canvas() {
   });
   const isDrawing = useRef<boolean>(false);
 
-  const toolsRef = useRef<{
-    eraser: boolean;
-    pickColor: boolean;
-    showText: boolean;
-    canvasText: boolean;
-    moveSticker?: boolean;
-  }>({
+  const toolsRef = useRef<ToolsRefProps>({
     eraser: false,
     pickColor: false,
     showText: false,
     canvasText: false,
     moveSticker: false,
   });
-  const [tools, setTools] = useState<{
-    eraser: boolean;
-    pickColor: boolean;
-    penSize: boolean;
-    canvasText: boolean;
-    showScreen: boolean;
-  }>({
+  const [tools, setTools] = useState<ToolsProps>({
     eraser: false,
     pickColor: false,
     penSize: false,
@@ -89,7 +73,6 @@ function Canvas() {
     if (!canvas) return;
     const context = canvas.getContext("2d");
     if (!context) return;
-    // let lastSent = 0;
 
     setCtx(context);
     if (!ctx) return;
@@ -136,8 +119,7 @@ function Canvas() {
       if (toolsRef.current.moveSticker) {
         return;
       }
-      // const now = Date.now();
-      // if (now - lastSent < 10) return;
+
       if (toolsRef.current.eraser) {
         const touch = event.touches[0];
 
@@ -155,7 +137,6 @@ function Canvas() {
 
         drawCanvas(offSetX, offSetY);
       }
-      // lastSent = now;
     }
 
     const startDrawing = (event: MouseEvent) => {
@@ -167,7 +148,6 @@ function Canvas() {
     const stopDrawing = () => {
       isDrawing.current = false;
       ctx.beginPath();
-      // sendDataToUser(name as string, "canvas", "stop");
     };
     const drawCanvas = (offsetX: number, offsetY: number) => {
       if (toolsRef.current.eraser) {
@@ -177,56 +157,24 @@ function Canvas() {
         ctx.fill();
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
-
-        // sendDataToUser(name as string, "canvas", "erase", { offsetX, offsetY });
       } else if (toolsRef.current.showText) {
-        // ctx.strokeStyle = "red";
-        // ctx.lineWidth = 1;
-        // ctx.strokeText("Hello, Canvas!", offsetX, offsetY);
         ctx.font = "20px Arial";
         ctx.fillStyle = "#000"; // text color
-        // ctx.fillText("Hello, Canvas!", offsetX, offsetY);
       } else {
         ctx.globalCompositeOperation = "source-over";
-        // ctx.lineWidth = 1;
+
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
         ctx.lineTo(offsetX, offsetY);
         ctx.stroke();
-        // ctx.translate(offsetX, offsetY);
-        // ctx.font = "20px Arial";
-        // console.log(ctx.lineWidth);
-        //Draw Reactangle
-        // ctx.stroke();
-        // ctx!.fillStyle = "blue"; // fill color
-        // ctx!.strokeRect(offsetX, offsetY, 200, 150);
-
-        //Draw Circle
-        // ctx.beginPath();
-        // ctx.arc(offsetX, offsetY, Math.PI, 0, Math.PI * 2); // full circle
-        // ctx.fill(); // for filled
-        // or
-        // sendDataToUser(
-        //   name as string,
-        //   "canvas",
-        //   "draw",
-        //   { offsetX, offsetY },
-        //   ctx?.strokeStyle as unknown as string,
-        //   ctx?.lineWidth,
-        //   ctx?.fillStyle as unknown as string
-        // );
       }
     };
     const draw = (event: MouseEvent) => {
-      // const now = Date.now();
-      // if (now - lastSent < 20) return;
       if (!isDrawing.current) return;
 
       const { offsetX, offsetY } = getMousePosition(event);
 
       drawCanvas(offsetX, offsetY);
-
-      // lastSent = now;
     };
 
     function handleEraser(event: MouseEvent) {
@@ -342,19 +290,7 @@ function Canvas() {
     e.preventDefault();
     // toolsRef.current.canvasText = !toolsRef.current.canvasText;
     inputRef.current!.value = "";
-    ctx!.fillText(
-      "",
-      // showStickerDetails.bgColor,
-      showCanvasText.x,
-      showCanvasText.y
-    );
-    // setTools((prev) => ({
-    //   ...prev,
-    //   penSize: false,
-    //   eraser: false,
-    //   pickColor: false,
-    //   canvasText: false,
-    // }));
+    ctx!.fillText("", showCanvasText.x, showCanvasText.y);
   }
 
   function showEraser(event: MouseEventHandler<HTMLLIElement>) {
@@ -546,9 +482,7 @@ function Canvas() {
                   padding: "0.25rem",
                 }}
               >
-                <label htmlFor="sketch-pen" className="text-xs">
-                  Sketch Pen
-                </label>
+                <label htmlFor="sketch-pen">Sketch Pen</label>
                 <input
                   type="range"
                   id="sketch-pen"
@@ -556,9 +490,7 @@ function Canvas() {
                   defaultValue={5}
                   onChange={(e) => (ctx!.lineWidth = Number(e.target.value))}
                 />
-                <label htmlFor="text-size" className="text-xs">
-                  Text Size
-                </label>
+                <label htmlFor="text-size">Text Size</label>
                 <input
                   type="range"
                   id="text-size"
@@ -582,7 +514,7 @@ function Canvas() {
                   }}
                 />
                 <div>
-                  <label className="text-xs">Customize Cursor</label>
+                  <label>Customize Cursor</label>
                   <div style={{ display: "flex", justifyContent: "left" }}>
                     <span>
                       <label htmlFor="on" className="center">
@@ -609,11 +541,23 @@ function Canvas() {
                         />
                       </label>
                     </span>
-                    <span></span>
                   </div>
                 </div>
               </div>
             </div>
+          </li>
+          <li
+            onClick={() => {
+              if (canvasRef.current)
+                ctx!.clearRect(
+                  0,
+                  0,
+                  canvasRef.current.width,
+                  canvasRef.current.height
+                );
+            }}
+          >
+            <Power />
           </li>
           <li
             onClick={() => {
@@ -642,7 +586,7 @@ function Canvas() {
               borderColor: tools.canvasText ? "#464c54" : "transparent",
             }}
           >
-            <ALargeSmallIcon />
+            <Keyboard />
           </li>
           <li
             onClick={() => {

@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useRef, useState, } from "react";
-import { ALargeSmallIcon, Eraser, MonitorCheck, MonitorX, PaintRollerIcon, PaletteIcon, PenLine, StickerIcon, } from "lucide-react";
+import { Eraser, Keyboard, MonitorCheck, MonitorX, PaintRollerIcon, PaletteIcon, PenLine, Power, StickerIcon, } from "lucide-react";
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
 import { isDraggingAtom } from "./sticker-editor";
@@ -47,7 +47,6 @@ function Canvas() {
         const context = canvas.getContext("2d");
         if (!context)
             return;
-        // let lastSent = 0;
         setCtx(context);
         if (!ctx)
             return;
@@ -89,8 +88,6 @@ function Canvas() {
             if (toolsRef.current.moveSticker) {
                 return;
             }
-            // const now = Date.now();
-            // if (now - lastSent < 10) return;
             if (toolsRef.current.eraser) {
                 const touch = event.touches[0];
                 drawCanvas(touch.clientX, touch.clientY);
@@ -101,7 +98,6 @@ function Canvas() {
                 const { offSetX, offSetY } = touchStart(event);
                 drawCanvas(offSetX, offSetY);
             }
-            // lastSent = now;
         }
         const startDrawing = (event) => {
             isDrawing.current = true;
@@ -112,7 +108,6 @@ function Canvas() {
         const stopDrawing = () => {
             isDrawing.current = false;
             ctx.beginPath();
-            // sendDataToUser(name as string, "canvas", "stop");
         };
         const drawCanvas = (offsetX, offsetY) => {
             if (toolsRef.current.eraser) {
@@ -122,54 +117,24 @@ function Canvas() {
                 ctx.fill();
                 ctx.beginPath();
                 ctx.moveTo(offsetX, offsetY);
-                // sendDataToUser(name as string, "canvas", "erase", { offsetX, offsetY });
             }
             else if (toolsRef.current.showText) {
-                // ctx.strokeStyle = "red";
-                // ctx.lineWidth = 1;
-                // ctx.strokeText("Hello, Canvas!", offsetX, offsetY);
                 ctx.font = "20px Arial";
                 ctx.fillStyle = "#000"; // text color
-                // ctx.fillText("Hello, Canvas!", offsetX, offsetY);
             }
             else {
                 ctx.globalCompositeOperation = "source-over";
-                // ctx.lineWidth = 1;
                 ctx.lineJoin = "round";
                 ctx.lineCap = "round";
                 ctx.lineTo(offsetX, offsetY);
                 ctx.stroke();
-                // ctx.translate(offsetX, offsetY);
-                // ctx.font = "20px Arial";
-                // console.log(ctx.lineWidth);
-                //Draw Reactangle
-                // ctx.stroke();
-                // ctx!.fillStyle = "blue"; // fill color
-                // ctx!.strokeRect(offsetX, offsetY, 200, 150);
-                //Draw Circle
-                // ctx.beginPath();
-                // ctx.arc(offsetX, offsetY, Math.PI, 0, Math.PI * 2); // full circle
-                // ctx.fill(); // for filled
-                // or
-                // sendDataToUser(
-                //   name as string,
-                //   "canvas",
-                //   "draw",
-                //   { offsetX, offsetY },
-                //   ctx?.strokeStyle as unknown as string,
-                //   ctx?.lineWidth,
-                //   ctx?.fillStyle as unknown as string
-                // );
             }
         };
         const draw = (event) => {
-            // const now = Date.now();
-            // if (now - lastSent < 20) return;
             if (!isDrawing.current)
                 return;
             const { offsetX, offsetY } = getMousePosition(event);
             drawCanvas(offsetX, offsetY);
-            // lastSent = now;
         };
         function handleEraser(event) {
             if (toolsRef.current.eraser) {
@@ -272,16 +237,7 @@ function Canvas() {
         e.preventDefault();
         // toolsRef.current.canvasText = !toolsRef.current.canvasText;
         inputRef.current.value = "";
-        ctx.fillText("", 
-        // showStickerDetails.bgColor,
-        showCanvasText.x, showCanvasText.y);
-        // setTools((prev) => ({
-        //   ...prev,
-        //   penSize: false,
-        //   eraser: false,
-        //   pickColor: false,
-        //   canvasText: false,
-        // }));
+        ctx.fillText("", showCanvasText.x, showCanvasText.y);
     }
     function showEraser(event) {
         const touches = event;
@@ -389,7 +345,7 @@ function Canvas() {
                                             background: "#cad5e2",
                                             borderRadius: "0.375rem",
                                             padding: "0.25rem",
-                                        }, children: [_jsx("label", { htmlFor: "sketch-pen", className: "text-xs", children: "Sketch Pen" }), _jsx("input", { type: "range", id: "sketch-pen", max: 40, defaultValue: 5, onChange: (e) => (ctx.lineWidth = Number(e.target.value)) }), _jsx("label", { htmlFor: "text-size", className: "text-xs", children: "Text Size" }), _jsx("input", { type: "range", id: "text-size", max: 80, defaultValue: 5, onChange: (e) => {
+                                        }, children: [_jsx("label", { htmlFor: "sketch-pen", children: "Sketch Pen" }), _jsx("input", { type: "range", id: "sketch-pen", max: 40, defaultValue: 5, onChange: (e) => (ctx.lineWidth = Number(e.target.value)) }), _jsx("label", { htmlFor: "text-size", children: "Text Size" }), _jsx("input", { type: "range", id: "text-size", max: 80, defaultValue: 5, onChange: (e) => {
                                                     setCanvasConf({
                                                         textSize: (1.2 * Number(e.target.value) > 10
                                                             ? 1.2 * Number(e.target.value)
@@ -402,7 +358,10 @@ function Canvas() {
                                                             ? 1.2 * Number(e.target.value)
                                                             : 10,
                                                     }));
-                                                } }), _jsxs("div", { children: [_jsx("label", { className: "text-xs", children: "Customize Cursor" }), _jsxs("div", { style: { display: "flex", justifyContent: "left" }, children: [_jsxs("span", { children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] }), _jsx("span", {})] })] })] }) })] }), _jsx("li", { onClick: () => {
+                                                } }), _jsxs("div", { children: [_jsx("label", { children: "Customize Cursor" }), _jsx("div", { style: { display: "flex", justifyContent: "left" }, children: _jsxs("span", { children: [_jsxs("label", { htmlFor: "on", className: "center", children: ["On", _jsx("input", { type: "radio", id: "on", name: "cursorGroup", value: "on", max: 40, onChange: customCursorColor })] }), _jsxs("label", { htmlFor: "off", className: "center", children: ["Off", _jsx("input", { id: "off", type: "radio", defaultChecked: true, name: "cursorGroup", value: "off", max: 40, onChange: customCursorColor })] })] }) })] })] }) })] }), _jsx("li", { onClick: () => {
+                                if (canvasRef.current)
+                                    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                            }, children: _jsx(Power, {}) }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = true;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;
@@ -424,7 +383,7 @@ function Canvas() {
                             }, className: ` li-box `, style: {
                                 borderRadius: tools.canvasText ? "0.375rem" : "",
                                 borderColor: tools.canvasText ? "#464c54" : "transparent",
-                            }, children: _jsx(ALargeSmallIcon, {}) }), _jsx("li", { onClick: () => {
+                            }, children: _jsx(Keyboard, {}) }), _jsx("li", { onClick: () => {
                                 toolsRef.current.canvasText = false;
                                 toolsRef.current.eraser = false;
                                 toolsRef.current.pickColor = false;
