@@ -491,12 +491,11 @@ function Canvas() {
             break;
           case 8:
             handleRollerIconTool();
-            handleRollerIconTool();
+
             setShowStickerDetails((prev) => ({
               ...prev,
               hidePen: false,
             }));
-            break;
             break;
         }
         setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
