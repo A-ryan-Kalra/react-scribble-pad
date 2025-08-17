@@ -2,6 +2,8 @@
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "outDir": "dist",
+
     "jsxImportSource": "react",
     "types": ["react", "react-dom"],
     "noEmit": false

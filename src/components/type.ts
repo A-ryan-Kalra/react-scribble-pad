@@ -24,7 +24,12 @@ export interface StickerDetailsProps {
 }
 
 export interface RangeIndexProps {
-  left: string;
-  top: string;
+  right: string;
+  bottom: string;
   value: string;
+}
+
+export interface BgColorProps {
+  openPalette: boolean;
+  color: string;
 }

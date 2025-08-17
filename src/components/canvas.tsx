@@ -22,7 +22,12 @@ import {
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
 import { isDraggingAtom } from "./sticker-editor";
-import type { StickerDetailsProps, ToolsProps, ToolsRefProps } from "./type";
+import type {
+  BgColorProps,
+  StickerDetailsProps,
+  ToolsProps,
+  ToolsRefProps,
+} from "./type";
 import RangeIndex from "./range-index";
 
 export const stickerDetails = atom<StickerDetailsProps>({
@@ -34,10 +39,10 @@ export const stickerDetails = atom<StickerDetailsProps>({
 });
 function Canvas() {
   const [isDragAtom] = useAtom(isDraggingAtom);
-  const [bgColor, setBgColor] = useState<{
-    openPalette: boolean;
-    color: string;
-  }>({ openPalette: false, color: "" });
+  const [bgColor, setBgColor] = useState<BgColorProps>({
+    openPalette: false,
+    color: "",
+  });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
@@ -297,15 +302,13 @@ function Canvas() {
   }
 
   function showEraser(event: MouseEventHandler<HTMLLIElement>) {
-    const touches = event;
-
     document.documentElement.style.setProperty(
       "--eraserPositionX",
-      `${touches.clientX}px`
+      `${event.clientX}px`
     );
     document.documentElement.style.setProperty(
       "--eraserPositionY",
-      `${touches.clientY}px`
+      `${event.clientY}px`
     );
   }
 
@@ -357,7 +360,7 @@ function Canvas() {
     }
   }
   function handleEraserTool(event: MouseEventHandler<HTMLLIElement>) {
-    event.stopPropagation();
+    // event.stopPropagation();
     showEraser(event);
 
     setShowStickerDetails((prev) => ({
@@ -437,6 +440,74 @@ function Canvas() {
       sticketTextAtom: false,
     }));
   };
+  function handleRollerIconTool() {
+    setBgColor((prev) => ({
+      ...prev,
+      openPalette: !prev.openPalette,
+    }));
+  }
+
+  function handleSwitchScreenTool() {
+    setTools((prev) => ({
+      ...prev,
+      showScreen: !prev.showScreen,
+    }));
+  }
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const num = Number(e.key);
+      if (num >= 1 && num <= 8) {
+        switch (num) {
+          case 1:
+            handlePaletteTools();
+            setShowStickerDetails((prev) => ({
+              ...prev,
+              hidePen: false,
+              hidePenOnEraser: false,
+            }));
+            break;
+          case 2:
+            console.log(e);
+            const event = {
+              clientX: window.innerWidth / 2,
+              clientY: window.innerHeight / 2,
+            };
+            handleEraserTool(event as MouseEventHandler<HTMLLIElement>);
+            break;
+          case 3:
+            handleCursorTool();
+            break;
+          case 4:
+            handleReset();
+            break;
+          case 5:
+            handleKeyboardTool();
+            break;
+          case 6:
+            handleSticketTool();
+            break;
+          case 7:
+            handleSwitchScreenTool();
+            break;
+          case 8:
+            handleRollerIconTool();
+            handleRollerIconTool();
+            setShowStickerDetails((prev) => ({
+              ...prev,
+              hidePen: false,
+            }));
+            break;
+            break;
+        }
+        setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [ctx]);
 
   return (
     <div
@@ -456,8 +527,8 @@ function Canvas() {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
         style={{
+          width: tools.showScreen ? "310px" : "360px",
           transition: "width 0.2s ease-in",
-          width: tools.showScreen ? "300px" : "350px",
         }}
         ref={palleteRef}
         className="pallete-box"
@@ -473,7 +544,7 @@ function Canvas() {
               }}
               className={``}
             />
-            <RangeIndex value="1" top="10px" left="10px" />
+            <RangeIndex value="1" bottom="0" right="0" />
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
                 <PickColor
@@ -501,6 +572,7 @@ function Canvas() {
             onClick={handleEraserTool}
           >
             <Eraser style={{ fill: tools.eraser ? "#cad5e2" : "" }} />
+            <RangeIndex value="2" bottom="0" right="0" />
           </li>
           <li
             onClick={handleCursorTool}
@@ -511,6 +583,8 @@ function Canvas() {
                 fill: tools.penSize ? "oklch(82.7% 0.119 306.383)" : "",
               }}
             />
+            <RangeIndex value="3" bottom="0" right="0" />
+
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
@@ -606,12 +680,14 @@ function Canvas() {
             onClick={handleReset}
           >
             <Power />
+            <RangeIndex value="4" bottom="0" right="0" />
           </li>
           <li
             onClick={handleKeyboardTool}
             className={` li-box ${tools.canvasText ? "show" : "hide"} hover `}
           >
             <Keyboard />
+            <RangeIndex value="5" bottom="0" right="0" />
           </li>
           <li
             onClick={handleSticketTool}
@@ -620,31 +696,19 @@ function Canvas() {
             }`}
           >
             <StickerIcon />
+            <RangeIndex value="6" bottom="0" right="0" />
           </li>
           <li className={` li-box hover `}>
             {tools.showScreen ? (
-              <div
-                onClick={() => {
-                  setTools((prev) => ({
-                    ...prev,
-                    showScreen: false,
-                  }));
-                }}
-              >
+              <div onClick={handleSwitchScreenTool}>
                 <MonitorCheck />
               </div>
             ) : (
-              <div
-                onClick={() => {
-                  setTools((prev) => ({
-                    ...prev,
-                    showScreen: true,
-                  }));
-                }}
-              >
+              <div onClick={handleSwitchScreenTool}>
                 <MonitorX />
               </div>
             )}
+            <RangeIndex value="7" bottom="0" right="0" />
           </li>
 
           <li
@@ -652,18 +716,13 @@ function Canvas() {
             style={{
               display: tools.showScreen ? "none" : "inline",
             }}
-            onClick={() => {
-              setBgColor((prev) => ({
-                ...prev,
-                openPalette: !prev.openPalette,
-              }));
-            }}
+            onClick={handleRollerIconTool}
           >
             <PaintRollerIcon />
             <div onClick={(e) => e.stopPropagation()}>
               {bgColor.openPalette && (
                 <PickColor
-                  position="-10rem"
+                  position="-11rem"
                   pick={(rgba: {
                     r: number;
                     g: number;
@@ -678,6 +737,7 @@ function Canvas() {
                 />
               )}
             </div>
+            <RangeIndex value="8" bottom="0" right="0" />
           </li>
         </ul>
       </div>

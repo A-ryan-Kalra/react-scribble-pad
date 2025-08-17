@@ -1,14 +1,14 @@
 import type { RangeIndexProps } from "./type";
 
-function RangeIndex({ left, top, value }: RangeIndexProps) {
+function RangeIndex({ right, bottom, value }: RangeIndexProps) {
   return (
     <div
       style={{
         position: "absolute",
-        top: `${top}px`,
-        left: `${left}px`,
+        bottom: `${bottom}%`,
+        right: `${right}px`,
         color: "black",
-        backgroundColor: "black",
+        fontSize: "10px",
       }}
     >
       {value}
