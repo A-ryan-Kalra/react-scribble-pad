@@ -23,6 +23,7 @@ import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
 import { isDraggingAtom } from "./sticker-editor";
 import type { StickerDetailsProps, ToolsProps, ToolsRefProps } from "./type";
+import RangeIndex from "./range-index";
 
 export const stickerDetails = atom<StickerDetailsProps>({
   sticketTextAtom: false,
@@ -338,6 +339,105 @@ function Canvas() {
       ctx!.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
   };
+  function handlePaletteTools() {
+    {
+      // toolsRef.current.pickColor = true;
+
+      toolsRef.current.canvasText = false;
+      toolsRef.current.eraser = false;
+      toolsRef.current.pickColor = false;
+      toolsRef.current.showText = false;
+      setTools((prev) => ({
+        ...prev,
+        eraser: false,
+        penSize: false,
+        pickColor: !prev.pickColor,
+        canvasText: false,
+      }));
+    }
+  }
+  function handleEraserTool(event: MouseEventHandler<HTMLLIElement>) {
+    event.stopPropagation();
+    showEraser(event);
+
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      sticketTextAtom: false,
+      // hidePen: !prev.hidePen,
+      hidePenOnEraser: !prev.hidePenOnEraser,
+    }));
+
+    toolsRef.current.eraser = !toolsRef.current.eraser;
+    toolsRef.current.canvasText = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = false;
+    setTools((prev) => ({
+      ...prev,
+      penSize: false,
+      pickColor: false,
+      eraser: !prev.eraser,
+      canvasText: false,
+    }));
+  }
+
+  const handleSticketTool = () => {
+    toolsRef.current.canvasText = false;
+    toolsRef.current.eraser = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = false;
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      sticketTextAtom: !prev.sticketTextAtom,
+    }));
+    setTools((prev) => ({
+      ...prev,
+      penSize: false,
+      eraser: false,
+      pickColor: false,
+      canvasText: false,
+    }));
+  };
+
+  function handleCursorTool() {
+    toolsRef.current.canvasText = false;
+    toolsRef.current.eraser = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = false;
+    setTools((prev) => ({
+      ...prev,
+      penSize: !prev.penSize,
+      eraser: false,
+      pickColor: false,
+      canvasText: false,
+    }));
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      sticketTextAtom: false,
+      hidePen: false,
+    }));
+  }
+
+  const handleKeyboardTool = () => {
+    toolsRef.current.canvasText = true;
+    toolsRef.current.eraser = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = !toolsRef.current.showText;
+    ctx!.globalCompositeOperation = "source-over";
+    // ctx!.fillStyle = ctx!.strokeStyle;
+    setTools((prev) => ({
+      ...prev,
+      penSize: false,
+      eraser: false,
+      pickColor: false,
+      canvasText: !prev.canvasText,
+    }));
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      hidePen: false,
+      sticketTextAtom: false,
+    }));
+  };
+
   return (
     <div
       style={{
@@ -357,7 +457,6 @@ function Canvas() {
         }}
         style={{
           transition: "width 0.2s ease-in",
-          cursor: "default",
           width: tools.showScreen ? "300px" : "350px",
         }}
         ref={palleteRef}
@@ -365,26 +464,8 @@ function Canvas() {
       >
         <ul className="pallete-tools">
           <li
-            className={`li-box hover`}
-            style={{
-              borderRadius: tools.pickColor ? "0.375rem" : "",
-              borderColor: tools.pickColor ? "#464c54" : "transparent",
-            }}
-            onClick={() => {
-              // toolsRef.current.pickColor = true;
-
-              toolsRef.current.canvasText = false;
-              toolsRef.current.eraser = false;
-              toolsRef.current.pickColor = false;
-              toolsRef.current.showText = false;
-              setTools((prev) => ({
-                ...prev,
-                eraser: false,
-                penSize: false,
-                pickColor: !prev.pickColor,
-                canvasText: false,
-              }));
-            }}
+            className={`li-box ${tools.pickColor ? "show" : "hide"} hover`}
+            onClick={handlePaletteTools}
           >
             <PaletteIcon
               style={{
@@ -392,18 +473,11 @@ function Canvas() {
               }}
               className={``}
             />
-            <div
-              onMouseEnter={() => {
-                if (!showStickerDetails.customizeCursor)
-                  setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
-              }}
-              onMouseLeave={() => {
-                setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <RangeIndex value="1" top="10px" left="10px" />
+            <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
                 <PickColor
+                  position="-2rem"
                   pick={(rgba: {
                     r: number;
                     g: number;
@@ -422,61 +496,15 @@ function Canvas() {
             </div>
           </li>
           <li
-            className={`li-box hover`}
-            style={{
-              borderRadius: tools.eraser ? "0.375rem" : "",
-              borderColor: tools.eraser ? "#464c54" : "transparent",
-            }}
+            className={`li-box ${tools.eraser ? "show" : "hide"} hover`}
             onTouchStart={showEraserOnTouch}
-            onClick={(event: MouseEventHandler<HTMLLIElement>) => {
-              showEraser(event);
-
-              setShowStickerDetails((prev) => ({
-                ...prev,
-                sticketTextAtom: false,
-                // hidePen: !prev.hidePen,
-                hidePenOnEraser: !prev.hidePenOnEraser,
-              }));
-
-              toolsRef.current.eraser = !toolsRef.current.eraser;
-              toolsRef.current.canvasText = false;
-              toolsRef.current.pickColor = false;
-              toolsRef.current.showText = false;
-              setTools((prev) => ({
-                ...prev,
-                penSize: false,
-                pickColor: false,
-                eraser: !prev.eraser,
-                canvasText: false,
-              }));
-            }}
+            onClick={handleEraserTool}
           >
             <Eraser style={{ fill: tools.eraser ? "#cad5e2" : "" }} />
           </li>
           <li
-            onClick={() => {
-              toolsRef.current.canvasText = false;
-              toolsRef.current.eraser = false;
-              toolsRef.current.pickColor = false;
-              toolsRef.current.showText = false;
-              setTools((prev) => ({
-                ...prev,
-                penSize: !prev.penSize,
-                eraser: false,
-                pickColor: false,
-                canvasText: false,
-              }));
-              setShowStickerDetails((prev) => ({
-                ...prev,
-                sticketTextAtom: false,
-                hidePen: false,
-              }));
-            }}
-            className={`li-box hover`}
-            style={{
-              borderRadius: tools.penSize ? "0.375rem" : "",
-              borderColor: tools.penSize ? "#464c54" : "transparent",
-            }}
+            onClick={handleCursorTool}
+            className={`li-box hover ${tools.penSize ? "show" : "hide"}`}
           >
             <PenLine
               style={{
@@ -532,7 +560,7 @@ function Canvas() {
                   }}
                 />
                 <div>
-                  <label>Customize Cursor</label>
+                  <label style={{ fontSize: "15px" }}>Customize Cursor</label>
                   <div
                     style={{
                       display: "flex",
@@ -574,71 +602,26 @@ function Canvas() {
             style={{
               cursor: "pointer",
             }}
-            className={`li-box hover`}
+            className="hover li-box"
             onClick={handleReset}
           >
             <Power />
           </li>
           <li
-            onClick={() => {
-              toolsRef.current.canvasText = true;
-              toolsRef.current.eraser = false;
-              toolsRef.current.pickColor = false;
-              toolsRef.current.showText = !toolsRef.current.showText;
-              ctx!.globalCompositeOperation = "source-over";
-              // ctx!.fillStyle = ctx!.strokeStyle;
-              setTools((prev) => ({
-                ...prev,
-                penSize: false,
-                eraser: false,
-                pickColor: false,
-                canvasText: !prev.canvasText,
-              }));
-              setShowStickerDetails((prev) => ({
-                ...prev,
-                hidePen: false,
-                sticketTextAtom: false,
-              }));
-            }}
-            className={`li-box hover`}
-            style={{
-              borderRadius: tools.canvasText ? "0.375rem" : "",
-              borderColor: tools.canvasText ? "#464c54" : "transparent",
-            }}
+            onClick={handleKeyboardTool}
+            className={` li-box ${tools.canvasText ? "show" : "hide"} hover `}
           >
             <Keyboard />
           </li>
           <li
-            onClick={() => {
-              toolsRef.current.canvasText = false;
-              toolsRef.current.eraser = false;
-              toolsRef.current.pickColor = false;
-              toolsRef.current.showText = false;
-              setShowStickerDetails((prev) => ({
-                ...prev,
-                sticketTextAtom: !prev.sticketTextAtom,
-              }));
-              setTools((prev) => ({
-                ...prev,
-                penSize: false,
-                eraser: false,
-                pickColor: false,
-                canvasText: false,
-              }));
-            }}
-            className={`li-box hover`}
-            style={{
-              borderRadius: showStickerDetails.sticketTextAtom
-                ? "0.375rem"
-                : "",
-              borderColor: showStickerDetails.sticketTextAtom
-                ? "#464c54"
-                : "transparent",
-            }}
+            onClick={handleSticketTool}
+            className={`li-box hover ${
+              showStickerDetails.sticketTextAtom ? "show" : "hide"
+            }`}
           >
             <StickerIcon />
           </li>
-          <li className={`li-box hover`}>
+          <li className={` li-box hover `}>
             {tools.showScreen ? (
               <div
                 onClick={() => {
@@ -665,10 +648,8 @@ function Canvas() {
           </li>
 
           <li
-            className={` li-box hover `}
+            className={` li-box hover ${bgColor.openPalette ? "show" : "hide"}`}
             style={{
-              borderRadius: bgColor.openPalette ? "0.375rem" : "",
-              borderColor: bgColor.openPalette ? "#464c54" : "transparent",
               display: tools.showScreen ? "none" : "inline",
             }}
             onClick={() => {
@@ -679,17 +660,10 @@ function Canvas() {
             }}
           >
             <PaintRollerIcon />
-            <div
-              onMouseEnter={() => {
-                setShowStickerDetails((prev) => ({ ...prev, hidePen: true }));
-              }}
-              onMouseLeave={() => {
-                setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div onClick={(e) => e.stopPropagation()}>
               {bgColor.openPalette && (
                 <PickColor
+                  position="-10rem"
                   pick={(rgba: {
                     r: number;
                     g: number;

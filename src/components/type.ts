@@ -22,3 +22,9 @@ export interface StickerDetailsProps {
   hidePen?: boolean;
   hidePenOnEraser?: boolean;
 }
+
+export interface RangeIndexProps {
+  left: string;
+  top: string;
+  value: string;
+}
