@@ -46,7 +46,7 @@ function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-
+  const trackCursorPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showCanvasText, setShowCanvasText] = useState({ x: -100, y: -100 });
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -185,6 +185,9 @@ function Canvas() {
     };
 
     function handleEraser(event: MouseEvent) {
+      trackCursorPosRef.current.x = event.clientX;
+      trackCursorPosRef.current.y = event.clientY;
+
       if (toolsRef.current.eraser) {
         document.documentElement.style.setProperty(
           "--eraserPositionX",
@@ -467,10 +470,9 @@ function Canvas() {
             }));
             break;
           case 2:
-            console.log(e);
             const event = {
-              clientX: window.innerWidth / 2,
-              clientY: window.innerHeight / 2,
+              clientX: trackCursorPosRef.current.x,
+              clientY: trackCursorPosRef.current.y,
             };
             handleEraserTool(event as MouseEventHandler<HTMLLIElement>);
             break;
@@ -537,12 +539,7 @@ function Canvas() {
             className={`li-box ${tools.pickColor ? "show" : "hide"} hover`}
             onClick={handlePaletteTools}
           >
-            <PaletteIcon
-              style={{
-                fill: tools.pickColor ? "oklch(82.7% 0.119 306.383)" : "",
-              }}
-              className={``}
-            />
+            <PaletteIcon />
             <RangeIndex value="1" bottom="0" right="0" />
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
@@ -577,11 +574,7 @@ function Canvas() {
             onClick={handleCursorTool}
             className={`li-box hover ${tools.penSize ? "show" : "hide"}`}
           >
-            <PenLine
-              style={{
-                fill: tools.penSize ? "oklch(82.7% 0.119 306.383)" : "",
-              }}
-            />
+            <PenLine />
             <RangeIndex value="3" bottom="0" right="0" />
 
             <div
