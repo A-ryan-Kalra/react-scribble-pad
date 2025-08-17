@@ -85,7 +85,7 @@ ul {
   border: 1px;
   padding: 0.25rem;
   border: 1px solid transparent;
-  transition: background-color, 0.2s ease-in;
+  /* transition: background-color, 0.2s ease-in; */
   border-radius: 0.375rem;
 }
 
@@ -94,10 +94,11 @@ ul {
   background-color: rgba(75, 178, 203, 0.7);
   fill: oklch(82.7% 0.119 306.383);
 }
-.li-box.hide {
-  border-radius: 0;
+/* .li-box.hide {
   border-color: transparent;
-}
+  background-color: transparent;
+  fill: inherit;
+} */
 .center {
   display: flex;
   align-items: center;
