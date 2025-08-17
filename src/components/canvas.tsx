@@ -46,10 +46,10 @@ function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-  const trackCursorPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
   const [showCanvasText, setShowCanvasText] = useState({ x: -100, y: -100 });
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const trackCursorPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
   const [canvasConf, setCanvasConf] = useState<{ textSize: string }>({
     textSize: "",
@@ -475,6 +475,7 @@ function Canvas() {
               clientY: trackCursorPosRef.current.y,
             };
             handleEraserTool(event as MouseEventHandler<HTMLLIElement>);
+
             break;
           case 3:
             handleCursorTool();
@@ -493,14 +494,12 @@ function Canvas() {
             break;
           case 8:
             handleRollerIconTool();
-
             setShowStickerDetails((prev) => ({
               ...prev,
               hidePen: false,
             }));
             break;
         }
-        setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -536,10 +535,10 @@ function Canvas() {
       >
         <ul className="pallete-tools">
           <li
-            className={`li-box ${tools.pickColor ? "show" : "hide"} hover`}
+            className={`li-box  ${tools.pickColor ? "show" : "hide"} hover`}
             onClick={handlePaletteTools}
           >
-            <PaletteIcon />
+            <PaletteIcon className={``} />
             <RangeIndex value="1" bottom="0" right="0" />
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
@@ -563,7 +562,7 @@ function Canvas() {
             </div>
           </li>
           <li
-            className={`li-box ${tools.eraser ? "show" : "hide"} hover`}
+            className={`li-box  ${tools.eraser ? "show" : "hide"} hover`}
             onTouchStart={showEraserOnTouch}
             onClick={handleEraserTool}
           >
@@ -572,7 +571,7 @@ function Canvas() {
           </li>
           <li
             onClick={handleCursorTool}
-            className={`li-box hover ${tools.penSize ? "show" : "hide"}`}
+            className={`li-box  hover ${tools.penSize ? "show" : "hide"}`}
           >
             <PenLine />
             <RangeIndex value="3" bottom="0" right="0" />
@@ -668,7 +667,7 @@ function Canvas() {
             style={{
               cursor: "pointer",
             }}
-            className="hover li-box"
+            className="hover li-box "
             onClick={handleReset}
           >
             <Power />
@@ -676,21 +675,21 @@ function Canvas() {
           </li>
           <li
             onClick={handleKeyboardTool}
-            className={` li-box ${tools.canvasText ? "show" : "hide"} hover `}
+            className={` li-box  ${tools.canvasText ? "show" : "hide"} hover `}
           >
             <Keyboard />
             <RangeIndex value="5" bottom="0" right="0" />
           </li>
           <li
             onClick={handleSticketTool}
-            className={`li-box hover ${
+            className={`li-box  hover ${
               showStickerDetails.sticketTextAtom ? "show" : "hide"
             }`}
           >
             <StickerIcon />
             <RangeIndex value="6" bottom="0" right="0" />
           </li>
-          <li className={` li-box hover `}>
+          <li className={` li-box  hover `}>
             {tools.showScreen ? (
               <div onClick={handleSwitchScreenTool}>
                 <MonitorCheck />
@@ -704,7 +703,9 @@ function Canvas() {
           </li>
 
           <li
-            className={` li-box hover ${bgColor.openPalette ? "show" : "hide"}`}
+            className={` li-box  hover ${
+              bgColor.openPalette ? "show" : "hide"
+            }`}
             style={{
               display: tools.showScreen ? "none" : "inline",
             }}
