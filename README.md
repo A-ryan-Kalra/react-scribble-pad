@@ -3,8 +3,8 @@
   ### Transparent Overlay for Sketch, Text, and Stickers.
 
 <img width="1435" height="785" alt="image1" src="https://github.com/user-attachments/assets/d94fde81-537e-49c3-a8e6-931e6ca4a8bd" />
-<img width="500" height="985" alt="iamge2" src="https://github.com/user-attachments/assets/f6ee340d-6926-42f1-8d58-c37043e0c149" />
-<img width="500" height="985" alt="image3" src="https://github.com/user-attachments/assets/d3bb64ee-b970-4260-bc5f-67d8c33ed998" />
+<img width="400" height="985" alt="iamge2" src="https://github.com/user-attachments/assets/f6ee340d-6926-42f1-8d58-c37043e0c149" />
+<img width="400" height="985" alt="image3" src="https://github.com/user-attachments/assets/d3bb64ee-b970-4260-bc5f-67d8c33ed998" />
 
   
 ## 🛠️ Installation
