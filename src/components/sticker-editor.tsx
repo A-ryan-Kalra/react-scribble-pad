@@ -215,6 +215,7 @@ function StickerEditor() {
 
     divEl.addEventListener("keydown", (e) => {
       if (e.key === "Delete") {
+        setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         divEl.remove();
       } else if (e.key === "Enter" && e.shiftKey) {
         divEl.appendChild(document.createElement("br"));
@@ -223,6 +224,7 @@ function StickerEditor() {
       }
       // if (window.innerWidth < 1024) {
       if (e.key === "Backspace" && divEl.textContent?.trim() === "") {
+        setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         divEl.remove();
       }
     });

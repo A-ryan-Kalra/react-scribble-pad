@@ -8,17 +8,6 @@ import {
   type TouchEvent as TouchEventHandler,
 } from "react";
 
-import {
-  Eraser,
-  Keyboard,
-  MonitorCheck,
-  MonitorX,
-  PaintRollerIcon,
-  PaletteIcon,
-  PenLine,
-  Power,
-  StickerIcon,
-} from "lucide-react";
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
 import { isDraggingAtom } from "./sticker-editor";
@@ -538,7 +527,7 @@ function Canvas() {
             className={`li-box  ${tools.pickColor ? "show" : ""} hover`}
             onClick={handlePaletteTools}
           >
-            <PaletteIcon className={``} />
+            <span className={`palette-outline`} />
             <RangeIndex value="1" bottom="0" right="0" />
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
@@ -566,14 +555,17 @@ function Canvas() {
             onTouchStart={showEraserOnTouch}
             onClick={handleEraserTool}
           >
-            <Eraser style={{ fill: tools.eraser ? "#cad5e2" : "" }} />
+            <span
+              className="eraser-line"
+              style={{ fill: tools.eraser ? "#cad5e2" : "" }}
+            />
             <RangeIndex value="2" bottom="0" right="0" />
           </li>
           <li
             onClick={handleCursorTool}
             className={`li-box  hover ${tools.penSize ? "show" : ""}`}
           >
-            <PenLine />
+            <span className="pencil-tools" />
             <RangeIndex value="3" bottom="0" right="0" />
 
             <div
@@ -670,14 +662,14 @@ function Canvas() {
             className="hover li-box "
             onClick={handleReset}
           >
-            <Power />
+            <span className="reset" />
             <RangeIndex value="4" bottom="0" right="0" />
           </li>
           <li
             onClick={handleKeyboardTool}
             className={` li-box  ${tools.canvasText ? "show" : ""} hover `}
           >
-            <Keyboard />
+            <span className="keyboard" />
             <RangeIndex value="5" bottom="0" right="0" />
           </li>
           <li
@@ -686,17 +678,17 @@ function Canvas() {
               showStickerDetails.sticketTextAtom ? "show" : ""
             }`}
           >
-            <StickerIcon />
+            <span className="sticker" />
             <RangeIndex value="6" bottom="0" right="0" />
           </li>
           <li className={` li-box  hover `}>
             {tools.showScreen ? (
               <div onClick={handleSwitchScreenTool}>
-                <MonitorCheck />
+                <span className="screen" />
               </div>
             ) : (
               <div onClick={handleSwitchScreenTool}>
-                <MonitorX />
+                <span className="screen-off" />
               </div>
             )}
             <RangeIndex value="7" bottom="0" right="0" />
@@ -709,7 +701,7 @@ function Canvas() {
             }}
             onClick={handleRollerIconTool}
           >
-            <PaintRollerIcon />
+            <span className="paint-roller" />
             <div onClick={(e) => e.stopPropagation()}>
               {bgColor.openPalette && (
                 <PickColor
