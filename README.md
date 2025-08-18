@@ -54,6 +54,8 @@ function App(){
 | `5` | ✏️ Add Texts – insert text anywhere on the canvas |
 | `6` | 📝 Make Draggable Notes – create sticky-style notes you can move around |
 | `7` | 🖥️ Switch to Whiteboard Mode – expand into fullscreen whiteboard |
+| `Esc` | 🔄 Reset Configured Tools |
+| `Del` | 🚮 Pressing Delete key on draggable notes, will simply delete them
 
 <br>
 
