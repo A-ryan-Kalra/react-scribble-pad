@@ -17,7 +17,7 @@ yarn add react-scribble-pad
 import React from 'react';
 
 import { ScribblePad } from "react-scribble-pad";
-import "react-scribble-pad/dist/react-scribble-pad.css";
+import "react-scribble-pad/dist/react-scribble-pad.css";   // Must include the css file
   
 function App(){
 
@@ -29,6 +29,8 @@ function App(){
 }
 ```
 
+<br>
+
 ## 🚀 Features
   **React Scribble Pad lets you add a fully transparent sketching layer on top of any webpage. Users can freely draw, type notes, place stickers and use as a whiteboard while still seeing and interacting with the content beneath.**
   
@@ -39,7 +41,23 @@ function App(){
  - Whiteboard Mode – Switch to a clean screen and use it as a digital whiteboard.
  - Motive - perfect for education, presentations, and live annotations.
 
-<br/>
+<br>
+
+## 🎹 Keyboard Shortcuts  
+
+| Key | Action |
+|-----|--------|
+| `1` | 🎨 Open the Palette – choose colors and adjust stroke size |
+| `2` | 🩹 Open the Eraser – erase parts of your sketch |
+| `3` | 🖱️ Open Cursor Tools – change cursor size or appearance |
+| `4` | 🔄 Reset Everything – clear the canvas |
+| `5` | ✏️ Add Texts – insert text anywhere on the canvas |
+| `6` | 📝 Make Draggable Notes – create sticky-style notes you can move around |
+| `7` | 🖥️ Switch to Whiteboard Mode – expand into fullscreen whiteboard |
+| `Esc` | 🔄 Reset Configured Tools |
+| `Del` | 🚮 Pressing Delete key on draggable notes, will simply delete them
+
+<br>
 
 ## Demo 🗿
 
