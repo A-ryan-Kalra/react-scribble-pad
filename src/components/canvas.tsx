@@ -528,7 +528,7 @@ function Canvas() {
             onClick={handlePaletteTools}
           >
             <span className={`palette-outline`} />
-            <RangeIndex value="1" bottom="0" right="0" />
+            <RangeIndex value="1" bottom="-1" right="-1" />
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
                 <PickColor
@@ -559,14 +559,14 @@ function Canvas() {
               className="eraser-line"
               style={{ fill: tools.eraser ? "#cad5e2" : "" }}
             />
-            <RangeIndex value="2" bottom="0" right="0" />
+            <RangeIndex value="2" bottom="-1" right="-1" />
           </li>
           <li
             onClick={handleCursorTool}
             className={`li-box  hover ${tools.penSize ? "show" : ""}`}
           >
             <span className="pencil-tools" />
-            <RangeIndex value="3" bottom="0" right="0" />
+            <RangeIndex value="3" bottom="-1" right="-1" />
 
             <div
               onClick={(e) => e.stopPropagation()}
@@ -663,14 +663,14 @@ function Canvas() {
             onClick={handleReset}
           >
             <span className="reset" />
-            <RangeIndex value="4" bottom="0" right="0" />
+            <RangeIndex value="4" bottom="-1" right="-1" />
           </li>
           <li
             onClick={handleKeyboardTool}
             className={` li-box  ${tools.canvasText ? "show" : ""} hover `}
           >
             <span className="keyboard" />
-            <RangeIndex value="5" bottom="0" right="0" />
+            <RangeIndex value="5" bottom="-1" right="-1" />
           </li>
           <li
             onClick={handleSticketTool}
@@ -679,7 +679,7 @@ function Canvas() {
             }`}
           >
             <span className="sticker" />
-            <RangeIndex value="6" bottom="0" right="0" />
+            <RangeIndex value="6" bottom="-1" right="-1" />
           </li>
           <li className={` li-box  hover `}>
             {tools.showScreen ? (
@@ -691,7 +691,7 @@ function Canvas() {
                 <span className="screen-off" />
               </div>
             )}
-            <RangeIndex value="7" bottom="0" right="0" />
+            <RangeIndex value="7" bottom="-1" right="-1" />
           </li>
 
           <li
@@ -720,7 +720,7 @@ function Canvas() {
                 />
               )}
             </div>
-            <RangeIndex value="8" bottom="0" right="0" />
+            <RangeIndex value="8" bottom="-1" right="-1" />
           </li>
         </ul>
       </div>

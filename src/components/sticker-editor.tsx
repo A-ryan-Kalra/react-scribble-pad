@@ -7,9 +7,8 @@ export const isDraggingAtom = atom(false);
 function StickerEditor() {
   const [, setIsDragging] = useAtom(isDraggingAtom);
 
-  // const { roomId } = useParams();
   const [input, setInput] = useState("");
-  // const [messages, setMessages] = useState({ message: "", name: "" });
+
   const [stopMessageSocket, setStopMessageSocket] = useState(false);
 
   const [showInput, setShowInput] = useState<boolean>(false);
@@ -29,12 +28,9 @@ function StickerEditor() {
   });
 
   useEffect(() => {
-    // socket.readyState === WebSocket.OPEN;
-
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
-      // if (showStickerDetails.sticketTextAtom)
       if (
         target.classList.contains("dynamic-input") ||
         (target?.parentNode as HTMLElement)?.classList.contains("li-box") ||
@@ -67,10 +63,6 @@ function StickerEditor() {
       };
 
       setUserCursor(data);
-
-      // else if (currentXPosition === Number.NEGATIVE_INFINITY) {
-      //   setShowInput(true);
-      // }
     };
 
     window.addEventListener("mousedown", handleMouseDown);
@@ -118,8 +110,6 @@ function StickerEditor() {
     let offsetX = 0;
     let offsetY = 0;
 
-    // socketProvider.get("message")?.send(JSON.stringify(data));
-
     setInput("");
     setShowInput(false);
 
@@ -140,33 +130,6 @@ function StickerEditor() {
     divEl.addEventListener("keydown", () => {
       setStopMessageSocket(true);
 
-      //Restrict users to type over 30 words
-
-      // const allowedKeys = [
-      //   "Backspace",
-      //   "Enter",
-      //   "ArrowLeft",
-      //   "ArrowRight",
-      //   "ArrowUp",
-      //   "ArrowDown",
-      // ];
-      // const shortcuts =
-      //   (e.metaKey || e.ctrlKey) &&
-      //   ["a", "c", "v"].includes(e.key.toLowerCase());
-
-      // const allowed = allowedKeys.includes(e.key) || shortcuts;
-      // if (divEl.textContent && divEl.textContent.length > 29 && !allowed) {
-      //   if (clearMessageSocketTimer) {
-      //     clearTimeout(clearMessageSocketTimer);
-      //   }
-      //   clearMessageSocketTimer = setTimeout(() => {
-      //     setStopMessageSocket(false);
-      //   }, 500);
-
-      //   e.preventDefault();
-      //   return;
-      // }
-
       if (clearMessageSocketTimer) {
         clearTimeout(clearMessageSocketTimer);
       }
@@ -177,8 +140,6 @@ function StickerEditor() {
 
     const handleMouseMove = (event: MouseEvent) => {
       if (isDragging) {
-        // const now = Date.now();
-        // if (now - lastSent < 20) return;
         divEl.style.left = `${event.clientX - offsetX}px`;
         divEl.style.top = `${event.clientY - offsetY}px`;
       }
@@ -189,10 +150,7 @@ function StickerEditor() {
     divEl.addEventListener("touchstart", (e: TouchEvent) => {
       if (e.touches.length > 0) {
         setIsDragging(true);
-        // const touch = e.touches[0];
 
-        // offsetX = touch.clientX - react.left;
-        // offsetY = touch.clientY - react.top;
         isDragging = true;
       }
     });
