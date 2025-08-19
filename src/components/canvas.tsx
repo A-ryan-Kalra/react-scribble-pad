@@ -61,9 +61,23 @@ function Canvas() {
     showScreen: true,
     lockScroll: false,
   });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
     toolsRef.current.moveSticker = isDragAtom;
+    const checkPoint = () => {
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        setIsTouchDevice(true);
+      } else {
+        setIsTouchDevice(false);
+      }
+    };
+    checkPoint();
+    window.addEventListener("resize", checkPoint);
+
+    return () => {
+      window.removeEventListener("resize", checkPoint);
+    };
   }, [isDragAtom]);
 
   useEffect(() => {
@@ -75,7 +89,6 @@ function Canvas() {
     setCtx(context);
     if (!ctx) return;
     let dpr;
-    // const dpr = window.devicePixelRatio || 1;
 
     dpr = window.devicePixelRatio || 1;
 
@@ -223,12 +236,9 @@ function Canvas() {
       //  Save the current drawing as an image
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-      // const dpr = window.devicePixelRatio || 1;
       let dpr;
 
       dpr = window.devicePixelRatio || 1;
-
-      // dpr = window.devicePixelRatio || 1;
 
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
@@ -548,15 +558,19 @@ function Canvas() {
       >
         <ul className="pallete-tools">
           <li
-            title="Screen Lock for touch users"
-            className={`li-box  ${tools.lockScroll ? "show" : ""} hover`}
+            title="Screen lock for touch-users"
+            className={`li-box  ${tools.lockScroll ? "show" : ""} ${
+              !isTouchDevice && "hover"
+            }`}
             onClick={handleScrollLock}
           >
             <span className="lock"></span>
           </li>
           <li
             title="Color Palette"
-            className={`li-box  ${tools.pickColor ? "show" : ""} hover`}
+            className={`li-box  ${tools.pickColor ? "show" : ""} ${
+              !isTouchDevice && "hover"
+            }`}
             onClick={handlePaletteTools}
           >
             <span className={`palette-outline`} />
@@ -584,7 +598,9 @@ function Canvas() {
           </li>
           <li
             title="Eraser"
-            className={`li-box  ${tools.eraser ? "show" : ""} hover`}
+            className={`li-box  ${tools.eraser ? "show" : ""} ${
+              !isTouchDevice && "hover"
+            }`}
             onTouchStart={showEraserOnTouch}
             onClick={handleEraserTool}
           >
@@ -597,7 +613,9 @@ function Canvas() {
           <li
             title="Customize Tools"
             onClick={handleCursorTool}
-            className={`li-box  hover ${tools.penSize ? "show" : ""}`}
+            className={`li-box ${tools.penSize ? "show" : ""} ${
+              !isTouchDevice && "hover"
+            }`}
           >
             <span className="pencil-tools" />
             <RangeIndex value="3" bottom="-1" right="-1" />
@@ -694,7 +712,7 @@ function Canvas() {
             style={{
               cursor: "pointer",
             }}
-            className="hover li-box "
+            className={`li-box ${!isTouchDevice && "hover"}`}
             onClick={handleReset}
           >
             <span className="reset" />
@@ -704,7 +722,9 @@ function Canvas() {
           <li
             title="Keyboard"
             onClick={handleKeyboardTool}
-            className={` li-box  ${tools.canvasText ? "show" : ""} hover `}
+            className={` li-box  ${tools.canvasText ? "show" : ""} ${
+              !isTouchDevice && "hover"
+            } `}
           >
             <span className="keyboard" />
             <RangeIndex value="5" bottom="-1" right="-1" />
@@ -712,14 +732,17 @@ function Canvas() {
           <li
             title="Notes"
             onClick={handleSticketTool}
-            className={`li-box  hover ${
+            className={`li-box ${
               showStickerDetails.sticketTextAtom ? "show" : ""
-            }`}
+            } ${!isTouchDevice && "hover"}`}
           >
             <span className="sticker" />
             <RangeIndex value="6" bottom="-1" right="-1" />
           </li>
-          <li title="Whiteboard" className={` li-box  hover `}>
+          <li
+            title="Whiteboard"
+            className={` li-box  ${!isTouchDevice && "hover"} `}
+          >
             {tools.showScreen ? (
               <div onClick={handleSwitchScreenTool}>
                 <span className="screen" />
@@ -734,7 +757,9 @@ function Canvas() {
 
           <li
             title="Paint Roller"
-            className={` li-box  hover ${bgColor.openPalette ? "show" : ""}`}
+            className={` li-box ${bgColor.openPalette ? "show" : ""} ${
+              !isTouchDevice && "hover"
+            }`}
             style={{
               visibility: tools.showScreen ? "hidden" : "visible",
               transition: "visibility 0.2s 0.1s ease-in,opacity 0.1s ease-out",

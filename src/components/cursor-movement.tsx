@@ -11,10 +11,27 @@ function CursorMovement() {
     x: -100,
     y: -100,
   });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkPoint = () => {
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        setIsTouchDevice(true);
+      } else {
+        setIsTouchDevice(false);
+      }
+    };
+    checkPoint();
+    window.addEventListener("resize", checkPoint);
+
+    return () => {
+      window.removeEventListener("resize", checkPoint);
+    };
+  }, []);
 
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {
-      if (window.innerWidth > 768) {
+      if (window.innerWidth > 1024) {
         setUserCursor({
           x: event.clientX,
           y: event.clientY,
@@ -59,35 +76,36 @@ function CursorMovement() {
           pointerEvents: "none",
           zIndex: 2147483647,
           cursor: "none",
-          // transition: "transform 0.04s ease-in-out",
           transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
         }}
       >
-        <div
-          style={{
-            visibility:
-              showStickerDetails?.hidePen || showStickerDetails.hidePenOnEraser
-                ? "hidden"
-                : "visible",
-            // WebkitMaskImage: "url('/pencil.svg')",
-            WebkitMaskRepeat: "no-repeat",
-            rotate: "90deg",
-            WebkitMaskSize: "contain",
-            WebkitMaskPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "contain",
-            backgroundPosition: "center",
-            backgroundColor: "transparent",
-            color: showStickerDetails.customizeCursor
-              ? showStickerDetails.bgColor
-              : "black",
-            width: "30px",
-            height: "30px",
-            pointerEvents: "none",
-          }}
-        >
-          <span className="pencil"></span>
-        </div>
+        {!isTouchDevice && (
+          <div
+            style={{
+              visibility:
+                showStickerDetails?.hidePen ||
+                showStickerDetails.hidePenOnEraser
+                  ? "hidden"
+                  : "visible",
+              WebkitMaskRepeat: "no-repeat",
+              rotate: "90deg",
+              WebkitMaskSize: "contain",
+              WebkitMaskPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "contain",
+              backgroundPosition: "center",
+              backgroundColor: "transparent",
+              color: showStickerDetails.customizeCursor
+                ? showStickerDetails.bgColor
+                : "black",
+              width: "30px",
+              height: "30px",
+              pointerEvents: "none",
+            }}
+          >
+            <span className="pencil"></span>
+          </div>
+        )}
       </div>
     </>
   );

@@ -95,7 +95,7 @@ function StickerEditor() {
     divEl.style.zIndex = "214748364";
     divEl.spellcheck = false;
     divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
-
+    divEl.style.touchAction = "none";
     divEl.style.background = "rgba(37, 235, 221, 0.6)";
     divEl.style.cursor = "grab";
     divEl.style.position = "fixed";
