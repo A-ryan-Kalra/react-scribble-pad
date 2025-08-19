@@ -1,7 +1,7 @@
 {
   "name": "react-scribble-pad",
   "private": false,
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "React transparent overlay just made easy.",
   "type": "module",
   "files": [
