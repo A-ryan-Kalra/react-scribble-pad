@@ -548,7 +548,7 @@ function Canvas() {
       >
         <ul className="pallete-tools">
           <li
-            title="Palm Rejection"
+            title="Screen Lock for touch users"
             className={`li-box  ${tools.lockScroll ? "show" : ""} hover`}
             onClick={handleScrollLock}
           >

@@ -51,7 +51,7 @@ ul {
 
 .pallete-box {
   scale: var(--scale);
-  position: absolute;
+  position: fixed;
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.4);
   color: black;
