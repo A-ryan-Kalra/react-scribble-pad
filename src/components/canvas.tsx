@@ -51,6 +51,7 @@ function Canvas() {
     showText: false,
     canvasText: false,
     moveSticker: false,
+    lockScroll: false,
   });
   const [tools, setTools] = useState<ToolsProps>({
     eraser: false,
@@ -58,6 +59,7 @@ function Canvas() {
     penSize: false,
     canvasText: false,
     showScreen: true,
+    lockScroll: false,
   });
 
   useEffect(() => {
@@ -74,11 +76,8 @@ function Canvas() {
     if (!ctx) return;
     let dpr;
     // const dpr = window.devicePixelRatio || 1;
-    if (window.innerWidth < 1200) {
-      dpr = 1;
-    } else {
-      dpr = window.devicePixelRatio || 1;
-    }
+
+    dpr = window.devicePixelRatio || 1;
 
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
@@ -98,6 +97,9 @@ function Canvas() {
     };
 
     function touchStart(event: TouchEvent) {
+      if (!toolsRef.current.lockScroll) {
+        return;
+      }
       let offSetX = 0;
       let offSetY = 0;
       isDrawing.current = true;
@@ -129,9 +131,12 @@ function Canvas() {
           `${touch.clientY}px`
         );
       } else {
-        const { offSetX, offSetY } = touchStart(event);
+        const isLockScreenDisabled = touchStart(event);
+        if (isLockScreenDisabled) {
+          const { offSetX, offSetY } = isLockScreenDisabled;
 
-        drawCanvas(offSetX, offSetY);
+          drawCanvas(offSetX, offSetY);
+        }
       }
     }
 
@@ -203,32 +208,12 @@ function Canvas() {
         }, 0);
       }
     }
-    function closeAllTools(event: KeyboardEvent) {
+    function handleEscapeKey(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setTools((prev) => ({
-          ...prev,
-          canvasText: false,
-          eraser: false,
-          penSize: false,
-          pickColor: false,
-        }));
-        setBgColor((prev) => ({
-          ...prev,
-          openPalette: false,
-        }));
-        toolsRef.current.canvasText = false;
-        toolsRef.current.eraser = false;
-        toolsRef.current.pickColor = false;
-        toolsRef.current.showText = false;
-        toolsRef.current.showText = false;
-        setShowStickerDetails((prev) => ({
-          ...prev,
-          sticketTextAtom: false,
-          hidePen: false,
-          hidePenOnEraser: false,
-        }));
+        closeAllTools();
       }
     }
+
     const resizeCanvas = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -240,11 +225,9 @@ function Canvas() {
 
       // const dpr = window.devicePixelRatio || 1;
       let dpr;
-      if (window.innerWidth < 1200) {
-        dpr = 1;
-      } else {
-        dpr = window.devicePixelRatio || 1;
-      }
+
+      dpr = window.devicePixelRatio || 1;
+
       // dpr = window.devicePixelRatio || 1;
 
       canvas.width = window.innerWidth * dpr;
@@ -265,7 +248,7 @@ function Canvas() {
     canvas.addEventListener("mouseout", stopDrawing);
     window.addEventListener("mousemove", handleEraser);
     window.addEventListener("mousedown", showCanvasTextPosition);
-    window.addEventListener("keydown", closeAllTools);
+    window.addEventListener("keydown", handleEscapeKey);
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("touchstart", touchStart);
     window.addEventListener("touchmove", touchMove);
@@ -278,7 +261,7 @@ function Canvas() {
       canvas.removeEventListener("mouseup", stopDrawing);
       canvas.removeEventListener("mouseout", stopDrawing);
       window.removeEventListener("mousedown", showCanvasTextPosition);
-      window.removeEventListener("keydown", closeAllTools);
+      window.removeEventListener("keydown", handleEscapeKey);
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("touchstart", touchStart);
       window.removeEventListener("touchmove", touchMove);
@@ -286,6 +269,31 @@ function Canvas() {
     };
   }, [ctx]);
 
+  function closeAllTools() {
+    setTools((prev) => ({
+      ...prev,
+      canvasText: false,
+      eraser: false,
+      penSize: false,
+      pickColor: false,
+      // lockScroll: false,
+    }));
+    setBgColor((prev) => ({
+      ...prev,
+      openPalette: false,
+    }));
+    toolsRef.current.canvasText = false;
+    toolsRef.current.eraser = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = false;
+    toolsRef.current.showText = false;
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      sticketTextAtom: false,
+      hidePen: false,
+      hidePenOnEraser: false,
+    }));
+  }
   function handleInput(e: FormEvent) {
     e.preventDefault();
     // toolsRef.current.canvasText = !toolsRef.current.canvasText;
@@ -333,7 +341,23 @@ function Canvas() {
     if (canvasRef.current) {
       ctx!.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
+    closeAllTools();
   };
+  function handleScrollLock() {
+    toolsRef.current.canvasText = false;
+    toolsRef.current.eraser = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = false;
+    toolsRef.current.lockScroll = !toolsRef.current.lockScroll;
+    setTools((prev) => ({
+      ...prev,
+      eraser: false,
+      penSize: false,
+      pickColor: false,
+      canvasText: false,
+      lockScroll: !prev.lockScroll,
+    }));
+  }
   function handlePaletteTools() {
     {
       // toolsRef.current.pickColor = true;
@@ -515,15 +539,23 @@ function Canvas() {
         onMouseLeave={() => {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
+        className={`pallete-box`}
         style={{
-          width: tools.showScreen ? "310px" : "360px",
+          width: tools.showScreen ? "340px" : "380px",
           transition: "width 0.2s ease-in",
         }}
         ref={palleteRef}
-        className="pallete-box"
       >
         <ul className="pallete-tools">
           <li
+            title="Palm Rejection"
+            className={`li-box  ${tools.lockScroll ? "show" : ""} hover`}
+            onClick={handleScrollLock}
+          >
+            <span className="lock"></span>
+          </li>
+          <li
+            title="Color Palette"
             className={`li-box  ${tools.pickColor ? "show" : ""} hover`}
             onClick={handlePaletteTools}
           >
@@ -532,7 +564,7 @@ function Canvas() {
             <div onClick={(e) => e.stopPropagation()}>
               {tools.pickColor && (
                 <PickColor
-                  position="-2rem"
+                  position="-3rem"
                   pick={(rgba: {
                     r: number;
                     g: number;
@@ -551,6 +583,7 @@ function Canvas() {
             </div>
           </li>
           <li
+            title="Eraser"
             className={`li-box  ${tools.eraser ? "show" : ""} hover`}
             onTouchStart={showEraserOnTouch}
             onClick={handleEraserTool}
@@ -562,6 +595,7 @@ function Canvas() {
             <RangeIndex value="2" bottom="-1" right="-1" />
           </li>
           <li
+            title="Customize Tools"
             onClick={handleCursorTool}
             className={`li-box  hover ${tools.penSize ? "show" : ""}`}
           >
@@ -656,6 +690,7 @@ function Canvas() {
             </div>
           </li>
           <li
+            title="Reset Tools"
             style={{
               cursor: "pointer",
             }}
@@ -665,7 +700,9 @@ function Canvas() {
             <span className="reset" />
             <RangeIndex value="4" bottom="-1" right="-1" />
           </li>
+
           <li
+            title="Keyboard"
             onClick={handleKeyboardTool}
             className={` li-box  ${tools.canvasText ? "show" : ""} hover `}
           >
@@ -673,6 +710,7 @@ function Canvas() {
             <RangeIndex value="5" bottom="-1" right="-1" />
           </li>
           <li
+            title="Notes"
             onClick={handleSticketTool}
             className={`li-box  hover ${
               showStickerDetails.sticketTextAtom ? "show" : ""
@@ -681,7 +719,7 @@ function Canvas() {
             <span className="sticker" />
             <RangeIndex value="6" bottom="-1" right="-1" />
           </li>
-          <li className={` li-box  hover `}>
+          <li title="Whiteboard" className={` li-box  hover `}>
             {tools.showScreen ? (
               <div onClick={handleSwitchScreenTool}>
                 <span className="screen" />
@@ -695,9 +733,12 @@ function Canvas() {
           </li>
 
           <li
+            title="Paint Roller"
             className={` li-box  hover ${bgColor.openPalette ? "show" : ""}`}
             style={{
-              display: tools.showScreen ? "none" : "inline",
+              visibility: tools.showScreen ? "hidden" : "visible",
+              transition: "visibility 0.2s 0.1s ease-in,opacity 0.1s ease-out",
+              opacity: tools.showScreen ? 0 : 1,
             }}
             onClick={handleRollerIconTool}
           >
@@ -732,9 +773,10 @@ function Canvas() {
 
       <canvas
         style={{
+          touchAction: tools.lockScroll ? "none" : "auto",
           // width: "100%",
           // height: "100%",
-
+          // touchAction: "none",
           // position: "relative",
           zIndex: 214748364,
           transition: "backgroundColor 0.2s ease-in",

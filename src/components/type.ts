@@ -3,6 +3,7 @@ export interface ToolsRefProps {
   pickColor: boolean;
   showText: boolean;
   canvasText: boolean;
+  lockScroll: boolean;
   moveSticker?: boolean;
 }
 
@@ -12,6 +13,7 @@ export interface ToolsProps {
   penSize: boolean;
   canvasText: boolean;
   showScreen: boolean;
+  lockScroll: boolean;
 }
 
 export interface StickerDetailsProps {
