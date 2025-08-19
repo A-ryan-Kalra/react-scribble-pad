@@ -43,10 +43,11 @@ function App(){
 
 <br>
 
-## 🎹 Keyboard Shortcuts  
+## 🎹 Keyboard Shortcuts & Toolpad
 
 | Key | Action |
 |-----|--------|
+|`🔒` | Enabling screen lock for touch users, prevents scrolling and lets them sketch directly on the canvas |
 | `1` | 🎨 Open the Palette – choose colors and adjust stroke size |
 | `2` | 🩹 Open the Eraser – erase parts of your sketch |
 | `3` | 🖱️ Open Cursor Tools – change cursor size or appearance |
@@ -59,9 +60,15 @@ function App(){
 
 <br>
 
-## Demo 🗿
+## 🗿 Demo
 
 **[A demo is more powerful than storytelling.](https://scribble-pad-psi.vercel.app/)**
+
+<br/>
+
+## 🎁 Donate
+
+[<img width="1090" height="306" alt="image" src="https://github.com/user-attachments/assets/ad84946b-d4b9-472f-b4e6-daea70872927" />](https://buymeacoffee.com/aryansmartb)
 
 <br/>
 
