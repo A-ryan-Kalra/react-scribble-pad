@@ -4,6 +4,7 @@ export interface ToolsRefProps {
   showText: boolean;
   canvasText: boolean;
   lockScroll: boolean;
+  showScreen: boolean;
   moveSticker?: boolean;
 }
 

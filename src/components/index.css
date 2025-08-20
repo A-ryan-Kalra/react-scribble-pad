@@ -71,8 +71,8 @@ ul {
 
 .pallete-tools {
   /* background-color: aqua; */
-  width: fit-content;
-  height: fit-content;
+  /* width: fit-content;
+  height: fit-content; */
   padding: 0.25rem;
   display: flex;
   flex-direction: row;

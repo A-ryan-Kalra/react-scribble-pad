@@ -52,6 +52,7 @@ function Canvas() {
     canvasText: false,
     moveSticker: false,
     lockScroll: false,
+    showScreen: false,
   });
   const [tools, setTools] = useState<ToolsProps>({
     eraser: false,
@@ -478,6 +479,8 @@ function Canvas() {
       ...prev,
       showScreen: !prev.showScreen,
     }));
+
+    toolsRef.current.showScreen = !toolsRef.current.showScreen;
   }
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -516,6 +519,7 @@ function Canvas() {
             handleSwitchScreenTool();
             break;
           case 8:
+            if (!toolsRef.current.showScreen) return;
             handleRollerIconTool();
             setShowStickerDetails((prev) => ({
               ...prev,
@@ -551,7 +555,7 @@ function Canvas() {
         }}
         className={`pallete-box`}
         style={{
-          width: tools.showScreen ? "340px" : "380px",
+          width: "fit-content",
           transition: "width 0.2s ease-in",
         }}
         ref={palleteRef}
@@ -761,15 +765,17 @@ function Canvas() {
               !isTouchDevice && "hover"
             }`}
             style={{
-              visibility: tools.showScreen ? "hidden" : "visible",
-              transition: "visibility 0.2s 0.1s ease-in,opacity 0.1s ease-out",
-              opacity: tools.showScreen ? 0 : 1,
+              pointerEvents: tools.showScreen ? "none" : "auto",
+              // backgroundColor: tools.showScreen ? "#efefef" : "",
+              transition:
+                "backgroundColor 0.2s 0.1s ease-in,opacity 0.1s ease-out",
+              opacity: tools.showScreen ? 0.5 : 1,
             }}
             onClick={handleRollerIconTool}
           >
             <span className="paint-roller" />
             <div onClick={(e) => e.stopPropagation()}>
-              {bgColor.openPalette && (
+              {bgColor.openPalette && !tools.showScreen && (
                 <PickColor
                   position="-11rem"
                   pick={(rgba: {
@@ -804,7 +810,7 @@ function Canvas() {
           // touchAction: "none",
           // position: "relative",
           zIndex: 214748364,
-          transition: "backgroundColor 0.2s ease-in",
+          transition: "background-color 0.1s ease-in",
           backgroundColor: tools.showScreen
             ? "transparent"
             : bgColor.color
