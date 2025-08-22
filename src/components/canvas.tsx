@@ -384,6 +384,16 @@ function Canvas() {
         pickColor: !prev.pickColor,
         canvasText: false,
       }));
+      setBgColor((prev) => ({
+        ...prev,
+        openPalette: false,
+      }));
+      setShowStickerDetails((prev) => ({
+        ...prev,
+        sticketTextAtom: false,
+        // hidePen: !prev.hidePen,
+        hidePenOnEraser: false,
+      }));
     }
   }
   function handleEraserTool(event: MouseEventHandler<HTMLLIElement>) {
@@ -418,6 +428,7 @@ function Canvas() {
     setShowStickerDetails((prev) => ({
       ...prev,
       sticketTextAtom: !prev.sticketTextAtom,
+      hidePenOnEraser: false,
     }));
     setTools((prev) => ({
       ...prev,
@@ -444,6 +455,7 @@ function Canvas() {
       ...prev,
       sticketTextAtom: false,
       hidePen: false,
+      hidePenOnEraser: false,
     }));
   }
 
@@ -465,6 +477,7 @@ function Canvas() {
       ...prev,
       hidePen: false,
       sticketTextAtom: false,
+      hidePenOnEraser: false,
     }));
   };
   function handleRollerIconTool() {
@@ -472,12 +485,39 @@ function Canvas() {
       ...prev,
       openPalette: !prev.openPalette,
     }));
+    setTools((prev) => ({
+      ...prev,
+      eraser: false,
+      penSize: false,
+      pickColor: false,
+      canvasText: false,
+    }));
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      sticketTextAtom: false,
+      // hidePen: !prev.hidePen,
+      hidePenOnEraser: false,
+    }));
   }
 
   function handleSwitchScreenTool() {
     setTools((prev) => ({
       ...prev,
       showScreen: !prev.showScreen,
+    }));
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      sticketTextAtom: false,
+      // hidePen: !prev.hidePen,
+      hidePenOnEraser: false,
+    }));
+
+    setTools((prev) => ({
+      ...prev,
+      penSize: false,
+      eraser: false,
+      pickColor: false,
+      canvasText: false,
     }));
 
     toolsRef.current.showScreen = !toolsRef.current.showScreen;
@@ -521,10 +561,7 @@ function Canvas() {
           case 8:
             if (!toolsRef.current.showScreen) return;
             handleRollerIconTool();
-            setShowStickerDetails((prev) => ({
-              ...prev,
-              hidePen: false,
-            }));
+
             break;
         }
       }
@@ -810,7 +847,7 @@ function Canvas() {
           // touchAction: "none",
           // position: "relative",
           zIndex: 214748364,
-          transition: "background-color 0.1s ease-in",
+          transition: "background-color 0.02s ease-in",
           backgroundColor: tools.showScreen
             ? "transparent"
             : bgColor.color
