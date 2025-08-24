@@ -6,11 +6,13 @@
 <br>
   
 <p align="center">
+  📢 New Update!
+  <br/>
   Soon to be published on chrome and firefox extension!! 🎁🥳
 </p>
 
-<img width="400" height="985" alt="image4"  src="https://github.com/user-attachments/assets/6ae91462-d5c5-400d-9193-b1d295966d57" />
-<img width="400" height="985" alt="image5"  src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" />
+<img width="40%" height="50%" alt="image4"  src="https://github.com/user-attachments/assets/6ae91462-d5c5-400d-9193-b1d295966d57" />
+<img width="40%" height="50%" alt="image5"  src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" />
 
 <br>
 
