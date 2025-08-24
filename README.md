@@ -2,30 +2,26 @@
 
 ### Transparent Overlay for Sketch, Text, and Stickers.
 
-<table align="center"><tr><td> 
-<br>
-  
-<p align="center">
+<br/>
+ 
+<table align="center">
+  <p align="center">
   📢 New Update!
   <br/>
   Soon to be published on chrome and firefox extension!! 🎁🥳
 </p>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/6ae91462-d5c5-400d-9193-b1d295966d57" alt="image4" width="250"/></td>
+    <td><img src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" alt="image5" width="250"/></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/d94fde81-537e-49c3-a8e6-931e6ca4a8bd" alt="image1" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/f6ee340d-6926-42f1-8d58-c37043e0c149" alt="image2" width="200"/></td>
+    <td><img src="https://github.com/user-attachments/assets/d3bb64ee-b970-4260-bc5f-67d8c33ed998" alt="image3" width="200"/></td>
+  </tr>
+</table>
 
-<img width="40%" height="50%" alt="image4"  src="https://github.com/user-attachments/assets/6ae91462-d5c5-400d-9193-b1d295966d57" />
-<img width="40%" height="50%" alt="image5"  src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" />
-
-<br>
-
-</td></tr></table>
-
-<br>
-
-<img width="1435" height="785" alt="image1" src="https://github.com/user-attachments/assets/d94fde81-537e-49c3-a8e6-931e6ca4a8bd" />
-<img width="400" height="985" alt="iamge2" hspace="5" src="https://github.com/user-attachments/assets/f6ee340d-6926-42f1-8d58-c37043e0c149" />
-<img width="400" height="985" alt="image3" hspace="5" src="https://github.com/user-attachments/assets/d3bb64ee-b970-4260-bc5f-67d8c33ed998" />
 <br/>
-
-
 
 ## 🛠️ Installation
 
