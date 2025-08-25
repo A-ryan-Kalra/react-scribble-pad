@@ -4,12 +4,7 @@
 
 <br/>
  
-<table align="center">
-  <p align="center">
-  📢 New Update!
-  <br/>
-  Soon to be published on chrome and firefox extension!! 🎁🥳
-</p>
+<table align="center"> 
   <tr>
     <td><img src="https://github.com/user-attachments/assets/6ae91462-d5c5-400d-9193-b1d295966d57" alt="image4" width="250"/></td>
     <td><img src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" alt="image5" width="250"/></td>
@@ -22,6 +17,13 @@
 </table>
 
 <br/>
+
+ 
+## 📢 New Update!
+
+**Extension available on both [chrome](https://chromewebstore.google.com/detail/mjikafmehojamcedemookbjjnhpciehm?utm_source=item-share-cb) and [firefox](https://addons.mozilla.org/en-US/firefox/addon/scribble-pad/) !! 🎁🥳**
+ 
+<br/>  
 
 ## 🛠️ Installation
 
