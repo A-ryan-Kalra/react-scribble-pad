@@ -4,8 +4,9 @@ export interface ToolsRefProps {
   showText: boolean;
   canvasText: boolean;
   lockScroll: boolean;
-  showScreen: boolean;
   moveSticker?: boolean;
+  showScreen: boolean;
+  adjustFullScreen: boolean;
 }
 
 export interface ToolsProps {
@@ -15,6 +16,7 @@ export interface ToolsProps {
   canvasText: boolean;
   showScreen: boolean;
   lockScroll: boolean;
+  adjustFullScreen: boolean;
 }
 
 export interface StickerDetailsProps {

@@ -1,18 +1,19 @@
 import CursorMovement from "./cursor-movement";
 import StickerEditor from "./sticker-editor";
 
-import Canvas from "./canvas";
+import Canvas, { adjustFullScreenAtom } from "./canvas";
 import "./index.css";
+import { useAtom } from "jotai";
 
 function ScribblePad() {
+  const [adjustFullScreen] = useAtom(adjustFullScreenAtom);
   return (
     <section
       style={{
         height: "100%",
         width: "100%",
         cursor: "none",
-        // overflow: "hidden",
-        position: "fixed",
+        position: adjustFullScreen ? "fixed" : "absolute",
         top: 0,
         left: 0,
         zIndex: 214748364,

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { atom, useAtom } from "jotai";
-import { stickerDetails } from "./canvas";
+import { adjustFullScreenAtom, stickerDetails } from "./canvas";
 export const isDraggingAtom = atom(false);
 
 function StickerEditor() {
@@ -10,7 +10,7 @@ function StickerEditor() {
   const [input, setInput] = useState("");
 
   const [stopMessageSocket, setStopMessageSocket] = useState(false);
-
+  const [adjustFullScreen] = useAtom(adjustFullScreenAtom);
   const [showInput, setShowInput] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
@@ -20,17 +20,24 @@ function StickerEditor() {
     y: number;
     width: number;
     height: number;
+    pageX: number;
+    pageY: number;
   }>({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
+    pageX: 0,
+    pageY: 0,
   });
 
   useEffect(() => {
+    // socket.readyState === WebSocket.OPEN;
+
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
+      // if (showStickerDetails.sticketTextAtom)
       if (
         target.classList.contains("dynamic-input") ||
         (target?.parentNode as HTMLElement)?.classList.contains("li-box") ||
@@ -60,9 +67,16 @@ function StickerEditor() {
         y: event.clientY,
         width: window.innerWidth,
         height: window.innerHeight,
+        pageX: event.pageX,
+        pageY: event.pageY,
+        // height: window.innerHeight,
       };
 
       setUserCursor(data);
+
+      // else if (currentXPosition === Number.NEGATIVE_INFINITY) {
+      //   setShowInput(true);
+      // }
     };
 
     window.addEventListener("mousedown", handleMouseDown);
@@ -94,13 +108,16 @@ function StickerEditor() {
     divEl.style.backdropFilter = "blur(10px)";
     divEl.style.zIndex = "214748364";
     divEl.spellcheck = false;
-    divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
     divEl.style.touchAction = "none";
+    divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
+
     divEl.style.background = "rgba(37, 235, 221, 0.6)";
     divEl.style.cursor = "grab";
-    divEl.style.position = "fixed";
-    divEl.style.left = `${userCursor.x}px`;
-    divEl.style.top = `${userCursor.y}px`;
+    divEl.style.position = adjustFullScreen ? "fixed" : "absolute";
+    divEl.style.left = `${
+      adjustFullScreen ? userCursor.x : userCursor.pageX
+    }px`;
+    divEl.style.top = `${adjustFullScreen ? userCursor.y : userCursor.pageY}px`;
     divEl.className = "dynamic-input";
 
     document.body.appendChild(divEl);
@@ -109,6 +126,8 @@ function StickerEditor() {
     let isDragging = false;
     let offsetX = 0;
     let offsetY = 0;
+
+    // socketProvider.get("message")?.send(JSON.stringify(data));
 
     setInput("");
     setShowInput(false);
@@ -130,6 +149,33 @@ function StickerEditor() {
     divEl.addEventListener("keydown", () => {
       setStopMessageSocket(true);
 
+      //Restrict users to type over 30 words
+
+      // const allowedKeys = [
+      //   "Backspace",
+      //   "Enter",
+      //   "ArrowLeft",
+      //   "ArrowRight",
+      //   "ArrowUp",
+      //   "ArrowDown",
+      // ];
+      // const shortcuts =
+      //   (e.metaKey || e.ctrlKey) &&
+      //   ["a", "c", "v"].includes(e.key.toLowerCase());
+
+      // const allowed = allowedKeys.includes(e.key) || shortcuts;
+      // if (divEl.textContent && divEl.textContent.length > 29 && !allowed) {
+      //   if (clearMessageSocketTimer) {
+      //     clearTimeout(clearMessageSocketTimer);
+      //   }
+      //   clearMessageSocketTimer = setTimeout(() => {
+      //     setStopMessageSocket(false);
+      //   }, 500);
+
+      //   e.preventDefault();
+      //   return;
+      // }
+
       if (clearMessageSocketTimer) {
         clearTimeout(clearMessageSocketTimer);
       }
@@ -140,6 +186,8 @@ function StickerEditor() {
 
     const handleMouseMove = (event: MouseEvent) => {
       if (isDragging) {
+        // const now = Date.now();
+        // if (now - lastSent < 20) return;
         divEl.style.left = `${event.clientX - offsetX}px`;
         divEl.style.top = `${event.clientY - offsetY}px`;
       }
@@ -150,7 +198,10 @@ function StickerEditor() {
     divEl.addEventListener("touchstart", (e: TouchEvent) => {
       if (e.touches.length > 0) {
         setIsDragging(true);
+        // const touch = e.touches[0];
 
+        // offsetX = touch.clientX - react.left;
+        // offsetY = touch.clientY - react.top;
         isDragging = true;
       }
     });
@@ -159,7 +210,9 @@ function StickerEditor() {
       if (isDragging && e.touches.length > 0) {
         const touch = e.touches[0];
         divEl.style.left = `${touch.clientX - divEl.clientWidth / 2}px`;
-        divEl.style.top = `${touch.clientY - divEl.clientHeight / 2}px`;
+        divEl.style.top = adjustFullScreen
+          ? `${touch.clientY - divEl.clientHeight / 2}px`
+          : `${touch.clientY - divEl.clientHeight / 2 + window.scrollY}px`;
       }
     });
     document.addEventListener("touchend", () => {
