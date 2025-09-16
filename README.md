@@ -2,10 +2,27 @@
 
 ### Transparent Overlay for Sketch, Text, and Stickers.
 
-<br/>
+<div align="center">
  
+<table>
+  <tr>
+    <td>
+      v1.3.1 is out 🚀<br>
+      <a href="https://github.com/A-ryan-Kalra/react-scribble-pad/releases/tag/v1.3.1">Check out →</a>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<br/>
+
+<div align="center">
+ 
+
 <table align="center"> 
   <tr>
+   <td><img width="250" alt="img" src="https://github.com/user-attachments/assets/d5a2e993-5b9d-451e-bafc-9d647f5f10d5" /></td>
     <td><img src="https://github.com/user-attachments/assets/6ae91462-d5c5-400d-9193-b1d295966d57" alt="image4" width="250"/></td>
     <td><img src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" alt="image5" width="250"/></td>
   </tr>
@@ -16,8 +33,13 @@
   </tr>
 </table>
 
-<br/>
+<hr/>
 
+<video src="https://github.com/user-attachments/assets/e7b5f162-fa19-43fd-b98e-2a865302681e"/>
+</div>
+
+
+<br/>
  
 ## 📢 New Update!
 
