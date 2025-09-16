@@ -38,7 +38,7 @@ function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-
+  const [chunkHeight, setChunkHeight] = useState(0);
   const [showCanvasText, setShowCanvasText] = useState({ x: -100, y: -100 });
   const inputRef = useRef<HTMLInputElement>(null);
   const trackCursorPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -47,6 +47,7 @@ function Canvas() {
     textSize: "",
   });
   const isDrawing = useRef<boolean>(false);
+  const [offset, setOffset] = useState(0);
 
   const toolsRef = useRef<ToolsRefProps>({
     eraser: false,
@@ -70,21 +71,40 @@ function Canvas() {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    if (!toolsRef.current.adjustFullScreen) {
+      const pageHeight = document.documentElement.scrollHeight;
+
+      if (pageHeight < 6500) {
+        setChunkHeight(pageHeight); // smaller pages = full height
+      } else {
+        setChunkHeight(6500); // bigger pages = 6500px chunks
+      }
+    }
     toolsRef.current.moveSticker = isDragAtom;
     const checkPoint = () => {
+      updateScale();
       if (window.matchMedia("(pointer: coarse)").matches) {
         setIsTouchDevice(true);
       } else {
         setIsTouchDevice(false);
       }
     };
+
+    function updateScale() {
+      const width = window.innerWidth;
+      let scale = 1;
+      if (width <= 370) scale = 0.7;
+      else if (width <= 440) scale = 0.84;
+      document.documentElement.style.setProperty("--scale", scale.toString());
+    }
+
     checkPoint();
     window.addEventListener("resize", checkPoint);
 
     return () => {
       window.removeEventListener("resize", checkPoint);
     };
-  }, [isDragAtom]);
+  }, [isDragAtom, tools.adjustFullScreen]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -96,7 +116,14 @@ function Canvas() {
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
     const width = window.innerWidth;
-    const height = document.documentElement.scrollHeight; // full page height
+    let height = chunkHeight; // full page height
+    canvas.style!.position = "relative";
+
+    if (toolsRef.current.adjustFullScreen) {
+      height = window.innerHeight;
+      canvas.style!.top = "0px";
+      canvas.style!.position = "fixed";
+    }
 
     // set backing resolution
     canvas.width = width * dpr;
@@ -111,6 +138,7 @@ function Canvas() {
     ctx.setTransform(1, 0, 0, 1, 0, 0); // reset before scaling
     ctx.scale(dpr, dpr);
     ctx.lineWidth = 5;
+    ctx.strokeStyle = showStickerDetails.bgColor ?? "#000";
     ctx.fill();
     ctx.font = "20px Arial";
 
@@ -261,9 +289,9 @@ function Canvas() {
       let dpr;
       dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
-      canvas.height = document.documentElement.scrollHeight * dpr;
+      canvas.height = 6500 * dpr;
       canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${document.documentElement.scrollHeight}px`;
+      canvas.style.height = `${6500}px`;
       ctx.lineWidth = 5;
       ctx.scale(dpr, dpr);
       //  Restore the saved image
@@ -295,7 +323,7 @@ function Canvas() {
       window.removeEventListener("touchmove", touchMove);
       window.removeEventListener("touchend", stopDrawing);
     };
-  }, [ctx, tools.adjustFullScreen]);
+  }, [ctx, tools.adjustFullScreen, chunkHeight]);
 
   function closeAllTools() {
     setTools((prev) => ({
@@ -358,20 +386,6 @@ function Canvas() {
       customizeCursor: event.target.value === "on" ? true : false,
     }));
   }
-  const handleReset = () => {
-    const allStickers = document.querySelectorAll(".dynamic-input");
-    allStickers.forEach((sticker) => {
-      if (document.body.contains(sticker)) {
-        document.body.removeChild(sticker);
-      }
-    });
-
-    if (canvasRef.current) {
-      ctx!.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    }
-    closeAllTools();
-  };
-
   const proxyImage = async (url: string) => {
     try {
       const res = await fetch(url, { mode: "cors" }); // may need <all_urls> in extension
@@ -427,6 +441,20 @@ function Canvas() {
       lockScroll: !prev.lockScroll,
     }));
   }
+  const handleReset = () => {
+    const allStickers = document.querySelectorAll(".dynamic-input");
+    allStickers.forEach((sticker) => {
+      if (document.body.contains(sticker)) {
+        document.body.removeChild(sticker);
+      }
+    });
+
+    if (canvasRef.current) {
+      ctx!.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+    closeAllTools();
+  };
+
   const handleScreenshot = async () => {
     await preloadImages();
     const element = document.documentElement;
@@ -459,8 +487,8 @@ function Canvas() {
     link.download = `scribble-pad-${year}-${month}-${day}-${minutes}-${seconds}-${date.getMilliseconds()}.webp`;
     link.click();
   };
-
   function handleAdjustFullScreen() {
+    toolsRef.current.adjustFullScreen = !toolsRef.current.adjustFullScreen;
     setAdjustFullScreen((prev) => !prev);
     handleReset();
     setTools((prev) => ({
@@ -670,12 +698,42 @@ function Canvas() {
         }
       }
     }
+
+    function handleScrollCanvas() {
+      if (toolsRef.current.adjustFullScreen) return;
+
+      const scrollY = window.scrollY;
+
+      const pageHeight = document.documentElement.scrollHeight;
+
+      // Snap offset in multiples of chunkHeight
+      let newOffset = Math.floor(scrollY / chunkHeight) * chunkHeight;
+
+      // Clamp so canvas never overshoots beyond page bottom
+      const maxOffset = Math.max(0, pageHeight - chunkHeight);
+      if (newOffset > maxOffset) {
+        newOffset = maxOffset;
+      }
+
+      if (newOffset !== offset) {
+        ctx!.clearRect(
+          0,
+          0,
+          Number(canvasRef!.current?.width),
+          Number(canvasRef!.current?.height)
+        );
+        setOffset(newOffset);
+      }
+    }
+
+    window.addEventListener("scroll", handleScrollCanvas);
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("scroll", handleScrollCanvas);
     };
-  }, [ctx]);
+  }, [ctx, offset]);
 
   return (
     <div
@@ -988,8 +1046,10 @@ function Canvas() {
           touchAction: tools.lockScroll ? "none" : "auto",
           // width: "100%",
           // height: "100%",
-          // touchAction: "none",
-          // position: "relative",
+          // touchAction: "none"
+          height: `${chunkHeight}px`,
+          top: offset + "px",
+          position: "relative",
           zIndex: 214748364,
           transition: "background-color 0.02s ease-in",
           backgroundColor: tools.showScreen
@@ -998,6 +1058,7 @@ function Canvas() {
             ? bgColor.color
             : "white",
         }}
+        height={chunkHeight}
         ref={canvasRef}
       />
       {tools.canvasText && (
