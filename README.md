@@ -18,7 +18,7 @@
 <br/>
 
 <div align="center">
- 
+
 
 <table align="center"> 
   <tr>
@@ -38,14 +38,13 @@
 <video src="https://github.com/user-attachments/assets/e7b5f162-fa19-43fd-b98e-2a865302681e"/>
 </div>
 
-
 <br/>
  
 ## 📢 New Update!
 
 **Extension available on both [chrome](https://chromewebstore.google.com/detail/mjikafmehojamcedemookbjjnhpciehm?utm_source=item-share-cb) and [firefox](https://addons.mozilla.org/en-US/firefox/addon/scribble-pad/) !! 🎁🥳**
- 
-<br/>  
+
+<br/>
 
 ## 🛠️ Installation
 
@@ -110,7 +109,7 @@ export default function Page() {
 | Key   | Action                                                                                               |
 | ----- | ---------------------------------------------------------------------------------------------------- |
 | `🔒`  | Enabling screen lock for touch users, prevents scrolling and lets them sketch directly on the canvas |
-| `⛶`  |  Switch Window/Screen Mode (Newly launched 🤩)                                                       |
+| `⛶`   | Switch Full-Screen/Window Mode (Newly launched 🤩)                                                   |
 | `1`   | 🎨 Open the Palette – choose colors and adjust stroke size                                           |
 | `2`   | 🩹 Open the Eraser – erase parts of your sketch                                                      |
 | `3`   | 🖱️ Open Cursor Tools – change cursor size or appearance                                              |
