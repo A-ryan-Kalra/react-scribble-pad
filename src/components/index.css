@@ -258,7 +258,7 @@ ul {
     --scale: 80%;
   }
 }
-@media screen and (max-width: 360px) {
+@media screen and (max-width: 380px) {
   :root {
     --scale: 65%;
   }

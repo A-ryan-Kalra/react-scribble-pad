@@ -371,6 +371,47 @@ function Canvas() {
     }
     closeAllTools();
   };
+
+  const proxyImage = async (url: string) => {
+    try {
+      const res = await fetch(url, { mode: "cors" }); // may need <all_urls> in extension
+      const blob = await res.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result); // base64 string
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.error("Proxy failed for", url, e);
+      return url; // fallback to original if proxy fails
+    }
+  };
+
+  // Preload & replace external images
+  const preloadImages = async () => {
+    const imgs = Array.from(document.images);
+
+    await Promise.all(
+      imgs.map(async (img: any) => {
+        // wait for normal load first
+        if (!img.complete) {
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        }
+
+        // If cross-origin, proxy it
+        if (
+          img.src.startsWith("http") &&
+          !img.src.startsWith(window.location.origin)
+        ) {
+          const proxied = await proxyImage(img.src);
+          img.src = proxied; // replace with data URI
+        }
+      })
+    );
+  };
   function handleScrollLock() {
     toolsRef.current.canvasText = false;
     toolsRef.current.eraser = false;
@@ -387,11 +428,16 @@ function Canvas() {
     }));
   }
   const handleScreenshot = async () => {
+    await preloadImages();
     const element = document.documentElement;
+
     const canvas = await html2canvas(element, {
-      ignoreElements: (element) => {
-        return element.classList.contains("no-screenshot");
-      },
+      ignoreElements: (el) =>
+        el.tagName === "IFRAME" ||
+        el.tagName === "SCRIPT" ||
+        el.classList.contains("no-screenshot"),
+      useCORS: true,
+      allowTaint: false,
       x: window.scrollX,
       y: window.scrollY,
       width: window.innerWidth,
@@ -649,6 +695,10 @@ function Canvas() {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
         className={`pallete-box no-screenshot`}
+        style={{
+          width: "fit-content",
+          transition: "width 0.2s ease-in",
+        }}
         ref={palleteRef}
       >
         <ul className="pallete-tools">
@@ -691,245 +741,240 @@ function Canvas() {
                 <span className="screenshot"></span>
               </li>
             </ul>
-
-            <ul
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                columnGap: "0.5rem",
-              }}
+          </div>
+          <ul
+            style={{
+              // width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              columnGap: "0.5rem",
+            }}
+          >
+            <li
+              title="Color Palette"
+              className={`li-box  ${tools.pickColor ? "show" : ""} ${
+                !isTouchDevice && "hover"
+              }`}
+              onClick={handlePaletteTools}
             >
-              <li
-                title="Color Palette"
-                className={`li-box  ${tools.pickColor ? "show" : ""} ${
-                  !isTouchDevice && "hover"
-                }`}
-                onClick={handlePaletteTools}
-              >
-                <span className={`palette-outline`} />
-                <RangeIndex value="1" bottom="-1" right="-1" />
-                <div onClick={(e) => e.stopPropagation()}>
-                  {tools.pickColor && (
-                    <PickColor
-                      position="-3rem"
-                      pick={(rgba: {
-                        r: number;
-                        g: number;
-                        b: number;
-                        a: number;
-                      }) => {
-                        ctx!.strokeStyle = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
-                        setShowStickerDetails((prev) => ({
-                          ...prev,
-                          bgColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
-                          sticketTextAtom: false,
-                        }));
-                      }}
-                    />
-                  )}
-                </div>
-              </li>
-              <li
-                title="Eraser"
-                className={`li-box  ${tools.eraser ? "show" : ""} ${
-                  !isTouchDevice && "hover"
-                }`}
-                onTouchStart={showEraserOnTouch}
-                onClick={handleEraserTool}
-              >
-                <span
-                  className="eraser-line"
-                  style={{ fill: tools.eraser ? "#cad5e2" : "" }}
-                />
-                <RangeIndex value="2" bottom="-1" right="-1" />
-              </li>
-              <li
-                title="Customize Tools"
-                onClick={handleCursorTool}
-                className={`li-box ${tools.penSize ? "show" : ""} ${
-                  !isTouchDevice && "hover"
-                }`}
-              >
-                <span className="pencil-tools" />
-                <RangeIndex value="3" bottom="-1" right="-1" />
+              <span className={`palette-outline`} />
+              <RangeIndex value="1" bottom="-1" right="-1" />
+              <div onClick={(e) => e.stopPropagation()}>
+                {tools.pickColor && (
+                  <PickColor
+                    position="-3rem"
+                    pick={(rgba: {
+                      r: number;
+                      g: number;
+                      b: number;
+                      a: number;
+                    }) => {
+                      ctx!.strokeStyle = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+                      setShowStickerDetails((prev) => ({
+                        ...prev,
+                        bgColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
+                        sticketTextAtom: false,
+                      }));
+                    }}
+                  />
+                )}
+              </div>
+            </li>
+            <li
+              title="Eraser"
+              className={`li-box  ${tools.eraser ? "show" : ""} ${
+                !isTouchDevice && "hover"
+              }`}
+              onTouchStart={showEraserOnTouch}
+              onClick={handleEraserTool}
+            >
+              <span
+                className="eraser-line"
+                style={{ fill: tools.eraser ? "#cad5e2" : "" }}
+              />
+              <RangeIndex value="2" bottom="-1" right="-1" />
+            </li>
+            <li
+              title="Customize Tools"
+              onClick={handleCursorTool}
+              className={`li-box ${tools.penSize ? "show" : ""} ${
+                !isTouchDevice && "hover"
+              }`}
+            >
+              <span className="pencil-tools" />
+              <RangeIndex value="3" bottom="-1" right="-1" />
 
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  position: "absolute",
+                  left: "-2rem",
+                  bottom: 50,
+                  visibility: tools.penSize ? "visible" : "hidden",
+                }}
+              >
                 <div
-                  onClick={(e) => e.stopPropagation()}
                   style={{
-                    position: "absolute",
-                    left: "-2rem",
-                    bottom: 50,
-                    visibility: tools.penSize ? "visible" : "hidden",
+                    background: "#cad5e2",
+                    borderRadius: "0.375rem",
+                    padding: "0.25rem",
+                    fontSize: "15px",
                   }}
                 >
-                  <div
-                    style={{
-                      background: "#cad5e2",
-                      borderRadius: "0.375rem",
-                      padding: "0.25rem",
-                      fontSize: "15px",
-                    }}
-                  >
-                    <label htmlFor="sketch-pen">Sketch Pen</label>
-                    <input
-                      type="range"
-                      id="sketch-pen"
-                      max={40}
-                      defaultValue={5}
-                      onChange={(e) =>
-                        (ctx!.lineWidth = Number(e.target.value))
-                      }
-                    />
-                    <label htmlFor="text-size">Text Size</label>
-                    <input
-                      type="range"
-                      id="text-size"
-                      max={80}
-                      defaultValue={5}
-                      onChange={(e) => {
-                        setCanvasConf({
-                          textSize: (1.2 * Number(e.target.value) > 10
+                  <label htmlFor="sketch-pen">Sketch Pen</label>
+                  <input
+                    type="range"
+                    id="sketch-pen"
+                    max={40}
+                    defaultValue={5}
+                    onChange={(e) => (ctx!.lineWidth = Number(e.target.value))}
+                  />
+                  <label htmlFor="text-size">Text Size</label>
+                  <input
+                    type="range"
+                    id="text-size"
+                    max={80}
+                    defaultValue={5}
+                    onChange={(e) => {
+                      setCanvasConf({
+                        textSize: (1.2 * Number(e.target.value) > 10
+                          ? 1.2 * Number(e.target.value)
+                          : 10
+                        ).toString(),
+                      });
+                      setShowStickerDetails((prev) => ({
+                        ...prev,
+                        hidePen: false,
+                        fontSize:
+                          1.2 * Number(e.target.value) > 10
                             ? 1.2 * Number(e.target.value)
-                            : 10
-                          ).toString(),
-                        });
-                        setShowStickerDetails((prev) => ({
-                          ...prev,
-                          hidePen: false,
-                          fontSize:
-                            1.2 * Number(e.target.value) > 10
-                              ? 1.2 * Number(e.target.value)
-                              : 10,
-                        }));
+                            : 10,
+                      }));
+                    }}
+                  />
+                  <div>
+                    <label style={{ fontSize: "15px" }}>Customize Cursor</label>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "left",
+                        fontSize: "15px",
+                        alignItems: "center",
+                        columnGap: "0.5rem",
                       }}
-                    />
-                    <div>
-                      <label style={{ fontSize: "15px" }}>
-                        Customize Cursor
+                    >
+                      <label htmlFor="on" className="center">
+                        On
+                        <input
+                          type="radio"
+                          id="on"
+                          name="cursorGroup"
+                          value={"on"}
+                          max={40}
+                          onChange={customCursorColor}
+                        />
                       </label>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "left",
-                          fontSize: "15px",
-                          alignItems: "center",
-                          columnGap: "0.5rem",
-                        }}
-                      >
-                        <label htmlFor="on" className="center">
-                          On
-                          <input
-                            type="radio"
-                            id="on"
-                            name="cursorGroup"
-                            value={"on"}
-                            max={40}
-                            onChange={customCursorColor}
-                          />
-                        </label>
-                        <label htmlFor="off" className="center">
-                          Off
-                          <input
-                            id="off"
-                            type="radio"
-                            defaultChecked
-                            name="cursorGroup"
-                            value={"off"}
-                            max={40}
-                            onChange={customCursorColor}
-                          />
-                        </label>
-                      </div>
+                      <label htmlFor="off" className="center">
+                        Off
+                        <input
+                          id="off"
+                          type="radio"
+                          defaultChecked
+                          name="cursorGroup"
+                          value={"off"}
+                          max={40}
+                          onChange={customCursorColor}
+                        />
+                      </label>
                     </div>
                   </div>
                 </div>
-              </li>
-              <li
-                title="Reset Tools"
-                style={{
-                  cursor: "pointer",
-                }}
-                className={`li-box ${!isTouchDevice && "hover"}`}
-                onClick={handleReset}
-              >
-                <span className="reset" />
-                <RangeIndex value="4" bottom="-1" right="-1" />
-              </li>
+              </div>
+            </li>
+            <li
+              title="Reset Tools"
+              style={{
+                cursor: "pointer",
+              }}
+              className={`li-box ${!isTouchDevice && "hover"}`}
+              onClick={handleReset}
+            >
+              <span className="reset" />
+              <RangeIndex value="4" bottom="-1" right="-1" />
+            </li>
 
-              <li
-                title="Keyboard"
-                onClick={handleKeyboardTool}
-                className={` li-box  ${tools.canvasText ? "show" : ""} ${
-                  !isTouchDevice && "hover"
-                } `}
-              >
-                <span className="keyboard" />
-                <RangeIndex value="5" bottom="-1" right="-1" />
-              </li>
-              <li
-                title="Notes"
-                onClick={handleSticketTool}
-                className={`li-box ${
-                  showStickerDetails.sticketTextAtom ? "show" : ""
-                } ${!isTouchDevice && "hover"}`}
-              >
-                <span className="sticker" />
-                <RangeIndex value="6" bottom="-1" right="-1" />
-              </li>
-              <li
-                title="Whiteboard"
-                className={` li-box  ${!isTouchDevice && "hover"} `}
-              >
-                {tools.showScreen ? (
-                  <div onClick={handleSwitchScreenTool}>
-                    <span className="screen" />
-                  </div>
-                ) : (
-                  <div onClick={handleSwitchScreenTool}>
-                    <span className="screen-off" />
-                  </div>
-                )}
-                <RangeIndex value="7" bottom="-1" right="-1" />
-              </li>
-
-              <li
-                title="Paint Roller"
-                className={` li-box ${bgColor.openPalette ? "show" : ""} ${
-                  !isTouchDevice && "hover"
-                }`}
-                style={{
-                  pointerEvents: tools.showScreen ? "none" : "auto",
-                  // backgroundColor: tools.showScreen ? "#efefef" : "",
-                  transition:
-                    "backgroundColor 0.2s 0.1s ease-in,opacity 0.1s ease-out",
-                  opacity: tools.showScreen ? 0.5 : 1,
-                }}
-                onClick={handleRollerIconTool}
-              >
-                <span className="paint-roller" />
-                <div onClick={(e) => e.stopPropagation()}>
-                  {bgColor.openPalette && !tools.showScreen && (
-                    <PickColor
-                      position="-11rem"
-                      pick={(rgba: {
-                        r: number;
-                        g: number;
-                        b: number;
-                        a: number;
-                      }) => {
-                        setBgColor((prev) => ({
-                          ...prev,
-                          color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
-                        }));
-                      }}
-                    />
-                  )}
+            <li
+              title="Keyboard"
+              onClick={handleKeyboardTool}
+              className={` li-box  ${tools.canvasText ? "show" : ""} ${
+                !isTouchDevice && "hover"
+              } `}
+            >
+              <span className="keyboard" />
+              <RangeIndex value="5" bottom="-1" right="-1" />
+            </li>
+            <li
+              title="Notes"
+              onClick={handleSticketTool}
+              className={`li-box ${
+                showStickerDetails.sticketTextAtom ? "show" : ""
+              } ${!isTouchDevice && "hover"}`}
+            >
+              <span className="sticker" />
+              <RangeIndex value="6" bottom="-1" right="-1" />
+            </li>
+            <li
+              title="Whiteboard"
+              className={` li-box  ${!isTouchDevice && "hover"} `}
+            >
+              {tools.showScreen ? (
+                <div onClick={handleSwitchScreenTool}>
+                  <span className="screen" />
                 </div>
-                <RangeIndex value="8" bottom="-1" right="-1" />
-              </li>
-            </ul>
-          </div>
+              ) : (
+                <div onClick={handleSwitchScreenTool}>
+                  <span className="screen-off" />
+                </div>
+              )}
+              <RangeIndex value="7" bottom="-1" right="-1" />
+            </li>
+
+            <li
+              title="Paint Roller"
+              className={` li-box ${bgColor.openPalette ? "show" : ""} ${
+                !isTouchDevice && "hover"
+              }`}
+              style={{
+                pointerEvents: tools.showScreen ? "none" : "auto",
+                // backgroundColor: tools.showScreen ? "#efefef" : "",
+                transition:
+                  "backgroundColor 0.2s 0.1s ease-in,opacity 0.1s ease-out",
+                opacity: tools.showScreen ? 0.5 : 1,
+              }}
+              onClick={handleRollerIconTool}
+            >
+              <span className="paint-roller" />
+              <div onClick={(e) => e.stopPropagation()}>
+                {bgColor.openPalette && !tools.showScreen && (
+                  <PickColor
+                    position="-11rem"
+                    pick={(rgba: {
+                      r: number;
+                      g: number;
+                      b: number;
+                      a: number;
+                    }) => {
+                      setBgColor((prev) => ({
+                        ...prev,
+                        color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
+                      }));
+                    }}
+                  />
+                )}
+              </div>
+              <RangeIndex value="8" bottom="-1" right="-1" />
+            </li>
+          </ul>
         </ul>
       </div>
       <div
