@@ -110,6 +110,7 @@ export default function Page() {
 | Key   | Action                                                                                               |
 | ----- | ---------------------------------------------------------------------------------------------------- |
 | `🔒`  | Enabling screen lock for touch users, prevents scrolling and lets them sketch directly on the canvas |
+| `⛶`  |  Switch Window/Screen Mode (Newly launched 🤩)                                                       |
 | `1`   | 🎨 Open the Palette – choose colors and adjust stroke size                                           |
 | `2`   | 🩹 Open the Eraser – erase parts of your sketch                                                      |
 | `3`   | 🖱️ Open Cursor Tools – change cursor size or appearance                                              |
