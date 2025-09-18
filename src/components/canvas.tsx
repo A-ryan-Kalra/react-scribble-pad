@@ -48,7 +48,7 @@ function Canvas() {
   });
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
-  const [showTools, setShowTools] = useState<boolean>(true);
+
   const [text, setText] = useState("");
 
   const toolsRef = useRef<ToolsRefProps>({
@@ -793,17 +793,14 @@ function Canvas() {
         onMouseLeave={() => {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
-        className={`pallete-box`}
+        className={`pallete-box no-screenshot`}
         style={{
           width: "fit-content",
           transition: "width 0.2s ease-in",
         }}
         ref={palleteRef}
       >
-        <ul
-          style={{ display: !showTools ? "none" : "" }}
-          className="pallete-tools"
-        >
+        <ul className="pallete-tools">
           <div className="ul-container">
             <ul
               style={{
