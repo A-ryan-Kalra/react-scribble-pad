@@ -48,6 +48,8 @@ function Canvas() {
   });
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
+  const [showTools, setShowTools] = useState<boolean>(true);
+  const [text, setText] = useState("");
 
   const toolsRef = useRef<ToolsRefProps>({
     eraser: false,
@@ -93,7 +95,7 @@ function Canvas() {
     function updateScale() {
       const width = window.innerWidth;
       let scale = 1;
-      if (width <= 370) scale = 0.7;
+      if (width <= 380) scale = 0.7;
       else if (width <= 440) scale = 0.84;
       document.documentElement.style.setProperty("--scale", scale.toString());
     }
@@ -140,7 +142,12 @@ function Canvas() {
     ctx.lineWidth = 5;
     ctx.strokeStyle = showStickerDetails.bgColor ?? "#000";
     ctx.fill();
-    ctx.font = "20px Arial";
+    ctx.font = "20px 'Architects Daughter', cursive";
+    // It will start loading from the first character
+    document.fonts.ready.then(() => {
+      ctx.font = "20px 'Architects Daughter', cursive";
+      ctx.fillText("", 50, 50);
+    });
 
     const getMousePosition = (event: MouseEvent) => {
       const react = canvas.getBoundingClientRect();
@@ -221,7 +228,7 @@ function Canvas() {
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
       } else if (toolsRef.current.showText) {
-        ctx.font = "20px Arial";
+        ctx.font = "20px 'Architects Daughter', cursive";
         ctx.fillStyle = "#000"; // text color
       } else {
         ctx.globalCompositeOperation = "source-over";
@@ -304,7 +311,7 @@ function Canvas() {
     canvas.addEventListener("mouseout", stopDrawing);
     window.addEventListener("mousemove", handleEraser);
     window.addEventListener("mousedown", showCanvasTextPosition);
-    window.addEventListener("keydown", handleEscapeKey);
+    window.addEventListener("keydown", handleEscapeKey, true);
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("touchstart", touchStart);
     window.addEventListener("touchmove", touchMove);
@@ -317,7 +324,7 @@ function Canvas() {
       canvas.removeEventListener("mouseup", stopDrawing);
       canvas.removeEventListener("mouseout", stopDrawing);
       window.removeEventListener("mousedown", showCanvasTextPosition);
-      window.removeEventListener("keydown", handleEscapeKey);
+      window.removeEventListener("keydown", handleEscapeKey, true);
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("touchstart", touchStart);
       window.removeEventListener("touchmove", touchMove);
@@ -326,6 +333,7 @@ function Canvas() {
   }, [ctx, tools.adjustFullScreen, chunkHeight]);
 
   function closeAllTools() {
+    setText("");
     setTools((prev) => ({
       ...prev,
       canvasText: false,
@@ -352,6 +360,7 @@ function Canvas() {
   }
   function handleInput(e: FormEvent) {
     e.preventDefault();
+    setText("");
     // toolsRef.current.canvasText = !toolsRef.current.canvasText;
     inputRef.current!.value = "";
     ctx!.fillText("", showCanvasText.x, showCanvasText.y);
@@ -432,6 +441,7 @@ function Canvas() {
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
     toolsRef.current.lockScroll = !toolsRef.current.lockScroll;
+    setText("");
     setTools((prev) => ({
       ...prev,
       eraser: false,
@@ -491,6 +501,7 @@ function Canvas() {
     toolsRef.current.adjustFullScreen = !toolsRef.current.adjustFullScreen;
     setAdjustFullScreen((prev) => !prev);
     handleReset();
+    setText("");
     setTools((prev) => ({
       ...prev,
       eraser: false,
@@ -509,6 +520,7 @@ function Canvas() {
       toolsRef.current.eraser = false;
       toolsRef.current.pickColor = false;
       toolsRef.current.showText = false;
+      setText("");
       setTools((prev) => ({
         ...prev,
         eraser: false,
@@ -543,6 +555,7 @@ function Canvas() {
     toolsRef.current.canvasText = false;
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
+    setText("");
     setTools((prev) => ({
       ...prev,
       penSize: false,
@@ -562,6 +575,8 @@ function Canvas() {
       sticketTextAtom: !prev.sticketTextAtom,
       hidePenOnEraser: false,
     }));
+
+    setText("");
     setTools((prev) => ({
       ...prev,
       penSize: false,
@@ -576,6 +591,8 @@ function Canvas() {
     toolsRef.current.eraser = false;
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
+
+    setText("");
     setTools((prev) => ({
       ...prev,
       penSize: !prev.penSize,
@@ -598,6 +615,8 @@ function Canvas() {
     toolsRef.current.showText = !toolsRef.current.showText;
     ctx!.globalCompositeOperation = "source-over";
     // ctx!.fillStyle = ctx!.strokeStyle;
+
+    setText("");
     setTools((prev) => ({
       ...prev,
       penSize: false,
@@ -611,12 +630,15 @@ function Canvas() {
       sticketTextAtom: false,
       hidePenOnEraser: false,
     }));
+    inputRef.current?.focus();
   };
   function handleRollerIconTool() {
     setBgColor((prev) => ({
       ...prev,
       openPalette: !prev.openPalette,
     }));
+
+    setText("");
     setTools((prev) => ({
       ...prev,
       eraser: false,
@@ -633,10 +655,12 @@ function Canvas() {
   }
 
   function handleSwitchScreenTool() {
-    setTools((prev) => ({
-      ...prev,
-      showScreen: !prev.showScreen,
-    }));
+    if (document.body.style.overflow === "hidden") {
+      document.body.style.overflow = "auto";
+    } else {
+      document.body.style.overflow = "hidden";
+    }
+
     setShowStickerDetails((prev) => ({
       ...prev,
       sticketTextAtom: false,
@@ -644,18 +668,34 @@ function Canvas() {
       hidePenOnEraser: false,
     }));
 
+    setText("");
     setTools((prev) => ({
       ...prev,
       penSize: false,
       eraser: false,
       pickColor: false,
       canvasText: false,
+      showScreen: !prev.showScreen,
     }));
 
     toolsRef.current.showScreen = !toolsRef.current.showScreen;
   }
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+
+      // If typing in input, textarea, or contenteditable → ignore
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable ||
+        e.key === "Escape"
+      ) {
+        return;
+      }
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
       const num = Number(e.key);
       if (num >= 1 && num <= 8) {
         switch (num) {
@@ -692,6 +732,7 @@ function Canvas() {
             break;
           case 8:
             if (!toolsRef.current.showScreen) return;
+
             handleRollerIconTool();
 
             break;
@@ -727,10 +768,10 @@ function Canvas() {
     }
 
     window.addEventListener("scroll", handleScrollCanvas);
-    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
       window.removeEventListener("scroll", handleScrollCanvas);
     };
   }, [ctx, offset]);
@@ -752,14 +793,17 @@ function Canvas() {
         onMouseLeave={() => {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
-        className={`pallete-box no-screenshot`}
+        className={`pallete-box`}
         style={{
           width: "fit-content",
           transition: "width 0.2s ease-in",
         }}
         ref={palleteRef}
       >
-        <ul className="pallete-tools">
+        <ul
+          style={{ display: !showTools ? "none" : "" }}
+          className="pallete-tools"
+        >
           <div className="ul-container">
             <ul
               style={{
@@ -792,8 +836,8 @@ function Canvas() {
                 <span className="full-screen"></span>
               </li>
               <li
-                title="Screen Shot"
-                className={`li-box ${!isTouchDevice && "hover"}`}
+                title="Screenshot"
+                className={`li-box hover`}
                 onClick={handleScreenshot}
               >
                 <span className="screenshot"></span>
@@ -1062,11 +1106,7 @@ function Canvas() {
         ref={canvasRef}
       />
       {tools.canvasText && (
-        <form
-          onClick={(e) => e.stopPropagation()}
-          onSubmit={handleInput}
-          className=""
-        >
+        <form onClick={(e) => e.stopPropagation()} onSubmit={handleInput}>
           <input
             ref={inputRef}
             // maxLength={30}
@@ -1077,24 +1117,42 @@ function Canvas() {
               position: "fixed",
               borderRadius: "3px",
               // pointerEvents: "none",
-              zIndex: 99999,
+              zIndex: 2147483647,
 
               left: `${showCanvasText.x}px`,
               top: `${showCanvasText.y}px`,
             }}
+            value={text}
             onChange={(e) => {
+              const newText = e.target.value;
+              const fontSize = canvasConf.textSize || "20";
+
+              const adjustSize =
+                Number(fontSize) <= 20 ? 3 : Number(fontSize) >= 50 ? 25 : 20;
               if (ctx) {
-                // ctx.fillStyle = ctx.strokeStyle;
-                ctx!.font = `${canvasConf.textSize}px Arial`;
+                ctx!.font = `${fontSize}px 'Architects Daughter', cursive`;
                 ctx.fillStyle = showStickerDetails.bgColor;
+                // if text got shorter (deletion happened)
+
+                if (newText.length < text.length) {
+                  ctx.clearRect(
+                    showCanvasText.x - 2,
+                    showCanvasText.y + window.scrollY - Number(fontSize), // go up by font size
+                    ctx.measureText(text + "M").width, // width of text + buffer
+                    Number(fontSize) + adjustSize
+                  );
+                }
+
+                // redraw whatever is in the input
                 ctx.fillText(
-                  e.target.value,
-                  // showStickerDetails.bgColor,
+                  newText,
                   showCanvasText.x,
                   showCanvasText.y +
                     (!tools.adjustFullScreen ? window.scrollY : 0)
                 );
               }
+
+              setText(newText);
             }}
             type="text"
             className="editor-input"
