@@ -10,7 +10,7 @@ body {
 }
 .eraser-tool {
   position: fixed;
-  border: 1px solid black;
+  border: 2px solid #ae9f9f;
   /* cursor: grab; */
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -18,13 +18,13 @@ body {
     calc(var(--eraserPositionX) - (100px / 2)),
     calc(var(--eraserPositionY) - (100px / 2))
   );
-  z-index: 214748364;
+  z-index: 214748365;
   top: 0;
   left: 0;
   width: 100px;
   height: 100px;
-  background-color: white;
-
+  background-color: transparent;
+  backdrop-filter: blur(1px);
   pointer-events: none;
 }
 
@@ -165,6 +165,7 @@ This will only work well inside extensions
   outline: none;
   opacity: 0.8;
   backdrop-filter: 10px;
+  padding: 0.25rem;
   background-color: rgba(130, 133, 134, 0.707);
 }
 .sticker-editor {

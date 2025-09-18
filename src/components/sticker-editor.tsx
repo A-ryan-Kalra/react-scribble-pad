@@ -93,7 +93,7 @@ function StickerEditor() {
     divEl.textContent = input;
 
     divEl.style.minWidth = "50px";
-    divEl.style.maxWidth = "150px";
+    divEl.style.maxWidth = "250px";
     // divEl.style.maxHeight = "100px";
     divEl.style.resize = "both";
     divEl.contentEditable = "true";
@@ -109,8 +109,10 @@ function StickerEditor() {
     divEl.style.zIndex = "214748364";
     divEl.spellcheck = false;
     divEl.style.touchAction = "none";
-    divEl.style.font = `${showStickerDetails.fontSize}px Arial`;
-
+    divEl.style.font = `${showStickerDetails.fontSize}px 'Architects Daughter', cursive`;
+    divEl.style.color = "#1b1919";
+    divEl.style.fontWeight = "1000";
+    divEl.style.letterSpacing = "1px";
     divEl.style.background = "rgba(37, 235, 221, 0.6)";
     divEl.style.cursor = "grab";
     divEl.style.position = adjustFullScreen ? "fixed" : "absolute";
@@ -145,44 +147,6 @@ function StickerEditor() {
       offsetY = e.clientY - divEl.offsetTop;
     });
     let clearMessageSocketTimer: any = 0;
-
-    divEl.addEventListener("keydown", () => {
-      setStopMessageSocket(true);
-
-      //Restrict users to type over 30 words
-
-      // const allowedKeys = [
-      //   "Backspace",
-      //   "Enter",
-      //   "ArrowLeft",
-      //   "ArrowRight",
-      //   "ArrowUp",
-      //   "ArrowDown",
-      // ];
-      // const shortcuts =
-      //   (e.metaKey || e.ctrlKey) &&
-      //   ["a", "c", "v"].includes(e.key.toLowerCase());
-
-      // const allowed = allowedKeys.includes(e.key) || shortcuts;
-      // if (divEl.textContent && divEl.textContent.length > 29 && !allowed) {
-      //   if (clearMessageSocketTimer) {
-      //     clearTimeout(clearMessageSocketTimer);
-      //   }
-      //   clearMessageSocketTimer = setTimeout(() => {
-      //     setStopMessageSocket(false);
-      //   }, 500);
-
-      //   e.preventDefault();
-      //   return;
-      // }
-
-      if (clearMessageSocketTimer) {
-        clearTimeout(clearMessageSocketTimer);
-      }
-      clearMessageSocketTimer = setTimeout(() => {
-        setStopMessageSocket(false);
-      }, 500);
-    });
 
     const handleMouseMove = (event: MouseEvent) => {
       if (isDragging) {
@@ -224,56 +188,74 @@ function StickerEditor() {
       isDragging = false;
     });
 
-    divEl.addEventListener("keydown", (e) => {
-      if (e.key === "Delete") {
-        setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
-        divEl.remove();
-      } else if (e.key === "Enter" && e.shiftKey) {
-        divEl.appendChild(document.createElement("br"));
-      } else if (e.key === "Escape" || e.key === "Enter") {
-        divEl.blur();
-      }
-      // if (window.innerWidth < 1024) {
-      if (e.key === "Backspace" && divEl.textContent?.trim() === "") {
-        setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
-        divEl.remove();
-      }
-    });
+    divEl.addEventListener(
+      "keydown",
+      (e) => {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        setStopMessageSocket(true);
+        if (clearMessageSocketTimer) {
+          clearTimeout(clearMessageSocketTimer);
+        }
+        clearMessageSocketTimer = setTimeout(() => {
+          setStopMessageSocket(false);
+        }, 500);
+        if (e.key === "Delete") {
+          setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+          divEl.remove();
+        } else if (e.key === "Enter" && e.shiftKey) {
+          divEl.appendChild(document.createElement("br"));
+        } else if (e.key === "Escape" || e.key === "Enter") {
+          divEl.blur(); // this should now fire correctly
+          setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+        } else if (e.key === "Backspace" && divEl.textContent?.trim() === "") {
+          setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
+          divEl.remove();
+        }
+      },
+      true
+    );
   };
 
   return (
     showInput && (
       <form onSubmit={handleInput}>
         <input
-          onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              setShowInput(false);
-              setInput("");
-            }
-          }}
           ref={inputRef}
+          type="text"
+          value={input}
+          className="sticker-editor"
           style={{
             width: "150px",
             height: "30px",
             position: "fixed",
             borderRadius: "3px",
-            // pointerEvents: "none",
             zIndex: 2147483647,
             transition: "transform 0.02s ease-in-out",
-            transform: `translate(${
-              ((userCursor.x - 75) / userCursor.width) * window.innerWidth
-            }px, ${
-              ((userCursor.y - 25) / userCursor.height) * window.innerHeight
-            }px)`,
+            transform: `translate(
+        ${((userCursor.x - 75) / userCursor.width) * window.innerWidth}px,
+        ${((userCursor.y - 25) / userCursor.height) * window.innerHeight}px
+      )`,
+          }}
+          onKeyDownCapture={(e) => {
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+
+            // Handle Escape to close
+            if (e.key === "Escape") {
+              setShowInput(false);
+              setInput("");
+            }
           }}
           onChange={(e) => {
+            // Now just update your state
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
             if (!stopMessageSocket) {
               setInput(e.target.value);
             }
           }}
-          type="text"
-          value={input}
-          className="sticker-editor"
         />
       </form>
     )
