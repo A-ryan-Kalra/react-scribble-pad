@@ -7,8 +7,8 @@
 <table>
   <tr>
     <td>
-      v1.3.1 is out 🚀<br>
-      <a href="https://github.com/A-ryan-Kalra/react-scribble-pad/releases/tag/v1.3.1">Check out →</a>
+      v1.4.1 is out 🚀<br>
+      <a href="https://github.com/A-ryan-Kalra/react-scribble-pad/releases/tag/v1.4.1">Check out →</a>
     </td>
   </tr>
 </table>
