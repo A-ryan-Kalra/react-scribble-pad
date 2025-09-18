@@ -19,7 +19,6 @@
 
 <div align="center">
 
-
 <table align="center"> 
   <tr>
    <td><img width="250" alt="img" src="https://github.com/user-attachments/assets/d5a2e993-5b9d-451e-bafc-9d647f5f10d5" /></td>
@@ -110,6 +109,7 @@ export default function Page() {
 | ----- | ---------------------------------------------------------------------------------------------------- |
 | `🔒`  | Enabling screen lock for touch users, prevents scrolling and lets them sketch directly on the canvas |
 | `⛶`   | Switch Full-Screen/Window Mode (Newly launched 🤩)                                                   |
+| `📸`  | Take Screenshot of a webpage                                                                         |
 | `1`   | 🎨 Open the Palette – choose colors and adjust stroke size                                           |
 | `2`   | 🩹 Open the Eraser – erase parts of your sketch                                                      |
 | `3`   | 🖱️ Open Cursor Tools – change cursor size or appearance                                              |
