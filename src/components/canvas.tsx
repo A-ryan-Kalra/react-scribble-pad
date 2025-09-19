@@ -55,7 +55,7 @@ function Canvas() {
   });
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
-  const [showTools, setShowTools] = useState<boolean>(true);
+
   const [text, setText] = useState("");
   const [, setShowStickerInput] = useAtom(showStickerInputAtom);
   const toolsRef = useRef<ToolsRefProps>({
