@@ -7,7 +7,7 @@
 <table>
   <tr>
     <td>
-      v1.4.1 is out 🚀<br>
+      Alert: Launched New Features 🚀<br>
       <a href="https://github.com/A-ryan-Kalra/react-scribble-pad/releases/tag/v1.4.1">Check out →</a>
     </td>
   </tr>
@@ -18,7 +18,6 @@
 <br/>
 
 <div align="center">
- 
 
 <table align="center"> 
   <tr>
@@ -114,10 +113,11 @@ export default function Page() {
 | `1`   | 🎨 Open the Palette – choose colors and adjust stroke size                                           |
 | `2`   | 🩹 Open the Eraser – erase parts of your sketch                                                      |
 | `3`   | 🖱️ Open Cursor Tools – change cursor size or appearance                                              |
-| `4`   | 🔄 Reset Everything – clear the canvas                                                               |
-| `5`   | ✏️ Add Texts – insert text anywhere on the canvas                                                    |
-| `6`   | 📝 Make Draggable Notes – create sticky-style notes you can move around                              |
-| `7`   | 🖥️ Switch to Whiteboard Mode – expand into fullscreen whiteboard                                     |
+| `4`   | ✏️ Add Texts – insert text anywhere on the canvas                                                    |
+| `5`   | 📝 Make Draggable Notes – create sticky-style notes you can move around                              |
+| `6`   | 🖥️ Switch to Whiteboard Mode – expand into fullscreen whiteboard                                     |
+| `7`   | 🎨 Open the Palette - choose background colors for Whiteboard Mode                                   |
+| `8`   | 🔄 Reset Everything – clear the canvas                                                               |
 | `Esc` | 🔄 Reset Configured Tools                                                                            |
 | `Del` | 🚮 Pressing Delete key on draggable notes, will simply delete them                                   |
 
