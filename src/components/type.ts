@@ -7,8 +7,8 @@ export interface ToolsRefProps {
   moveSticker?: boolean;
   showScreen: boolean;
   adjustFullScreen: boolean;
+  eraserSize: string;
 }
-
 export interface ToolsProps {
   eraser: boolean;
   pickColor: boolean;
