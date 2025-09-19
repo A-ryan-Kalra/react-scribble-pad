@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "Architects Daughter";
+  src: url("fonts/ArchitectsDaughter.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -6,6 +13,8 @@ body {
 :root {
   --eraserPositionX: -100px;
   --eraserPositionY: -100px;
+  --eraserWidth: 100px;
+  --eraserHeight: 100px;
   --scale: 1;
 }
 .eraser-tool {
@@ -15,14 +24,14 @@ body {
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   transform: translate(
-    calc(var(--eraserPositionX) - (100px / 2)),
-    calc(var(--eraserPositionY) - (100px / 2))
+    calc(var(--eraserPositionX) - (var(--eraserWidth, 100px) / 2)),
+    calc(var(--eraserPositionY) - (var(--eraserHeight, 100px) / 2))
   );
   z-index: 214748365;
   top: 0;
   left: 0;
-  width: 100px;
-  height: 100px;
+  width: var(--eraserWidth, 100px);
+  height: var(--eraserHeight, 100px);
   background-color: transparent;
   backdrop-filter: blur(1px);
   pointer-events: none;
