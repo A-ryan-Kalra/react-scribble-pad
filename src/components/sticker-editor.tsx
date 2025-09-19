@@ -3,15 +3,15 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { atom, useAtom } from "jotai";
 import { adjustFullScreenAtom, stickerDetails } from "./canvas";
 export const isDraggingAtom = atom(false);
+export const showStickerInputAtom = atom(false);
 
 function StickerEditor() {
   const [, setIsDragging] = useAtom(isDraggingAtom);
 
   const [input, setInput] = useState("");
-
   const [stopMessageSocket, setStopMessageSocket] = useState(false);
   const [adjustFullScreen] = useAtom(adjustFullScreenAtom);
-  const [showInput, setShowInput] = useState<boolean>(false);
+  const [showInput, setShowInput] = useAtom(showStickerInputAtom);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
 
@@ -106,7 +106,7 @@ function StickerEditor() {
     divEl.style.borderRadius = "10px";
     divEl.style.padding = "0.55rem";
     divEl.style.backdropFilter = "blur(10px)";
-    divEl.style.zIndex = "214748364";
+    divEl.style.zIndex = "214748365";
     divEl.spellcheck = false;
     divEl.style.touchAction = "none";
     divEl.style.font = `${showStickerDetails.fontSize}px 'Architects Daughter', cursive`;
@@ -231,7 +231,7 @@ function StickerEditor() {
             height: "30px",
             position: "fixed",
             borderRadius: "3px",
-            zIndex: 2147483647,
+            zIndex: 214748368,
             transition: "transform 0.02s ease-in-out",
             transform: `translate(
         ${((userCursor.x - 75) / userCursor.width) * window.innerWidth}px,

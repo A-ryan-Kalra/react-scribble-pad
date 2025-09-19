@@ -10,7 +10,10 @@ import {
 import html2canvas from "html2canvas";
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
-import { isDraggingAtom } from "./sticker-editor";
+import StickerEditor, {
+  isDraggingAtom,
+  showStickerInputAtom,
+} from "./sticker-editor";
 import type {
   BgColorProps,
   StickerDetailsProps,
@@ -43,14 +46,18 @@ function Canvas() {
   const inputRef = useRef<HTMLInputElement>(null);
   const trackCursorPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showStickerDetails, setShowStickerDetails] = useAtom(stickerDetails);
-  const [canvasConf, setCanvasConf] = useState<{ textSize: string }>({
-    textSize: "",
+  const [canvasConf, setCanvasConf] = useState<{
+    textSize: string;
+    eraserSize: string;
+  }>({
+    textSize: "20",
+    eraserSize: "100",
   });
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
-
+  const [showTools, setShowTools] = useState<boolean>(true);
   const [text, setText] = useState("");
-
+  const [, setShowStickerInput] = useAtom(showStickerInputAtom);
   const toolsRef = useRef<ToolsRefProps>({
     eraser: false,
     pickColor: false,
@@ -60,6 +67,7 @@ function Canvas() {
     lockScroll: false,
     showScreen: false,
     adjustFullScreen: false,
+    eraserSize: "",
   });
   const [tools, setTools] = useState<ToolsProps>({
     eraser: false,
@@ -82,6 +90,9 @@ function Canvas() {
         setChunkHeight(6500); // bigger pages = 6500px chunks
       }
     }
+  }, [tools.adjustFullScreen]);
+
+  useEffect(() => {
     toolsRef.current.moveSticker = isDragAtom;
     const checkPoint = () => {
       updateScale();
@@ -106,7 +117,7 @@ function Canvas() {
     return () => {
       window.removeEventListener("resize", checkPoint);
     };
-  }, [isDragAtom, tools.adjustFullScreen]);
+  }, [isDragAtom]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -221,7 +232,9 @@ function Canvas() {
     const drawCanvas = (offsetX: number, offsetY: number) => {
       if (toolsRef.current.eraser) {
         ctx.globalCompositeOperation = "destination-out";
-        const size = 100;
+        const size = Number(toolsRef.current.eraserSize)
+          ? Number(toolsRef.current.eraserSize)
+          : 100;
 
         ctx.rect(offsetX - size / 2, offsetY - size / 2, size, size);
         ctx.fill();
@@ -280,30 +293,12 @@ function Canvas() {
         }, 0);
       }
     }
+
     function handleEscapeKey(event: KeyboardEvent) {
       if (event.key === "Escape") {
         closeAllTools();
       }
     }
-
-    const resizeCanvas = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      //  Save the current drawing as an image
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let dpr;
-      dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = 6500 * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${6500}px`;
-      ctx.lineWidth = 5;
-      ctx.scale(dpr, dpr);
-      //  Restore the saved image
-      ctx.putImageData(imageData, 0, 0);
-    };
 
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
@@ -312,7 +307,6 @@ function Canvas() {
     window.addEventListener("mousemove", handleEraser);
     window.addEventListener("mousedown", showCanvasTextPosition);
     window.addEventListener("keydown", handleEscapeKey, true);
-    window.addEventListener("resize", resizeCanvas);
     window.addEventListener("touchstart", touchStart);
     window.addEventListener("touchmove", touchMove);
     window.addEventListener("touchend", stopDrawing);
@@ -325,7 +319,6 @@ function Canvas() {
       canvas.removeEventListener("mouseout", stopDrawing);
       window.removeEventListener("mousedown", showCanvasTextPosition);
       window.removeEventListener("keydown", handleEscapeKey, true);
-      window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("touchstart", touchStart);
       window.removeEventListener("touchmove", touchMove);
       window.removeEventListener("touchend", stopDrawing);
@@ -334,6 +327,7 @@ function Canvas() {
 
   function closeAllTools() {
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       canvasText: false,
@@ -442,6 +436,7 @@ function Canvas() {
     toolsRef.current.showText = false;
     toolsRef.current.lockScroll = !toolsRef.current.lockScroll;
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       eraser: false,
@@ -502,6 +497,7 @@ function Canvas() {
     setAdjustFullScreen((prev) => !prev);
     handleReset();
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       eraser: false,
@@ -521,6 +517,7 @@ function Canvas() {
       toolsRef.current.pickColor = false;
       toolsRef.current.showText = false;
       setText("");
+      setShowStickerInput(false);
       setTools((prev) => ({
         ...prev,
         eraser: false,
@@ -556,6 +553,7 @@ function Canvas() {
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       penSize: false,
@@ -593,6 +591,7 @@ function Canvas() {
     toolsRef.current.showText = false;
 
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       penSize: !prev.penSize,
@@ -617,6 +616,7 @@ function Canvas() {
     // ctx!.fillStyle = ctx!.strokeStyle;
 
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       penSize: false,
@@ -639,6 +639,7 @@ function Canvas() {
     }));
 
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       eraser: false,
@@ -669,6 +670,7 @@ function Canvas() {
     }));
 
     setText("");
+    setShowStickerInput(false);
     setTools((prev) => ({
       ...prev,
       penSize: false,
@@ -719,22 +721,20 @@ function Canvas() {
             handleCursorTool();
             break;
           case 4:
-            handleReset();
-            break;
-          case 5:
             handleKeyboardTool();
             break;
-          case 6:
+          case 5:
             handleSticketTool();
             break;
-          case 7:
+          case 6:
             handleSwitchScreenTool();
             break;
-          case 8:
+          case 7:
             if (!toolsRef.current.showScreen) return;
-
             handleRollerIconTool();
-
+            break;
+          case 8:
+            handleReset();
             break;
         }
       }
@@ -779,7 +779,7 @@ function Canvas() {
   return (
     <div
       style={{
-        zIndex: 214748364,
+        zIndex: 214748367,
         cursor: tools.canvasText ? "text" : "",
       }}
       className={`canvas-container`}
@@ -908,6 +908,7 @@ function Canvas() {
                 style={{
                   position: "absolute",
                   left: "-2rem",
+                  zIndex: "214748364",
                   bottom: 50,
                   visibility: tools.penSize ? "visible" : "hidden",
                 }}
@@ -916,6 +917,7 @@ function Canvas() {
                   style={{
                     background: "#cad5e2",
                     borderRadius: "0.375rem",
+                    zIndex: "214748364",
                     padding: "0.25rem",
                     fontSize: "15px",
                   }}
@@ -928,19 +930,22 @@ function Canvas() {
                     defaultValue={5}
                     onChange={(e) => (ctx!.lineWidth = Number(e.target.value))}
                   />
-                  <label htmlFor="text-size">Text Size</label>
+                  <label htmlFor="text-size">
+                    Text Size: {`${Math.floor(Number(canvasConf.textSize))}`}
+                  </label>
                   <input
                     type="range"
                     id="text-size"
                     max={80}
-                    defaultValue={5}
+                    defaultValue={20}
                     onChange={(e) => {
-                      setCanvasConf({
+                      setCanvasConf((prev) => ({
+                        ...prev,
                         textSize: (1.2 * Number(e.target.value) > 10
                           ? 1.2 * Number(e.target.value)
                           : 10
                         ).toString(),
-                      });
+                      }));
                       setShowStickerDetails((prev) => ({
                         ...prev,
                         hidePen: false,
@@ -949,6 +954,38 @@ function Canvas() {
                             ? 1.2 * Number(e.target.value)
                             : 10,
                       }));
+                    }}
+                  />
+                  <label htmlFor="eraser-size">
+                    Eraser Size:{" "}
+                    {`${Math.floor(Number(canvasConf.eraserSize))}`}
+                  </label>
+                  <input
+                    type="range"
+                    id="eraser-size"
+                    maxLength={100}
+                    defaultValue={100}
+                    onChange={(e) => {
+                      let size =
+                        Number(e.target.value) > 20
+                          ? Number(e.target.value)
+                          : 20;
+
+                      setCanvasConf((prev) => ({
+                        ...prev,
+                        eraserSize: size.toString(),
+                      }));
+
+                      document.documentElement.style.setProperty(
+                        "--eraserWidth",
+                        `${size}px`
+                      );
+                      document.documentElement.style.setProperty(
+                        "--eraserHeight",
+                        `${size}px`
+                      );
+
+                      toolsRef.current.eraserSize = size.toString();
                     }}
                   />
                   <div>
@@ -990,17 +1027,6 @@ function Canvas() {
                 </div>
               </div>
             </li>
-            <li
-              title="Reset Tools"
-              style={{
-                cursor: "pointer",
-              }}
-              className={`li-box ${!isTouchDevice && "hover"}`}
-              onClick={handleReset}
-            >
-              <span className="reset" />
-              <RangeIndex value="4" bottom="-1" right="-1" />
-            </li>
 
             <li
               title="Keyboard"
@@ -1010,7 +1036,7 @@ function Canvas() {
               } `}
             >
               <span className="keyboard" />
-              <RangeIndex value="5" bottom="-1" right="-1" />
+              <RangeIndex value="4" bottom="-1" right="-1" />
             </li>
             <li
               title="Notes"
@@ -1020,7 +1046,7 @@ function Canvas() {
               } ${!isTouchDevice && "hover"}`}
             >
               <span className="sticker" />
-              <RangeIndex value="6" bottom="-1" right="-1" />
+              <RangeIndex value="5" bottom="-1" right="-1" />
             </li>
             <li
               title="Whiteboard"
@@ -1035,7 +1061,7 @@ function Canvas() {
                   <span className="screen-off" />
                 </div>
               )}
-              <RangeIndex value="7" bottom="-1" right="-1" />
+              <RangeIndex value="6" bottom="-1" right="-1" />
             </li>
 
             <li
@@ -1071,6 +1097,17 @@ function Canvas() {
                   />
                 )}
               </div>
+              <RangeIndex value="7" bottom="-1" right="-1" />
+            </li>
+            <li
+              title="Reset Tools"
+              style={{
+                cursor: "pointer",
+              }}
+              className={`li-box ${!isTouchDevice && "hover"}`}
+              onClick={handleReset}
+            >
+              <span className="reset" />
               <RangeIndex value="8" bottom="-1" right="-1" />
             </li>
           </ul>
@@ -1081,7 +1118,7 @@ function Canvas() {
         className=""
         style={{ pointerEvents: "none", position: "relative" }}
       ></div>
-
+      <StickerEditor />
       <canvas
         style={{
           touchAction: tools.lockScroll ? "none" : "auto",
@@ -1102,10 +1139,16 @@ function Canvas() {
         height={chunkHeight}
         ref={canvasRef}
       />
+
       {tools.canvasText && (
         <form onClick={(e) => e.stopPropagation()} onSubmit={handleInput}>
           <input
             ref={inputRef}
+            onMouseDown={() => {
+              setTimeout(() => {
+                inputRef?.current?.focus();
+              }, 0);
+            }}
             // maxLength={30}
             placeholder=""
             style={{
@@ -1114,7 +1157,7 @@ function Canvas() {
               position: "fixed",
               borderRadius: "3px",
               // pointerEvents: "none",
-              zIndex: 2147483647,
+              zIndex: 214748365,
 
               left: `${showCanvasText.x}px`,
               top: `${showCanvasText.y}px`,
@@ -1125,7 +1168,8 @@ function Canvas() {
               const fontSize = canvasConf.textSize || "20";
 
               const adjustSize =
-                Number(fontSize) <= 20 ? 3 : Number(fontSize) >= 50 ? 25 : 20;
+                Number(fontSize) <= 20 ? 8 : Number(fontSize) >= 50 ? 25 : 20;
+
               if (ctx) {
                 ctx!.font = `${fontSize}px 'Architects Daughter', cursive`;
                 ctx.fillStyle = showStickerDetails.bgColor;
