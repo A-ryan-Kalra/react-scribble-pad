@@ -134,8 +134,9 @@ function Canvas() {
 
     if (toolsRef.current.adjustFullScreen) {
       height = window.innerHeight;
-      canvas.style!.top = "0px";
       canvas.style!.position = "fixed";
+      canvas.style!.top = "0px";
+      canvas.style!.left = "0px";
     }
 
     // set backing resolution
