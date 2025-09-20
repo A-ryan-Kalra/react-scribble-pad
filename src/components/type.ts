@@ -26,6 +26,12 @@ export interface StickerDetailsProps {
   customizeCursor?: boolean;
   hidePen?: boolean;
   hidePenOnEraser?: boolean;
+  rgba: {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+  };
 }
 
 export interface RangeIndexProps {
@@ -37,4 +43,10 @@ export interface RangeIndexProps {
 export interface BgColorProps {
   openPalette: boolean;
   color: string;
+  rgba: {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+  };
 }

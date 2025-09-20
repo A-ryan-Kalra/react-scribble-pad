@@ -28,6 +28,12 @@ export const stickerDetails = atom<StickerDetailsProps>({
   fontSize: 16,
   customizeCursor: false,
   hidePenOnEraser: false,
+  rgba: {
+    r: 40,
+    g: 41,
+    b: 42,
+    a: 100,
+  },
 });
 export const adjustFullScreenAtom = atom<boolean>(false);
 
@@ -37,6 +43,12 @@ function Canvas() {
   const [bgColor, setBgColor] = useState<BgColorProps>({
     openPalette: false,
     color: "",
+    rgba: {
+      r: 40,
+      g: 41,
+      b: 42,
+      a: 100,
+    },
   });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const palleteRef = useRef<HTMLDivElement>(null);
@@ -107,7 +119,7 @@ function Canvas() {
       const width = window.innerWidth;
       let scale = 1;
       if (width <= 380) scale = 0.7;
-      else if (width <= 440) scale = 0.84;
+      else if (width <= 440) scale = 0.8;
       document.documentElement.style.setProperty("--scale", scale.toString());
     }
 
@@ -460,7 +472,6 @@ function Canvas() {
     }
     closeAllTools();
   };
-
   const handleScreenshot = async () => {
     await preloadImages();
     const element = document.documentElement;
@@ -863,6 +874,7 @@ function Canvas() {
                 {tools.pickColor && (
                   <PickColor
                     position="-3rem"
+                    colorState={showStickerDetails.rgba}
                     pick={(rgba: {
                       r: number;
                       g: number;
@@ -874,6 +886,7 @@ function Canvas() {
                         ...prev,
                         bgColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
                         sticketTextAtom: false,
+                        rgba: { ...rgba },
                       }));
                     }}
                   />
@@ -990,7 +1003,9 @@ function Canvas() {
                     }}
                   />
                   <div>
-                    <label style={{ fontSize: "15px" }}>Customize Cursor</label>
+                    <label style={{ fontSize: "14px" }}>
+                      Display Cursor Color
+                    </label>
                     <div
                       style={{
                         display: "flex",
@@ -1083,6 +1098,7 @@ function Canvas() {
               <div onClick={(e) => e.stopPropagation()}>
                 {bgColor.openPalette && !tools.showScreen && (
                   <PickColor
+                    colorState={bgColor.rgba}
                     position="-11rem"
                     pick={(rgba: {
                       r: number;
@@ -1093,6 +1109,7 @@ function Canvas() {
                       setBgColor((prev) => ({
                         ...prev,
                         color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
+                        rgba: { ...rgba },
                       }));
                     }}
                   />
