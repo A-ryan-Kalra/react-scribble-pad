@@ -105,21 +105,21 @@ export default function Page() {
 
 ## 🎹 Keyboard Shortcuts & Toolpad
 
-| Key   | Action                                                                                               |
-| ----- | ---------------------------------------------------------------------------------------------------- |
-| `🔒`  | Enabling screen lock for touch users, prevents scrolling and lets them sketch directly on the canvas |
-| `⛶`   | Switch Full-Screen/Window Mode (Newly launched 🤩)                                                   |
-| `📸`  | Take Screenshot of a webpage                                                                         |
-| `1`   | 🎨 Open the Palette – choose colors and adjust stroke size                                           |
-| `2`   | 🩹 Open the Eraser – erase parts of your sketch                                                      |
-| `3`   | 🖱️ Open Cursor Tools – change cursor size or appearance                                              |
-| `4`   | ✏️ Add Texts – insert text anywhere on the canvas                                                    |
-| `5`   | 📝 Make Draggable Notes – create sticky-style notes you can move around                              |
-| `6`   | 🖥️ Switch to Whiteboard Mode – expand into fullscreen whiteboard                                     |
-| `7`   | 🎨 Open the Palette - choose background colors for Whiteboard Mode                                   |
-| `8`   | 🔄 Reset Everything – clear the canvas                                                               |
-| `Esc` | 🔄 Reset Configured Tools                                                                            |
-| `Del` | 🚮 Pressing Delete key on draggable notes, will simply delete them                                   |
+| Key   | Action                                                                                                               |
+| ----- | -------------------------------------------------------------------------------------------------------------------- |
+| `🔒`  | Enabling screen lock for touch users, prevents scrolling and lets them sketch directly on the canvas                 |
+| `⛶`   | Switch Full-Screen/Window Mode (Newly launched 🤩)                                                                   |
+| `📸`  | Take Screenshot of a webpage                                                                                         |
+| `1`   | 🎨 Open the Palette – choose colors and adjust stroke size                                                           |
+| `2`   | 🩹 Open the Eraser – erase parts of your sketch                                                                      |
+| `3`   | 🖱️ Open Cursor Tools – change cursor size or appearance                                                              |
+| `4`   | ✏️ Add Texts – insert text anywhere on the canvas                                                                    |
+| `5`   | 📝 Make Draggable Notes – create sticky-style notes you can move around                                              |
+| `6`   | 🖥️ Switch to Whiteboard Mode – expand into fullscreen whiteboard                                                     |
+| `7`   | 🎨 Open the Palette - choose background colors for Whiteboard Mode                                                   |
+| `8`   | 🔄 Reset Everything – clear the canvas                                                                               |
+| `Esc` | 🔄 Reset Configured Tools                                                                                            |
+| `Del` | 🚮 Pressing Delete key on draggable notes or backspacing every character until the last one, will simply delete them |
 
 <br>
 
