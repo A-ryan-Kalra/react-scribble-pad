@@ -65,9 +65,9 @@ function Canvas() {
     textSize: "20",
     eraserSize: "100",
   });
+  const cusrorSize = useRef<number>(5);
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
-
   const [text, setText] = useState("");
   const [, setShowStickerInput] = useAtom(showStickerInputAtom);
   const toolsRef = useRef<ToolsRefProps>({
@@ -258,7 +258,7 @@ function Canvas() {
         ctx.fillStyle = "#000"; // text color
       } else {
         ctx.globalCompositeOperation = "source-over";
-
+        ctx.lineWidth = cusrorSize.current;
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
         ctx.lineTo(offsetX, offsetY);
@@ -805,7 +805,8 @@ function Canvas() {
         onMouseLeave={() => {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
-        className={`pallete-box no-screenshot`}
+        data-topparent
+        className={`pallete-box`}
         style={{
           width: "fit-content",
           transition: "width 0.2s ease-in",
@@ -942,7 +943,9 @@ function Canvas() {
                     id="sketch-pen"
                     max={40}
                     defaultValue={5}
-                    onChange={(e) => (ctx!.lineWidth = Number(e.target.value))}
+                    onChange={(e) => {
+                      cusrorSize.current = Number(e.target.value);
+                    }}
                   />
                   <label htmlFor="text-size">
                     Text Size: {`${Math.floor(Number(canvasConf.textSize))}`}
@@ -950,7 +953,7 @@ function Canvas() {
                   <input
                     type="range"
                     id="text-size"
-                    max={80}
+                    max={84}
                     defaultValue={20}
                     onChange={(e) => {
                       setCanvasConf((prev) => ({
@@ -1187,6 +1190,9 @@ function Canvas() {
 
               const adjustSize =
                 Number(fontSize) <= 20 ? 8 : Number(fontSize) >= 50 ? 25 : 20;
+              const canvasTopOffset = parseInt(
+                canvasRef.current?.style.top || "0"
+              );
 
               if (ctx) {
                 ctx!.font = `${fontSize}px 'Architects Daughter', cursive`;
@@ -1196,7 +1202,10 @@ function Canvas() {
                 if (newText.length < text.length) {
                   ctx.clearRect(
                     showCanvasText.x - 2,
-                    showCanvasText.y + window.scrollY - Number(fontSize), // go up by font size
+                    showCanvasText.y +
+                      window.scrollY -
+                      Number(fontSize) -
+                      canvasTopOffset, // go up by font size
                     ctx.measureText(text + "M").width, // width of text + buffer
                     Number(fontSize) + adjustSize
                   );
@@ -1207,7 +1216,8 @@ function Canvas() {
                   newText,
                   showCanvasText.x,
                   showCanvasText.y +
-                    (!tools.adjustFullScreen ? window.scrollY : 0)
+                    (!tools.adjustFullScreen ? window.scrollY : 0) -
+                    canvasTopOffset
                 );
               }
 
