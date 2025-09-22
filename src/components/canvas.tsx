@@ -792,7 +792,8 @@ function Canvas() {
     <div
       style={{
         zIndex: 214748367,
-        cursor: tools.canvasText ? "text" : "",
+        cursor:
+          tools.canvasText || showStickerDetails.sticketTextAtom ? "text" : "",
       }}
       className={`canvas-container`}
     >
