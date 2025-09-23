@@ -357,7 +357,6 @@ function Canvas() {
     toolsRef.current.eraser = false;
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
-    toolsRef.current.showText = false;
     setShowStickerDetails((prev) => ({
       ...prev,
       sticketTextAtom: false,
@@ -840,7 +839,7 @@ function Canvas() {
               <li
                 title="Screen Mode"
                 className={`li-box  ${tools.adjustFullScreen ? "show" : ""} ${
-                  !isTouchDevice && "hover"
+                  !tools.adjustFullScreen && "hover"
                 }`}
                 onClick={handleAdjustFullScreen}
               >
