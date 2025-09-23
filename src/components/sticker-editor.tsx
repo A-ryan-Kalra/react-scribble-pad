@@ -161,22 +161,21 @@ function StickerEditor() {
     });
 
     resizeHandle.addEventListener("touchstart", (e) => {
-      // e.preventDefault();
-      e.preventDefault(); // 👈 stops focus loss
+      e.preventDefault();
       e.stopPropagation();
 
       isResizing = true;
     });
 
     resizeHandle.addEventListener("mousedown", (e) => {
-      // e.preventDefault();
-      e.preventDefault(); // 👈 stops focus loss
+      e.preventDefault();
       e.stopPropagation();
 
       isResizing = true;
     });
 
     window.addEventListener("touchmove", (e) => {
+      if (!isResizing) return;
       const touch = e.touches[0];
       const rect = divEl.getBoundingClientRect();
       let newWidth = touch.clientX - rect.left;
