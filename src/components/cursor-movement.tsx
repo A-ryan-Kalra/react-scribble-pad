@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { stickerDetails } from "./canvas";
 import { useAtom } from "jotai";
 function CursorMovement() {
@@ -11,6 +11,7 @@ function CursorMovement() {
     x: -100,
     y: -100,
   });
+  const cursorRef = useRef<HTMLDivElement>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,9 @@ function CursorMovement() {
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {
       if (window.innerWidth > 1024) {
+        cursorRef.current!.style.transform = `translate(${event.clientX}px, ${
+          event.clientY + 1
+        }px)`;
         setUserCursor({
           x: event.clientX,
           y: event.clientY,
@@ -60,14 +64,15 @@ function CursorMovement() {
           position: "fixed",
           pointerEvents: "none",
           zIndex: 2147483647,
-          transition: "transform 0.02s ease-in",
           backgroundColor: showStickerDetails.bgColor
             ? showStickerDetails.bgColor
             : "black",
           transform: `translate(${userCursor.x}px, ${userCursor.y}px)`,
+          transition: "transform 0.02s ease-in",
         }}
       />
       <div
+        ref={cursorRef}
         style={{
           width: "50px",
           height: "50px",
@@ -76,10 +81,10 @@ function CursorMovement() {
           pointerEvents: "none",
           zIndex: 2147483647,
           cursor: "none",
-          transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
+          // transform: `translate(${userCursor.x}px, ${userCursor.y + 1}px)`,
         }}
       >
-        {!isTouchDevice && (
+        {!isTouchDevice && showStickerDetails.customizeCursor && (
           <div
             style={{
               visibility:
@@ -95,9 +100,11 @@ function CursorMovement() {
               backgroundSize: "contain",
               backgroundPosition: "center",
               backgroundColor: "transparent",
-              color: showStickerDetails.customizeCursor
-                ? showStickerDetails.bgColor
-                : "black",
+              color: showStickerDetails.bgColor,
+
+              // color: showStickerDetails.customizeCursor
+              //   ? showStickerDetails.bgColor
+              //   : "black",
               width: "30px",
               height: "30px",
               pointerEvents: "none",

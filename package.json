@@ -57,6 +57,7 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
+    "@jaames/iro": "^5.5.2",
     "@uiw/react-color": "^2.7.3",
     "html2canvas": "^1.4.1",
     "jotai": "^2.12.5"

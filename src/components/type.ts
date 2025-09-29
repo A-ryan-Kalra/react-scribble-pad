@@ -50,3 +50,8 @@ export interface BgColorProps {
     a: number;
   };
 }
+
+export interface ScribblePadProps {
+  openPad?: boolean;
+  setOpenPad: (openPad: boolean) => void;
+}
