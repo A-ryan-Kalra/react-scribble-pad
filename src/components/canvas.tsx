@@ -462,105 +462,64 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
 
     closeAllTools();
   };
-  function normalizeColors(element: HTMLElement) {
-    const allNodes = element.querySelectorAll<HTMLElement>("*");
 
-    allNodes.forEach((node) => {
-      const style = window.getComputedStyle(node);
-
-      // normalize text color
-      if (style.color.includes("oklch") || style.color.includes("oklab")) {
-        node.style.color = toRGB(style.color);
-      }
-
-      // normalize background color
-      if (
-        style.backgroundColor.includes("oklch") ||
-        style.backgroundColor.includes("oklab")
-      ) {
-        node.style.backgroundColor = toRGB(style.backgroundColor);
-      }
-
-      // normalize borders
-      [
-        "borderColor",
-        "borderTopColor",
-        "borderRightColor",
-        "borderBottomColor",
-        "borderLeftColor",
-      ].forEach((prop) => {
-        const value = (style as any)[prop];
-        if (value && (value.includes("oklch") || value.includes("oklab"))) {
-          (node.style as any)[prop] = toRGB(value);
-        }
-      });
-    });
-  }
-
-  // Trick: browser can parse oklch → rgb automatically
-  function toRGB(color: string): string {
-    const ctx = document.createElement("canvas").getContext("2d")!;
-    ctx.fillStyle = color;
-    return ctx.fillStyle; // browser returns as rgb()
-  }
   // Preload & replace external images
-  const preloadImages = async () => {
-    const imgs = Array.from(document.images);
+  // const preloadImages = async () => {
+  //   const imgs = Array.from(document.images);
 
-    await Promise.all(
-      imgs.map(async (img: any) => {
-        // wait for normal load first
-        if (!img.complete) {
-          await new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        }
+  //   await Promise.all(
+  //     imgs.map(async (img: any) => {
+  //       // wait for normal load first
+  //       if (!img.complete) {
+  //         await new Promise((resolve) => {
+  //           img.onload = resolve;
+  //           img.onerror = resolve;
+  //         });
+  //       }
 
-        // If cross-origin, proxy it
-        if (
-          img.src.startsWith("http") &&
-          !img.src.startsWith(window.location.origin)
-        ) {
-          const proxied = await proxyImage(img.src);
-          img.src = proxied; // replace with data URI
-        }
-      })
-    );
-  };
-  const handleScreenshot = async () => {
-    await preloadImages();
-    const element = document.documentElement;
-    // normalize colors inside clone
-    normalizeColors(element);
-    const canvas = await html2canvas(element, {
-      ignoreElements: (el) =>
-        el.tagName === "IFRAME" ||
-        el.tagName === "SCRIPT" ||
-        el.classList.contains("no-screenshot"),
-      useCORS: true,
-      allowTaint: false,
-      x: window.scrollX,
-      y: window.scrollY,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      // windowWidth: document.documentElement.scrollWidth,
-      // windowHeight: document.documentElement.scrollHeight,
-    });
-    const imgData = canvas.toDataURL("image/webp");
+  //       // If cross-origin, proxy it
+  //       if (
+  //         img.src.startsWith("http") &&
+  //         !img.src.startsWith(window.location.origin)
+  //       ) {
+  //         const proxied = await proxyImage(img.src);
+  //         img.src = proxied; // replace with data URI
+  //       }
+  //     })
+  //   );
+  // };
+  // const handleScreenshot = async () => {
+  //   await preloadImages();
+  //   const element = document.documentElement;
 
-    // download the screenshot
-    const link = document.createElement("a");
-    link.href = imgData;
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const seconds = date.getSeconds();
-    const minutes = date.getMinutes();
-    link.download = `scribble-pad-${year}-${month}-${day}-${minutes}-${seconds}-${date.getMilliseconds()}.webp`;
-    link.click();
-  };
+  //   const canvas = await html2canvas(element, {
+  //     ignoreElements: (el) =>
+  //       el.tagName === "IFRAME" ||
+  //       el.tagName === "SCRIPT" ||
+  //       el.classList.contains("no-screenshot"),
+  //     useCORS: true,
+  //     allowTaint: false,
+  //     x: window.scrollX,
+  //     y: window.scrollY,
+  //     width: window.innerWidth,
+  //     height: window.innerHeight,
+  //     // windowWidth: document.documentElement.scrollWidth,
+  //     // windowHeight: document.documentElement.scrollHeight,
+  //   });
+  //   const imgData = canvas.toDataURL("image/webp");
+
+  //   // download the screenshot
+  //   const link = document.createElement("a");
+  //   link.href = imgData;
+  //   const date = new Date();
+  //   const year = date.getFullYear();
+  //   const month = date.getMonth() + 1;
+  //   const day = date.getDate();
+  //   const seconds = date.getSeconds();
+  //   const minutes = date.getMinutes();
+  //   link.download = `scribble-pad-${year}-${month}-${day}-${minutes}-${seconds}-${date.getMilliseconds()}.webp`;
+  //   link.click();
+  // };
   function handleAdjustFullScreen() {
     toolsRef.current.adjustFullScreen = !toolsRef.current.adjustFullScreen;
     setAdjustFullScreen((prev) => ({
@@ -1058,13 +1017,13 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
               >
                 <span className="full-screen"></span>
               </li>
-              <li
+              {/* <li
                 title="Screenshot"
                 className={`li-box hover`}
                 onClick={handleScreenshot}
               >
                 <span className="screenshot"></span>
-              </li>
+              </li> */}
               <li
                 title="Cursor - Interact with the web page"
                 className={`li-box ${

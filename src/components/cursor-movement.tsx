@@ -42,7 +42,7 @@ function CursorMovement() {
         });
       }
     }
-
+    cursorRef.current!.style.transform = "translate(-100px, -100px)";
     window.addEventListener("mousemove", handleMouseMove);
 
     return () => {

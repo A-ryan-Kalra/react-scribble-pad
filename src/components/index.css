@@ -113,9 +113,9 @@ This will only work well inside extensions
   width: fit-content;
   height: fit-content;
 
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.4);
@@ -129,14 +129,14 @@ This will only work well inside extensions
   cursor: default;
   transition: width 0.2s ease-in;
 
-  pointer-events: auto !important;
+  pointer-events: auto;
   scale: var(--scale);
 }
 .pallete-box.show {
   animation: moveUp 0.8s ease-out forwards;
 }
 .pallete-box.hide {
-  animation: moveDown 0.5s ease-in forwards;
+  animation: moveDown 0.5s ease-out forwards;
 }
 @keyframes moveUp {
   from {
