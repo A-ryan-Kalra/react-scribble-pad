@@ -8,7 +8,7 @@ import {
   type MouseEvent as MouseEventHandler,
   type TouchEvent as TouchEventHandler,
 } from "react";
-import html2canvas from "html2canvas";
+
 import PickColor from "./pick-color";
 import { atom, useAtom } from "jotai";
 import StickerEditor, {
@@ -414,20 +414,6 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
       customizeCursor: event.target.value === "on" ? true : false,
     }));
   }
-  const proxyImage = async (url: string) => {
-    try {
-      const res = await fetch(url, { mode: "cors" }); // may need <all_urls> in extension
-      const blob = await res.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result); // base64 string
-        reader.readAsDataURL(blob);
-      });
-    } catch (e) {
-      console.error("Proxy failed for", url, e);
-      return url; // fallback to original if proxy fails
-    }
-  };
 
   function handleScrollLock() {
     toolsRef.current.canvasText = false;
