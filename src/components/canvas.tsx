@@ -463,63 +463,6 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     closeAllTools();
   };
 
-  // Preload & replace external images
-  // const preloadImages = async () => {
-  //   const imgs = Array.from(document.images);
-
-  //   await Promise.all(
-  //     imgs.map(async (img: any) => {
-  //       // wait for normal load first
-  //       if (!img.complete) {
-  //         await new Promise((resolve) => {
-  //           img.onload = resolve;
-  //           img.onerror = resolve;
-  //         });
-  //       }
-
-  //       // If cross-origin, proxy it
-  //       if (
-  //         img.src.startsWith("http") &&
-  //         !img.src.startsWith(window.location.origin)
-  //       ) {
-  //         const proxied = await proxyImage(img.src);
-  //         img.src = proxied; // replace with data URI
-  //       }
-  //     })
-  //   );
-  // };
-  // const handleScreenshot = async () => {
-  //   await preloadImages();
-  //   const element = document.documentElement;
-
-  //   const canvas = await html2canvas(element, {
-  //     ignoreElements: (el) =>
-  //       el.tagName === "IFRAME" ||
-  //       el.tagName === "SCRIPT" ||
-  //       el.classList.contains("no-screenshot"),
-  //     useCORS: true,
-  //     allowTaint: false,
-  //     x: window.scrollX,
-  //     y: window.scrollY,
-  //     width: window.innerWidth,
-  //     height: window.innerHeight,
-  //     // windowWidth: document.documentElement.scrollWidth,
-  //     // windowHeight: document.documentElement.scrollHeight,
-  //   });
-  //   const imgData = canvas.toDataURL("image/webp");
-
-  //   // download the screenshot
-  //   const link = document.createElement("a");
-  //   link.href = imgData;
-  //   const date = new Date();
-  //   const year = date.getFullYear();
-  //   const month = date.getMonth() + 1;
-  //   const day = date.getDate();
-  //   const seconds = date.getSeconds();
-  //   const minutes = date.getMinutes();
-  //   link.download = `scribble-pad-${year}-${month}-${day}-${minutes}-${seconds}-${date.getMilliseconds()}.webp`;
-  //   link.click();
-  // };
   function handleAdjustFullScreen() {
     toolsRef.current.adjustFullScreen = !toolsRef.current.adjustFullScreen;
     setAdjustFullScreen((prev) => ({
