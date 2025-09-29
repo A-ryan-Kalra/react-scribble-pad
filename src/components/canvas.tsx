@@ -3,6 +3,7 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type ClipboardEventHandler,
   type FormEvent,
   type MouseEvent as MouseEventHandler,
   type TouchEvent as TouchEventHandler,
@@ -16,6 +17,8 @@ import StickerEditor, {
 } from "./sticker-editor";
 import type {
   BgColorProps,
+  ScribblePadProps,
+  // ScribblePadProps,
   StickerDetailsProps,
   ToolsProps,
   ToolsRefProps,
@@ -24,9 +27,9 @@ import RangeIndex from "./range-index";
 
 export const stickerDetails = atom<StickerDetailsProps>({
   sticketTextAtom: false,
-  bgColor: "",
+  bgColor: "black",
   fontSize: 16,
-  customizeCursor: false,
+  customizeCursor: true,
   hidePenOnEraser: false,
   rgba: {
     r: 40,
@@ -35,11 +38,16 @@ export const stickerDetails = atom<StickerDetailsProps>({
     a: 100,
   },
 });
-export const adjustFullScreenAtom = atom<boolean>(false);
+export const adjustFullScreenAtom = atom<{
+  isCanvasUnMounted: boolean;
+  adjustScreen: boolean;
+}>({ isCanvasUnMounted: false, adjustScreen: false });
 
-function Canvas() {
+function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
   const [isDragAtom] = useAtom(isDraggingAtom);
-  const [, setAdjustFullScreen] = useAtom(adjustFullScreenAtom);
+  const [adjustScreen, setAdjustFullScreen] = useAtom(adjustFullScreenAtom);
+  const eraserRef = useRef<HTMLDivElement>(null);
+
   const [bgColor, setBgColor] = useState<BgColorProps>({
     openPalette: false,
     color: "",
@@ -68,8 +76,10 @@ function Canvas() {
   const cusrorSize = useRef<number>(5);
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
+
   const [text, setText] = useState("");
   const [, setShowStickerInput] = useAtom(showStickerInputAtom);
+
   const toolsRef = useRef<ToolsRefProps>({
     eraser: false,
     pickColor: false,
@@ -79,7 +89,7 @@ function Canvas() {
     lockScroll: false,
     showScreen: false,
     adjustFullScreen: false,
-    eraserSize: "",
+    eraserSize: "100",
   });
   const [tools, setTools] = useState<ToolsProps>({
     eraser: false,
@@ -118,8 +128,8 @@ function Canvas() {
     function updateScale() {
       const width = window.innerWidth;
       let scale = 1;
-      if (width <= 380) scale = 0.7;
-      else if (width <= 440) scale = 0.8;
+      if (width <= 380) scale = 0.65;
+      else if (width <= 440) scale = 0.75;
       document.documentElement.style.setProperty("--scale", scale.toString());
     }
 
@@ -213,15 +223,12 @@ function Canvas() {
           ? window.scrollY + touch.clientY
           : touch.clientY;
 
+        if (eraserRef.current) {
+          eraserRef.current.style.transform = `translate(${
+            touch.clientX - Number(toolsRef.current.eraserSize) / 2
+          }px, ${touch.clientY - Number(toolsRef.current.eraserSize) / 2}px)`;
+        }
         drawCanvas(touch.clientX, offsetY);
-        document.documentElement.style.setProperty(
-          "--eraserPositionX",
-          `${touch.clientX}px`
-        );
-        document.documentElement.style.setProperty(
-          "--eraserPositionY",
-          `${touch.clientY}px`
-        );
       } else {
         const isLockScreenDisabled = touchStart(event);
         if (isLockScreenDisabled) {
@@ -277,15 +284,10 @@ function Canvas() {
       trackCursorPosRef.current.x = event.clientX;
       trackCursorPosRef.current.y = event.clientY;
 
-      if (toolsRef.current.eraser) {
-        document.documentElement.style.setProperty(
-          "--eraserPositionX",
-          `${event.clientX}px`
-        );
-        document.documentElement.style.setProperty(
-          "--eraserPositionY",
-          `${event.clientY}px`
-        );
+      if (eraserRef.current) {
+        eraserRef.current.style.transform = `translate(${
+          event.clientX - Number(toolsRef.current.eraserSize) / 2
+        }px, ${event.clientY - Number(toolsRef.current.eraserSize) / 2}px)`;
       }
     }
     function showCanvasTextPosition(event: MouseEvent) {
@@ -341,6 +343,10 @@ function Canvas() {
   function closeAllTools() {
     setText("");
     setShowStickerInput(false);
+    setAdjustFullScreen((prev) => ({
+      ...prev,
+      isCanvasUnMounted: false,
+    }));
     setTools((prev) => ({
       ...prev,
       canvasText: false,
@@ -349,10 +355,14 @@ function Canvas() {
       pickColor: false,
       // lockScroll: false,
     }));
+
+    // toolsRef.current.eraserSize = "100";
+    // setCanvasConf((prev)=>({...prev,eraserSize:"100"}))
     setBgColor((prev) => ({
       ...prev,
       openPalette: false,
     }));
+
     toolsRef.current.canvasText = false;
     toolsRef.current.eraser = false;
     toolsRef.current.pickColor = false;
@@ -381,18 +391,21 @@ function Canvas() {
       "--eraserPositionY",
       `${event.clientY}px`
     );
+
+    if (eraserRef.current) {
+      eraserRef.current.style.transform = `translate(${
+        event.clientX - Number(toolsRef.current.eraserSize) / 2
+      }px, ${event.clientY - Number(toolsRef.current.eraserSize) / 2}px)`;
+    }
   }
 
   function showEraserOnTouch(event: TouchEventHandler<HTMLElement>) {
     const touch = event.touches[0];
-    document.documentElement.style.setProperty(
-      "--eraserPositionX",
-      `${touch.clientX}px`
-    );
-    document.documentElement.style.setProperty(
-      "--eraserPositionY",
-      `${touch.clientY}px`
-    );
+    if (eraserRef.current) {
+      eraserRef.current.style.transform = `translate(${
+        touch.clientX - Number(toolsRef.current.eraserSize) / 2
+      }px, ${touch.clientY - Number(toolsRef.current.eraserSize) / 2}px)`;
+    }
   }
 
   function customCursorColor(event: ChangeEvent<HTMLInputElement>) {
@@ -416,31 +429,6 @@ function Canvas() {
     }
   };
 
-  // Preload & replace external images
-  const preloadImages = async () => {
-    const imgs = Array.from(document.images);
-
-    await Promise.all(
-      imgs.map(async (img: any) => {
-        // wait for normal load first
-        if (!img.complete) {
-          await new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        }
-
-        // If cross-origin, proxy it
-        if (
-          img.src.startsWith("http") &&
-          !img.src.startsWith(window.location.origin)
-        ) {
-          const proxied = await proxyImage(img.src);
-          img.src = proxied; // replace with data URI
-        }
-      })
-    );
-  };
   function handleScrollLock() {
     toolsRef.current.canvasText = false;
     toolsRef.current.eraser = false;
@@ -466,15 +454,85 @@ function Canvas() {
       }
     });
 
-    if (canvasRef.current) {
-      ctx!.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    if (canvasRef?.current) {
+      ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
+    // document.documentElement.style.setProperty("--eraserWidth", `${100}px`);
+    // document.documentElement.style.setProperty("--eraserHeight", `${100}px`);
+
     closeAllTools();
+  };
+  function normalizeColors(element: HTMLElement) {
+    const allNodes = element.querySelectorAll<HTMLElement>("*");
+
+    allNodes.forEach((node) => {
+      const style = window.getComputedStyle(node);
+
+      // normalize text color
+      if (style.color.includes("oklch") || style.color.includes("oklab")) {
+        node.style.color = toRGB(style.color);
+      }
+
+      // normalize background color
+      if (
+        style.backgroundColor.includes("oklch") ||
+        style.backgroundColor.includes("oklab")
+      ) {
+        node.style.backgroundColor = toRGB(style.backgroundColor);
+      }
+
+      // normalize borders
+      [
+        "borderColor",
+        "borderTopColor",
+        "borderRightColor",
+        "borderBottomColor",
+        "borderLeftColor",
+      ].forEach((prop) => {
+        const value = (style as any)[prop];
+        if (value && (value.includes("oklch") || value.includes("oklab"))) {
+          (node.style as any)[prop] = toRGB(value);
+        }
+      });
+    });
+  }
+
+  // Trick: browser can parse oklch → rgb automatically
+  function toRGB(color: string): string {
+    const ctx = document.createElement("canvas").getContext("2d")!;
+    ctx.fillStyle = color;
+    return ctx.fillStyle; // browser returns as rgb()
+  }
+  // Preload & replace external images
+  const preloadImages = async () => {
+    const imgs = Array.from(document.images);
+
+    await Promise.all(
+      imgs.map(async (img: any) => {
+        // wait for normal load first
+        if (!img.complete) {
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        }
+
+        // If cross-origin, proxy it
+        if (
+          img.src.startsWith("http") &&
+          !img.src.startsWith(window.location.origin)
+        ) {
+          const proxied = await proxyImage(img.src);
+          img.src = proxied; // replace with data URI
+        }
+      })
+    );
   };
   const handleScreenshot = async () => {
     await preloadImages();
     const element = document.documentElement;
-
+    // normalize colors inside clone
+    normalizeColors(element);
     const canvas = await html2canvas(element, {
       ignoreElements: (el) =>
         el.tagName === "IFRAME" ||
@@ -505,7 +563,10 @@ function Canvas() {
   };
   function handleAdjustFullScreen() {
     toolsRef.current.adjustFullScreen = !toolsRef.current.adjustFullScreen;
-    setAdjustFullScreen((prev) => !prev);
+    setAdjustFullScreen((prev) => ({
+      ...prev,
+      adjustScreen: !prev.adjustScreen,
+    }));
     handleReset();
     setText("");
     setShowStickerInput(false);
@@ -704,13 +765,15 @@ function Canvas() {
         target.isContentEditable ||
         e.key === "Escape"
       ) {
+        // e.stopPropagation();
+        // e.stopImmediatePropagation();
         return;
       }
       e.stopPropagation();
       e.stopImmediatePropagation();
 
       const num = Number(e.key);
-      if (num >= 1 && num <= 8) {
+      if (num >= 1 && num <= 9) {
         switch (num) {
           case 1:
             handlePaletteTools();
@@ -747,6 +810,9 @@ function Canvas() {
           case 8:
             handleReset();
             break;
+          case 9:
+            handleExit();
+            break;
         }
       }
     }
@@ -774,19 +840,165 @@ function Canvas() {
           Number(canvasRef!.current?.width),
           Number(canvasRef!.current?.height)
         );
+
         setOffset(newOffset);
+        handleReset();
       }
     }
 
-    window.addEventListener("scroll", handleScrollCanvas);
+    window.addEventListener("scroll", handleScrollCanvas, {
+      passive: true,
+      capture: true,
+    } as EventListenerOptions);
     document.addEventListener("keydown", handleKeyDown, true);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown, true);
-      window.removeEventListener("scroll", handleScrollCanvas);
+      window.removeEventListener("scroll", handleScrollCanvas, {
+        passive: true,
+        capture: true,
+      } as EventListenerOptions);
     };
   }, [ctx, offset]);
 
+  const handleDefaultCursor = () => {
+    // canvasRef.current!.style.display =
+    //   canvasRef.current!.style.display !== "none" ? "none" : "block";
+
+    setAdjustFullScreen((prev) => ({
+      ...prev,
+      isCanvasUnMounted: !prev.isCanvasUnMounted,
+    }));
+    toolsRef.current.canvasText = true;
+    toolsRef.current.eraser = false;
+    toolsRef.current.pickColor = false;
+    toolsRef.current.showText = false;
+
+    setText("");
+    setShowStickerInput(false);
+    setTools((prev) => ({
+      ...prev,
+      penSize: false,
+      eraser: false,
+      pickColor: false,
+      canvasText: false,
+    }));
+    setShowStickerDetails((prev) => ({
+      ...prev,
+      hidePen: false,
+      sticketTextAtom: false,
+      hidePenOnEraser: false,
+    }));
+  };
+
+  function handleMoveTools() {
+    palleteRef.current!.classList.remove("show");
+    palleteRef.current!.classList.add("hide");
+  }
+  const handleExit = () => {
+    palleteRef.current?.classList.replace;
+
+    handleMoveTools();
+    setTools((prev) => ({
+      ...prev,
+      adjustFullScreen: false,
+    }));
+    toolsRef.current.adjustFullScreen = false;
+    setAdjustFullScreen((prev) => ({
+      ...prev,
+    }));
+    setShowStickerDetails((prev) => ({ ...prev, customizeCursor: true }));
+    handleReset();
+    setOpenPad(false);
+  };
+
+  function isAsciiArt(text: string) {
+    const lines = text.split("\n");
+    // Heuristic: if most lines have lots of spaces or special characters
+    const ratio = lines.filter(
+      (line) =>
+        line.match(/[^a-zA-Z0-9\s]/g)?.length! > line.length * 0.2 ||
+        line.includes("  ")
+    ).length;
+
+    return ratio > lines.length * 0.5;
+  }
+  function drawWrappedText(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    x: number,
+    y: number,
+    maxWidth: number,
+    lineHeight: number
+  ) {
+    const words = text.split(" ");
+    let line = "";
+    let currentY = y;
+
+    words.forEach((word, i) => {
+      const testLine = line + word + " ";
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && i > 0) {
+        ctx.fillText(line, x, currentY);
+        line = word + " ";
+        currentY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    });
+
+    ctx.fillText(line, x, currentY);
+  }
+
+  // console.log(ctx)]
+
+  const handlePaste = (e: ClipboardEvent) => {
+    // e.preventDefault();
+
+    const text = e.clipboardData?.getData("text/plain") ?? "";
+
+    const fontSize = canvasConf.textSize || "20";
+    const canvasTopOffset = parseInt(canvasRef.current?.style.top || "0");
+
+    if (ctx) {
+      ctx.fillStyle = showStickerDetails.bgColor;
+      ctx.fillStyle = showStickerDetails.bgColor;
+      if (isAsciiArt(text)) {
+        // Monospace, preserve line breaks
+        ctx.font = `${fontSize}px 'Courier New', monospace`;
+
+        text.split("\n").forEach((line, i) => {
+          ctx.fillText(
+            line,
+            showCanvasText.x,
+            showCanvasText.y +
+              (!tools.adjustFullScreen
+                ? i * (Number(fontSize) + 4) + window.scrollY
+                : i * (Number(fontSize) + 4)) -
+              canvasTopOffset
+          );
+        });
+        e.preventDefault();
+      }
+      // else {
+      //   // Normal prose, wrapped text
+      //   console.log(window.innerWidth - showCanvasText.y);
+      //   ctx.font = `${fontSize}px 'Architects Daughter', cursive, 'Courier New', monospace, sans-serif`;
+      //   drawWrappedText(
+      //     ctx,
+      //     text,
+      //     showCanvasText.x,
+      //     showCanvasText.y +
+      //       (!tools.adjustFullScreen ? window.scrollY : 0) -
+      //       canvasTopOffset,
+      //     window.innerWidth, // max width
+      //     Number(fontSize) + 6 // line height
+      //   );
+      // }
+    }
+
+    // setText(text);
+  };
   return (
     <div
       style={{
@@ -796,7 +1008,7 @@ function Canvas() {
       }}
       className={`canvas-container`}
     >
-      {tools.eraser && <div className="eraser-tool"></div>}
+      {tools.eraser && <div ref={eraserRef} className="eraser-tool"></div>}
 
       <div
         onMouseEnter={() => {
@@ -806,8 +1018,9 @@ function Canvas() {
           setShowStickerDetails((prev) => ({ ...prev, hidePen: false }));
         }}
         data-topparent
-        className={`pallete-box`}
+        className={`pallete-box ${openPad ? "show" : "hide"} no-screenshot`}
         style={{
+          // transform: ctx ? "translateY(100px)" : "translateY(0)",
           width: "fit-content",
           transition: "width 0.2s ease-in",
         }}
@@ -837,9 +1050,9 @@ function Canvas() {
                 <span className="lock"></span>
               </li>
               <li
-                title="Screen Mode"
+                title="Screen Mode - Switch Window/Full-screen mode"
                 className={`li-box  ${tools.adjustFullScreen ? "show" : ""} ${
-                  !tools.adjustFullScreen && "hover"
+                  !isTouchDevice && "hover"
                 }`}
                 onClick={handleAdjustFullScreen}
               >
@@ -851,6 +1064,15 @@ function Canvas() {
                 onClick={handleScreenshot}
               >
                 <span className="screenshot"></span>
+              </li>
+              <li
+                title="Cursor - Interact with the web page"
+                className={`li-box ${
+                  adjustScreen.isCanvasUnMounted ? "show" : ""
+                } ${!isTouchDevice && "hover"}`}
+                onClick={handleDefaultCursor}
+              >
+                <span className="cursor"></span>
               </li>
             </ul>
           </div>
@@ -870,7 +1092,7 @@ function Canvas() {
               onClick={handlePaletteTools}
             >
               <span className={`palette-outline`} />
-              <RangeIndex value="1" bottom="-1" right="-1" />
+              <RangeIndex value="1" bottom="-1" right="0" />
               <div onClick={(e) => e.stopPropagation()}>
                 {tools.pickColor && (
                   <PickColor
@@ -924,6 +1146,7 @@ function Canvas() {
                   position: "absolute",
                   left: "-2rem",
                   zIndex: "214748364",
+                  letterSpacing: "0.4px",
                   bottom: 50,
                   visibility: tools.penSize ? "visible" : "hidden",
                 }}
@@ -1006,9 +1229,7 @@ function Canvas() {
                     }}
                   />
                   <div>
-                    <label style={{ fontSize: "14px" }}>
-                      Display Cursor Color
-                    </label>
+                    <label style={{ fontSize: "15px" }}>Display Cursor</label>
                     <div
                       style={{
                         display: "flex",
@@ -1023,6 +1244,7 @@ function Canvas() {
                         <input
                           type="radio"
                           id="on"
+                          defaultChecked
                           name="cursorGroup"
                           value={"on"}
                           max={40}
@@ -1034,7 +1256,6 @@ function Canvas() {
                         <input
                           id="off"
                           type="radio"
-                          defaultChecked
                           name="cursorGroup"
                           value={"off"}
                           max={40}
@@ -1131,6 +1352,17 @@ function Canvas() {
               <span className="reset" />
               <RangeIndex value="8" bottom="-1" right="-1" />
             </li>
+            <li
+              title="Exit"
+              style={{
+                cursor: "pointer",
+              }}
+              className={`li-box ${!isTouchDevice && "hover"}`}
+              onClick={handleExit}
+            >
+              <span className="exit" />
+              <RangeIndex value="9" bottom="-1" right="-1" />
+            </li>
           </ul>
         </ul>
       </div>
@@ -1140,6 +1372,7 @@ function Canvas() {
         style={{ pointerEvents: "none", position: "relative" }}
       ></div>
       <StickerEditor />
+
       <canvas
         style={{
           touchAction: tools.lockScroll ? "none" : "auto",
@@ -1164,12 +1397,16 @@ function Canvas() {
       {tools.canvasText && (
         <form onClick={(e) => e.stopPropagation()} onSubmit={handleInput}>
           <input
+            autoComplete="off"
             ref={inputRef}
             onMouseDown={() => {
               setTimeout(() => {
                 inputRef?.current?.focus();
               }, 0);
             }}
+            onPaste={
+              handlePaste as unknown as ClipboardEventHandler<HTMLInputElement>
+            }
             // maxLength={30}
             placeholder=""
             style={{
@@ -1177,6 +1414,7 @@ function Canvas() {
               height: "30px",
               position: "fixed",
               borderRadius: "3px",
+              fontSize: "16px",
               // pointerEvents: "none",
               zIndex: 214748365,
 
@@ -1188,8 +1426,8 @@ function Canvas() {
               const newText = e.target.value;
               const fontSize = canvasConf.textSize || "20";
 
-              const adjustSize =
-                Number(fontSize) <= 20 ? 8 : Number(fontSize) >= 50 ? 25 : 20;
+              // const adjustSize =
+              //   Number(fontSize) <= 20 ? 8 : Number(fontSize) >= 50 ? 25 : 20;
               const canvasTopOffset = parseInt(
                 canvasRef.current?.style.top || "0"
               );
@@ -1197,27 +1435,30 @@ function Canvas() {
               if (ctx) {
                 ctx!.font = `${fontSize}px 'Architects Daughter', cursive`;
                 ctx.fillStyle = showStickerDetails.bgColor;
-                // if text got shorter (deletion happened)
 
                 if (newText.length < text.length) {
+                  // clear the entire text block before re-drawing
                   ctx.clearRect(
                     showCanvasText.x - 2,
                     showCanvasText.y +
-                      window.scrollY -
-                      Number(fontSize) -
-                      canvasTopOffset, // go up by font size
-                    ctx.measureText(text + "M").width, // width of text + buffer
-                    Number(fontSize) + adjustSize
+                      (!tools.adjustFullScreen ? window.scrollY : 0) -
+                      canvasTopOffset -
+                      Number(fontSize),
+                    window.innerWidth - showCanvasText.x, // full width available
+                    (Number(fontSize) + 6) * (text.split("\n").length + 2) // enough height to cover all wrapped lines
                   );
                 }
 
                 // redraw whatever is in the input
-                ctx.fillText(
+                drawWrappedText(
+                  ctx,
                   newText,
                   showCanvasText.x,
                   showCanvasText.y +
                     (!tools.adjustFullScreen ? window.scrollY : 0) -
-                    canvasTopOffset
+                    canvasTopOffset,
+                  window.innerWidth - showCanvasText.x, // max width
+                  Number(fontSize) + 6 // line height
                 );
               }
 
