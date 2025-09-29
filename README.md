@@ -17,18 +17,20 @@
 
 <br/>
 
-<div align="center">
 
+
+
+<div align="center">
 <table align="center"> 
   <tr>
+    <td><img width="250" alt="image5" src="https://github.com/user-attachments/assets/fe066753-edbd-4355-a1cb-5a37fc5ad78e" /></td>
+   <td><img  alt="image3" width="250" src="https://github.com/user-attachments/assets/8d44288c-3336-4a37-b89b-9ef88932ee72" /></td>
    <td><img width="250" alt="img" src="https://github.com/user-attachments/assets/d5a2e993-5b9d-451e-bafc-9d647f5f10d5" /></td>
-    <td><img src="https://github.com/user-attachments/assets/284f1767-91c6-4894-b38f-e2c30938b655" alt="image4" width="250"/></td>
-    <td><img src="https://github.com/user-attachments/assets/7eab338e-ac37-4cb2-a94c-bbbf669e3a26" alt="image5" width="250"/></td>
   </tr>
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/5659b465-827a-4428-b390-237464293e7c" alt="image1" width="200"/></td>
-    <td><img src="https://github.com/user-attachments/assets/f6ee340d-6926-42f1-8d58-c37043e0c149" alt="image2" width="200"/></td>
-    <td><img src="https://github.com/user-attachments/assets/d3bb64ee-b970-4260-bc5f-67d8c33ed998" alt="image3" width="200"/></td>
+    <td><img  alt="image1" width="250" src="https://github.com/user-attachments/assets/2ba5a1a8-5794-4dc0-9f9b-38dd7c74ea89" /></td>
+    <td><img  width="250" alt="image2" src="https://github.com/user-attachments/assets/8a8dd17d-c275-41ec-81ee-84868df01244" /></td>
+    <td><img src="https://github.com/user-attachments/assets/284f1767-91c6-4894-b38f-e2c30938b655" alt="image4" width="250"/></td>
   </tr>
 </table>
 
@@ -55,37 +57,53 @@ yarn add react-scribble-pad
 **React**
 
 ```
-import React from 'react';
+import React,{ useState } from 'react';
 
 import { ScribblePad } from "react-scribble-pad";
 import "react-scribble-pad/dist/react-scribble-pad.css";   // Must include the css file
 
-function App(){
+function App() {
+ const [open, setOpen] = useState<boolean>(false);
+ function handleScribblePad() {
+    setOpen(true);
+ }
 
   return (
     <div>
-      <ScribblePad />
+      <button onClick={handleScribblePad}>Open Scribble Pad</button>
+      <ScribblePad openPad={open} setOpenPad={setOpen} />
     </div>
   );
 }
+
+export default App;
 ```
+ 
 
 **Next.js (App Router)**
 
 ```
 "use client";
+import React,{ useState } from 'react';
 
 import { ScribblePad } from "react-scribble-pad";
-import "react-scribble-pad/dist/react-scribble-pad.css"; // Must include the CSS file
+import "react-scribble-pad/dist/react-scribble-pad.css";   // Must include the css file
 
-export default function Page() {
+function App() {
+ const [open, setOpen] = useState<boolean>(false);
+ function handleScribblePad() {
+    setOpen(true);
+ }
+
   return (
     <div>
-      <ScribblePad />
+      <button onClick={handleScribblePad}>Open Scribble Pad</button>
+      <ScribblePad openPad={open} setOpenPad={setOpen} />
     </div>
   );
 }
 
+export default App;
 ```
 
 <br>
