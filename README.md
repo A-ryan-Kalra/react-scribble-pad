@@ -17,9 +17,6 @@
 
 <br/>
 
-
-
-
 <div align="center">
 <table align="center"> 
   <tr>
@@ -78,7 +75,6 @@ function App() {
 
 export default App;
 ```
- 
 
 **Next.js (App Router)**
 

@@ -1,8 +1,8 @@
 {
   "name": "react-scribble-pad",
   "private": false,
-  "version": "2.4.0",
-  "description": "React transparent overlay just made easy.",
+  "version": "2.5.0",
+  "description": "React Sketches just made easy.",
   "type": "module",
   "files": [
     "dist"
@@ -22,7 +22,11 @@
     "react",
     "vite",
     "front-end",
+    "note-pad",
+    "colorful-notes",
     "css",
+    "ascii",
+    "dot-icons",
     "overlay",
     "transparent-overlay",
     "whiteboard",

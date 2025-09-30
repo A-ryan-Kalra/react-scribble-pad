@@ -68,17 +68,18 @@ ul {
 /**
 This will only work well inside react-packages
 **/
-/* .pallete-box {
+.pallete-box {
   position: fixed;
   bottom: 1.75rem;
-  left: 50%;
-  transform: translateX(-50%);
-
+  left: 50% !important;
+  translate: -50% 0 !important;
+  /* translate: translateX(-50%) 0 !important; */
+  pointer-events: auto !important;
   width: fit-content;
   height: fit-content;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center !important;
+  align-items: center !important;
 
   backdrop-filter: blur(10px);
 
@@ -88,14 +89,14 @@ This will only work well inside react-packages
   border: 1.5px solid #eaecef;
   box-shadow: 0px 0px 0px 1px rgb(0 0 0 / 0.2);
   border-radius: 0.375rem;
-
+  scale: var(--scale);
   cursor: default;
-  transition: width 0.2s ease-in;
+  /* transition: width 0.2s ease-in; */
 }
 
-.pallete-box {
-  transform: translateX(-50%) scale(var(--scale));
-  transform-origin: bottom center;
+/* .pallete-box {
+  transform: translateX(-50%) scale(var(--scale)) !important;
+  transform-origin: bottom center !important;
 } */
 
 /**
@@ -105,17 +106,17 @@ This will only work well inside react-packages
 /**
 This will only work well inside extensions
 **/
-.pallete-box {
+/* .pallete-box {
   position: fixed !important;
-  inset-inline: 0 !important;
-  bottom: 1.75rem;
-  margin-inline: auto !important;
+  inset-inline: 0 !important;  
+  bottom: 1.75rem;  
+  margin-inline: auto !important; 
   width: fit-content;
   height: fit-content;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.4);
@@ -129,9 +130,33 @@ This will only work well inside extensions
   cursor: default;
   transition: width 0.2s ease-in;
 
-  pointer-events: auto;
+  pointer-events: auto !important;
   scale: var(--scale);
+ 
+} */
+.pallete-box.show {
+  animation: moveUp 0.5s ease-out forwards;
 }
+.pallete-box.hide {
+  animation: moveDown 0.5s ease-out forwards;
+}
+@keyframes moveUp {
+  from {
+    transform: translateY(300px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes moveDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(300px);
+  }
+}
+
 .pallete-box.show {
   animation: moveUp 0.8s ease-out forwards;
 }
