@@ -4,10 +4,14 @@
   font-weight: normal;
   font-style: normal;
 }
-
+html,
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+}
+
+body {
   box-sizing: border-box;
   font-family: "Architects Daughter", cursive, "Courier New", monospace,
     sans-serif;

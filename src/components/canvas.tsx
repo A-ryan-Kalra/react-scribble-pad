@@ -149,7 +149,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
 
     setCtx(context);
     if (!ctx) return;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = window.devicePixelRatio > 1 ? window.devicePixelRatio : 1;
     const width = window.innerWidth;
     let height = chunkHeight; // full page height
     canvas.style!.position = "relative";
@@ -837,7 +837,28 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
 
     ctx.fillText(line, x, currentY);
   }
+  function getWrappedLineCount(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    maxWidth: number
+  ) {
+    const words = text.split(" ");
+    let line = "";
+    let lineCount = 1;
 
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line + words[i] + " ";
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && i > 0) {
+        line = words[i] + " ";
+        lineCount++;
+      } else {
+        line = testLine;
+      }
+    }
+
+    return lineCount;
+  }
   // console.log(ctx)]
 
   const handlePaste = (e: ClipboardEvent) => {
@@ -1323,6 +1344,11 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
               if (ctx) {
                 ctx!.font = `${fontSize}px 'Architects Daughter', cursive`;
                 ctx.fillStyle = showStickerDetails.bgColor;
+                const lineCount = getWrappedLineCount(
+                  ctx,
+                  text,
+                  window.innerWidth - showCanvasText.x // max available width
+                );
 
                 if (newText.length < text.length) {
                   // clear the entire text block before re-drawing
@@ -1333,7 +1359,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
                       canvasTopOffset -
                       Number(fontSize),
                     window.innerWidth - showCanvasText.x, // full width available
-                    (Number(fontSize) + 6) * (text.split("\n").length + 2) // enough height to cover all wrapped lines
+                    (Number(fontSize) + 6) * (lineCount + 1) // enough height to cover all wrapped lines
                   );
                 }
 
