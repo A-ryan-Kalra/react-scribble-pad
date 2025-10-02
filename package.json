@@ -1,7 +1,7 @@
 {
   "name": "react-scribble-pad",
   "private": false,
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "React Sketches just made easy.",
   "type": "module",
   "files": [
