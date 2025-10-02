@@ -73,7 +73,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     textSize: "20",
     eraserSize: "100",
   });
-  const cusrorSize = useRef<number>(5);
+  const cursorSize = useRef<number>(4);
   const isDrawing = useRef<boolean>(false);
   const [offset, setOffset] = useState(0);
 
@@ -173,7 +173,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
 
     ctx.setTransform(1, 0, 0, 1, 0, 0); // reset before scaling
     ctx.scale(dpr, dpr);
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 4;
     ctx.strokeStyle = showStickerDetails.bgColor ?? "#000";
     ctx.fill();
     ctx.font = "20px 'Architects Daughter', cursive";
@@ -273,7 +273,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
         ctx.fillStyle = "#000"; // text color
       } else {
         ctx.globalCompositeOperation = "source-over";
-        ctx.lineWidth = cusrorSize.current;
+        ctx.lineWidth = cursorSize.current;
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
         ctx.lineTo(offsetX, offsetY);
@@ -352,6 +352,9 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     setText("");
     setShowStickerInput(false);
     shadowRef.current = true;
+    if (ctx) {
+      ctx.shadowBlur = 1.2;
+    }
     setAdjustFullScreen((prev) => ({
       ...prev,
       isCanvasUnMounted: false,
@@ -481,6 +484,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     {
       // toolsRef.current.pickColor = true;
       shadowRef.current = true;
+      ctx!.shadowBlur = 1.2;
       toolsRef.current.canvasText = false;
       toolsRef.current.eraser = false;
       toolsRef.current.pickColor = false;
@@ -510,6 +514,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     // event.stopPropagation();
     showEraser(event);
     shadowRef.current = true;
+    ctx!.shadowBlur = 1.2;
     setShowStickerDetails((prev) => ({
       ...prev,
       sticketTextAtom: false,
@@ -536,6 +541,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     toolsRef.current.canvasText = false;
     toolsRef.current.eraser = false;
     shadowRef.current = true;
+    ctx!.shadowBlur = 1.2;
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
     setShowStickerDetails((prev) => ({
@@ -560,6 +566,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
     toolsRef.current.pickColor = false;
     toolsRef.current.showText = false;
     shadowRef.current = true;
+    ctx!.shadowBlur = 1.2;
     setText("");
     setShowStickerInput(false);
     setTools((prev) => ({
@@ -615,6 +622,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
       openPalette: !prev.openPalette,
     }));
     shadowRef.current = true;
+    ctx!.shadowBlur = 1.2;
     setText("");
     setShowStickerInput(false);
     setTools((prev) => ({
@@ -639,6 +647,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
       document.body.style.overflow = "hidden";
     }
     shadowRef.current = true;
+    ctx!.shadowBlur = 1.2;
     setShowStickerDetails((prev) => ({
       ...prev,
       sticketTextAtom: false,
@@ -1093,7 +1102,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
                     max={40}
                     defaultValue={5}
                     onChange={(e) => {
-                      cusrorSize.current = Number(e.target.value);
+                      cursorSize.current = Number(e.target.value);
                     }}
                   />
                   <label htmlFor="text-size">
