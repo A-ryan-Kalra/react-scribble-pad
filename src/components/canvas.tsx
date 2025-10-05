@@ -247,7 +247,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
       isDrawing.current = true;
       const { offsetX, offsetY } = getMousePosition(event);
       ctx.beginPath();
-      ctx.moveTo(offsetX + 3, offsetY + 2);
+      ctx.moveTo(offsetX + 2, offsetY + 2);
     };
     const stopDrawing = () => {
       isDrawing.current = false;
@@ -276,7 +276,7 @@ function Canvas({ openPad, setOpenPad }: ScribblePadProps) {
         ctx.lineWidth = cursorSize.current;
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
-        ctx.lineTo(offsetX + 3, offsetY + 2);
+        ctx.lineTo(offsetX + 2, offsetY + 2);
         ctx.stroke();
       }
     };
